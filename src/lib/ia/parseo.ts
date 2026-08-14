@@ -56,7 +56,7 @@ export async function parsearMensaje(
   catalogo: string[],
   hoy: string,
 ): Promise<Parseo> {
-  const respuesta = await completar(promptSistema(catalogo, hoy), texto);
+  const respuesta = await completar(promptSistema(catalogo, hoy), texto, "parseo");
   const validado = esquemaParseo.safeParse(extraerJson(respuesta));
 
   if (!validado.success) {

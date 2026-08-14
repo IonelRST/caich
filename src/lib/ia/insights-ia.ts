@@ -135,6 +135,7 @@ export async function generarNivel23(
   const respuesta = await completar(
     sistema(principios),
     `Estadísticas calculadas sobre los datos del usuario:\n${describirEstadisticas(estadisticas)}`,
+    "insights",
   );
 
   const validado = esquema.safeParse(extraerJson(respuesta));

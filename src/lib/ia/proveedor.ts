@@ -17,10 +17,22 @@
 
 type Proveedor = "tensorx" | "claude";
 
-const MODELOS: Record<Proveedor, string> = {
-  tensorx: "deepseek/deepseek-v4-flash-0731",
-  claude: "claude-sonnet-4-5",
+/**
+ * §15: modelo según tarea. El parseo es simple y repetitivo y se ejecuta en
+ * cada mensaje, así que va a un modelo rápido y barato; los insights razonan
+ * sobre el histórico y cruzan datos con la base de principios, así que se
+ * reservan el modelo capaz. Un único modelo para ambas cosas paga de más en la
+ * tarea frecuente o rinde de menos en la difícil.
+ */
+export type Tarea = "parseo" | "insights";
+
+const MODELOS_CLAUDE: Record<Tarea, string> = {
+  parseo: "claude-haiku-4-5",
+  insights: "claude-opus-5",
 };
+
+/** TensorX es el interruptor de desarrollo: un solo modelo barato para todo. */
+const MODELO_TENSORX = "deepseek/deepseek-v4-flash-0731";
 
 function proveedorActivo(): Proveedor {
   const elegido = process.env.IA_PROVEEDOR;
@@ -28,8 +40,10 @@ function proveedorActivo(): Proveedor {
   return process.env.TENSORX_API_KEY ? "tensorx" : "claude";
 }
 
-export function modeloEnUso(): string {
-  return MODELOS[proveedorActivo()];
+export function modeloEnUso(tarea: Tarea): string {
+  return proveedorActivo() === "tensorx"
+    ? MODELO_TENSORX
+    : MODELOS_CLAUDE[tarea];
 }
 
 /**
@@ -39,10 +53,11 @@ export function modeloEnUso(): string {
 export async function completar(
   sistema: string,
   usuario: string,
+  tarea: Tarea,
 ): Promise<string> {
   return proveedorActivo() === "tensorx"
     ? completarTensorx(sistema, usuario)
-    : completarClaude(sistema, usuario);
+    : completarClaude(sistema, usuario, tarea);
 }
 
 async function completarTensorx(
@@ -59,7 +74,7 @@ async function completarTensorx(
       Authorization: `Bearer ${clave}`,
     },
     body: JSON.stringify({
-      model: MODELOS.tensorx,
+      model: MODELO_TENSORX,
       messages: [
         { role: "system", content: sistema },
         { role: "user", content: usuario },
@@ -87,6 +102,7 @@ async function completarTensorx(
 async function completarClaude(
   sistema: string,
   usuario: string,
+  tarea: Tarea,
 ): Promise<string> {
   const clave = process.env.ANTHROPIC_API_KEY;
   if (!clave) throw new Error("Falta ANTHROPIC_API_KEY en el entorno");
@@ -94,12 +110,20 @@ async function completarClaude(
   const { default: Anthropic } = await import("@anthropic-ai/sdk");
   const cliente = new Anthropic({ apiKey: clave });
 
+  const esParseo = tarea === "parseo";
+
   const respuesta = await cliente.messages.create({
-    model: MODELOS.claude,
-    max_tokens: 2048,
-    temperature: 0,
+    model: MODELOS_CLAUDE[tarea],
+    // En los modelos con razonamiento, max_tokens limita pensamiento Y
+    // respuesta juntos: si se ajusta al tamaño del JSON esperado, la respuesta
+    // se corta a media frase. De ahí el margen en insights.
+    max_tokens: esParseo ? 2048 : 8192,
     system: sistema,
     messages: [{ role: "user", content: usuario }],
+    // temperature SOLO en el modelo de parseo. Los modelos Opus actuales
+    // rechazan temperature/top_p/top_k con un 400: enviarlo aquí rompería los
+    // insights en cuanto se cambie el proveedor a Claude.
+    ...(esParseo ? { temperature: 0 } : {}),
   });
 
   const bloque = respuesta.content.find((c) => c.type === "text");

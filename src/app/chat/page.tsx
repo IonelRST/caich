@@ -19,8 +19,9 @@ export default function Chat() {
 
       <footer className="mt-10 border-t border-borde pt-6">
         <p className="text-xs text-suave">
-          Modelo en uso: {modeloEnUso()}. El texto original de cada mensaje se
-          conserva, para poder revisar el parseo si sale mal.
+          Modelo en uso para el parseo: {modeloEnUso("parseo")}. El texto
+          original de cada mensaje se conserva, para poder revisar el parseo si
+          sale mal.
         </p>
       </footer>
     </main>

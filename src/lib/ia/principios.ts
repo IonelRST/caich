@@ -65,6 +65,9 @@ export async function generarBorradorPrincipios(): Promise<
   const respuesta = await completar(
     SISTEMA,
     "Redacta la base curada de principios.",
+    // La base curada se genera una vez y el usuario la aprueba: aquí manda
+    // la calidad, no el coste por llamada.
+    "insights",
   );
 
   const validado = esquemaBorrador.safeParse(extraerJson(respuesta));
