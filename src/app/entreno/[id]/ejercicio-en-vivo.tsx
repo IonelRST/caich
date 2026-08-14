@@ -53,17 +53,17 @@ export function EjercicioEnVivo({
     seriesObjetivo != null && seriesHechas.length >= seriesObjetivo;
 
   return (
-    <section className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+    <section className="rounded-xl border border-borde p-4">
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="text-base font-medium">{nombre}</h2>
-        <span className="shrink-0 text-xs text-neutral-500 dark:text-neutral-400">
+        <span className="shrink-0 text-xs text-suave">
           {seriesHechas.length}
           {seriesObjetivo != null && `/${seriesObjetivo}`} series
         </span>
       </div>
 
       {anterior && (
-        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-1 text-xs text-suave">
           Última vez: {anterior.peso ?? "–"} kg × {anterior.repeticiones ?? "–"}
         </p>
       )}
@@ -73,10 +73,10 @@ export function EjercicioEnVivo({
           {seriesHechas.map((s) => (
             <li
               key={s.id}
-              className="flex items-center justify-between gap-3 rounded-lg bg-neutral-50 px-3 py-1.5 text-sm dark:bg-neutral-900"
+              className="flex items-center justify-between gap-3 rounded-lg bg-superficie px-3 py-1.5 text-sm"
             >
               <span>
-                <span className="text-neutral-500 dark:text-neutral-400">
+                <span className="text-suave">
                   {s.numero_serie}.
                 </span>{" "}
                 {s.peso} kg × {s.repeticiones}
@@ -87,7 +87,7 @@ export function EjercicioEnVivo({
                 <button
                   type="submit"
                   aria-label={`Borrar serie ${s.numero_serie}`}
-                  className="rounded px-2 py-0.5 text-xs text-neutral-500 hover:text-red-700 dark:hover:text-red-400"
+                  className="rounded px-2 py-0.5 text-xs text-suave hover:text-error"
                 >
                   ✕
                 </button>
@@ -130,7 +130,7 @@ export function EjercicioEnVivo({
         {estado.error && (
           <p
             role="alert"
-            className="mt-2 text-sm text-red-600 dark:text-red-400"
+            className="mt-2 text-sm text-error"
           >
             {estado.error}
           </p>
@@ -158,26 +158,26 @@ function Stepper({
 
   return (
     <div>
-      <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+      <p className="text-xs font-medium text-suave">
         {etiqueta}
       </p>
-      <div className="mt-1 flex items-center gap-2">
+      <div className="mt-1 flex items-center gap-3">
         <button
           type="button"
           onClick={() => ajustar(-paso)}
           aria-label={`Bajar ${etiqueta}`}
-          className="h-11 w-11 shrink-0 rounded-lg border border-neutral-300 text-lg leading-none dark:border-neutral-700"
+          className="h-14 w-14 shrink-0 rounded-lg border border-borde text-2xl leading-none"
         >
           −
         </button>
-        <output className="flex-1 text-center text-lg font-medium tabular-nums">
+        <output className="flex-1 text-center font-cifra text-4xl font-semibold tabular-nums">
           {valor}
         </output>
         <button
           type="button"
           onClick={() => ajustar(paso)}
           aria-label={`Subir ${etiqueta}`}
-          className="h-11 w-11 shrink-0 rounded-lg border border-neutral-300 text-lg leading-none dark:border-neutral-700"
+          className="h-14 w-14 shrink-0 rounded-lg border border-borde text-2xl leading-none"
         >
           +
         </button>
@@ -192,7 +192,7 @@ function BotonSerie({ numero }: { numero: number }) {
     <button
       type="submit"
       disabled={pending}
-      className="mt-3 h-12 w-full rounded-lg bg-neutral-900 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+      className="mt-4 h-14 w-full rounded-lg bg-accion text-base font-medium text-sobre-accion disabled:opacity-50"
     >
       {pending ? "Guardando…" : `Guardar serie ${numero}`}
     </button>

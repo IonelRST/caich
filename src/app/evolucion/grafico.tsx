@@ -35,7 +35,7 @@ function Resumen({ serie }: { serie: SerieMedida }) {
   // Estadística pura (§11.1): aritmética sobre los propios datos, sin
   // interpretación. No afirma causas ni recomienda nada.
   return (
-    <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+    <p className="mt-1 text-sm text-suave">
       {diferencia === 0
         ? "Sin cambio en el periodo registrado."
         : `${diferencia > 0 ? "+" : ""}${diferencia.toFixed(1)} ${serie.unidad} desde el primer registro.`}
@@ -48,7 +48,7 @@ export function GraficosEvolucion({ series }: { series: SerieMedida[] }) {
 
   if (series.length === 0) {
     return (
-      <p className="mt-8 text-sm text-neutral-500 dark:text-neutral-400">
+      <p className="mt-8 text-sm text-suave">
         Todavía no hay datos suficientes. Registra alguna medida y aquí verás su
         evolución.
       </p>
@@ -68,8 +68,8 @@ export function GraficosEvolucion({ series }: { series: SerieMedida[] }) {
               onClick={() => setActiva(s.nombre)}
               className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
                 s.nombre === serie.nombre
-                  ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900"
-                  : "border-neutral-300 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-900"
+                  ? "border-accion bg-accion text-sobre-accion"
+                  : "border-borde hover:bg-superficie"
               }`}
             >
               {s.etiqueta}
@@ -81,14 +81,14 @@ export function GraficosEvolucion({ series }: { series: SerieMedida[] }) {
       <div className="mt-6">
         <h2 className="text-sm font-medium">
           {serie.etiqueta}{" "}
-          <span className="font-normal text-neutral-500 dark:text-neutral-400">
+          <span className="font-normal text-suave">
             ({serie.unidad})
           </span>
         </h2>
         <Resumen serie={serie} />
 
         {serie.puntos.length === 1 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             Solo hay un registro ({serie.puntos[0].valor} {serie.unidad}). Con
             un segundo dato ya se podrá dibujar la evolución.
           </p>
@@ -101,34 +101,38 @@ export function GraficosEvolucion({ series }: { series: SerieMedida[] }) {
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  className="stroke-neutral-200 dark:stroke-neutral-800"
+                  className="stroke-borde"
                 />
                 <XAxis
                   dataKey="etiqueta"
                   tick={{ fontSize: 12 }}
-                  className="fill-neutral-500"
+                  className="fill-suave"
                 />
                 <YAxis
                   domain={["auto", "auto"]}
                   tick={{ fontSize: 12 }}
-                  className="fill-neutral-500"
+                  className="fill-suave"
                 />
                 <Tooltip
                   formatter={(v) => `${v} ${serie.unidad}`}
                   labelFormatter={(l) => `${serie.etiqueta} · ${l}`}
                   contentStyle={{
                     borderRadius: 8,
-                    border: "1px solid rgb(212 212 212)",
+                    border: "1px solid var(--borde)",
+                    backgroundColor: "var(--superficie)",
+                    color: "var(--texto)",
                     fontSize: 13,
                   }}
                 />
+                {/* §21.5: las series usan la paleta categórica propia, nunca el
+                    color de acción ni uno de estado. Un solo dato por gráfico
+                    aquí, así que va la primera de la paleta. */}
                 <Line
                   type="monotone"
                   dataKey="valor"
-                  stroke="currentColor"
+                  stroke="var(--serie-1)"
                   strokeWidth={2}
                   dot={{ r: 3 }}
-                  className="text-neutral-900 dark:text-white"
                 />
               </LineChart>
             </ResponsiveContainer>

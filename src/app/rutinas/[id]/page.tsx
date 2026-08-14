@@ -49,7 +49,7 @@ export default async function DetalleRutina({
         </h1>
         <Link
           href="/rutinas"
-          className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
         >
           Volver
         </Link>
@@ -59,11 +59,11 @@ export default async function DetalleRutina({
         <h2 className="text-sm font-medium">Ejercicios</h2>
 
         {!items || items.length === 0 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             Todavía no hay ninguno. Añade el primero abajo.
           </p>
         ) : (
-          <ol className="mt-4 divide-y divide-neutral-200 dark:divide-neutral-800">
+          <ol className="mt-4 divide-y divide-borde">
             {items.map((it) => {
               const ej = it.catalogo_ejercicio as unknown as Ejercicio | null;
               return (
@@ -75,7 +75,7 @@ export default async function DetalleRutina({
                     <p className="text-sm font-medium">
                       {ej?.nombre_canonico ?? "Ejercicio"}
                     </p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    <p className="text-xs text-suave">
                       {it.series_objetivo}×{it.reps_objetivo}
                       {it.peso_objetivo != null && ` · ${it.peso_objetivo} kg`}
                     </p>
@@ -86,7 +86,7 @@ export default async function DetalleRutina({
                     <input type="hidden" name="rutina_id" value={id} />
                     <button
                       type="submit"
-                      className="shrink-0 rounded-lg px-2 py-1 text-xs text-neutral-500 hover:bg-red-50 hover:text-red-700 dark:text-neutral-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+                      className="shrink-0 rounded-lg px-2 py-1 text-xs text-suave hover:bg-error/10 hover:text-error"
                     >
                       Quitar
                     </button>
@@ -112,7 +112,7 @@ export default async function DetalleRutina({
             <input type="hidden" name="rutina_id" value={id} />
             <button
               type="submit"
-              className="w-full rounded-lg bg-neutral-900 px-4 py-3 text-sm font-medium text-white dark:bg-white dark:text-neutral-900"
+              className="w-full rounded-lg bg-accion px-4 py-3 text-sm font-medium text-sobre-accion"
             >
               Empezar entreno
             </button>
@@ -120,12 +120,12 @@ export default async function DetalleRutina({
         </section>
       )}
 
-      <section className="mt-10 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+      <section className="mt-10 border-t border-borde pt-6">
         <form action={borrarRutina}>
           <input type="hidden" name="id" value={id} />
           <button
             type="submit"
-            className="text-sm text-neutral-500 underline underline-offset-4 hover:text-red-700 dark:text-neutral-400 dark:hover:text-red-400"
+            className="text-sm text-suave underline underline-offset-4 hover:text-error"
           >
             Borrar esta rutina
           </button>

@@ -36,7 +36,7 @@ export default async function Portada() {
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">caich</h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-1 text-sm text-suave">
             {usuario?.email}
           </p>
         </div>
@@ -44,7 +44,7 @@ export default async function Portada() {
         <form action={cerrarSesion}>
           <button
             type="submit"
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-900"
+            className="rounded-lg border border-borde px-3 py-1.5 text-sm transition-colors hover:bg-superficie"
           >
             Salir
           </button>
@@ -54,7 +54,7 @@ export default async function Portada() {
       {enCurso && (
         <Link
           href={`/entreno/${enCurso.id}`}
-          className="mt-8 flex items-center justify-between gap-4 rounded-xl bg-neutral-900 px-5 py-4 text-white dark:bg-white dark:text-neutral-900"
+          className="mt-8 flex items-center justify-between gap-4 rounded-xl bg-accion px-5 py-4 text-sobre-accion"
         >
           <span className="text-sm font-medium">Tienes un entreno en curso</span>
           <span className="text-sm">Retomar →</span>
@@ -72,7 +72,7 @@ export default async function Portada() {
           <Link
             key={l.href}
             href={l.href}
-            className="rounded-xl border border-neutral-200 px-4 py-3 text-center text-sm font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:hover:bg-neutral-900"
+            className="rounded-xl border border-borde px-4 py-3 text-center text-sm font-medium transition-colors hover:bg-superficie"
           >
             {l.texto}
           </Link>
@@ -90,20 +90,20 @@ export default async function Portada() {
         <h2 className="text-sm font-medium">Últimos registros</h2>
 
         {!ultimas || ultimas.length === 0 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             Nada registrado todavía. Guarda tu primera medida arriba.
           </p>
         ) : (
-          <ul className="mt-4 divide-y divide-neutral-200 dark:divide-neutral-800">
+          <ul className="mt-4 divide-y divide-borde">
             {ultimas.map((r) => (
               <li key={r.id} className="flex justify-between gap-4 py-2.5">
                 <span className="text-sm">
                   {etiquetaDeMedida(r.nombre)}{" "}
-                  <span className="text-neutral-500 dark:text-neutral-400">
+                  <span className="text-suave">
                     {r.valor} {r.unidad}
                   </span>
                 </span>
-                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                <span className="text-xs text-suave">
                   {formatoFecha.format(new Date(r.fecha_evento))}
                 </span>
               </li>
@@ -112,9 +112,9 @@ export default async function Portada() {
         )}
       </section>
 
-      <section className="mt-10 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+      <section className="mt-10 border-t border-borde pt-6">
         <h2 className="text-sm font-medium">Tus datos</h2>
-        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="mt-2 text-sm text-suave">
           Son datos de salud personales. Puedes descargarlos cuando quieras, sin
           depender de que esta app siga existiendo.
         </p>
@@ -134,9 +134,9 @@ export default async function Portada() {
         </div>
       </section>
 
-      <section className="mt-10 rounded-xl border border-dashed border-neutral-300 p-5 dark:border-neutral-700">
+      <section className="mt-10 rounded-xl border border-dashed border-borde p-5">
         <h2 className="text-sm font-medium">Pendiente</h2>
-        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="mt-2 text-sm text-suave">
           El chat con parseo y los insights necesitan créditos de la API de
           Claude. La dirección visual está sin definir (§21): esto todavía es
           andamiaje, no diseño.

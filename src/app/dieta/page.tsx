@@ -48,7 +48,7 @@ export default async function Dieta() {
         <h1 className="text-2xl font-semibold tracking-tight">Dieta</h1>
         <Link
           href="/"
-          className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
         >
           Volver
         </Link>
@@ -60,7 +60,7 @@ export default async function Dieta() {
         </h2>
 
         {deHoy.length === 0 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             No hay comidas planificadas para hoy. Añádelas al plan más abajo.
           </p>
         ) : (
@@ -81,12 +81,12 @@ export default async function Dieta() {
 
       <section className="mt-10">
         <h2 className="text-sm font-medium">Plan semanal</h2>
-        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="mt-1 text-sm text-suave">
           Se define una vez, con calma. El día a día es solo confirmar.
         </p>
 
         {!items || items.length === 0 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             El plan está vacío.
           </p>
         ) : (
@@ -97,10 +97,10 @@ export default async function Dieta() {
 
               return (
                 <div key={dia}>
-                  <h3 className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                  <h3 className="text-xs font-medium text-suave">
                     {dia}
                   </h3>
-                  <ul className="mt-1 divide-y divide-neutral-200 dark:divide-neutral-800">
+                  <ul className="mt-1 divide-y divide-borde">
                     {delDia.map((i) => (
                       <li
                         key={i.id}
@@ -108,12 +108,12 @@ export default async function Dieta() {
                       >
                         <div className="min-w-0">
                           <p className="text-sm">
-                            <span className="text-neutral-500 dark:text-neutral-400">
+                            <span className="text-suave">
                               {i.momento_dia}:
                             </span>{" "}
                             {i.descripcion}
                           </p>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                          <p className="text-xs text-suave">
                             {i.cantidad}
                             {i.calorias != null && ` · ${i.calorias} kcal`}
                             {i.proteina_g != null && ` · ${i.proteina_g} g prot.`}
@@ -123,7 +123,7 @@ export default async function Dieta() {
                           <input type="hidden" name="id" value={i.id} />
                           <button
                             type="submit"
-                            className="shrink-0 rounded-lg px-2 py-1 text-xs text-neutral-500 hover:text-red-700 dark:text-neutral-400 dark:hover:text-red-400"
+                            className="shrink-0 rounded-lg px-2 py-1 text-xs text-suave hover:text-error"
                           >
                             Quitar
                           </button>

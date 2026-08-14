@@ -12,7 +12,7 @@ import {
 const INICIAL: EstadoDieta = {};
 
 const claseCampo =
-  "w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:focus:border-neutral-300";
+  "w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
 
 function Boton({ texto, cargando }: { texto: string; cargando: string }) {
   const { pending } = useFormStatus();
@@ -20,7 +20,7 @@ function Boton({ texto, cargando }: { texto: string; cargando: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion disabled:opacity-50"
     >
       {pending ? cargando : texto}
     </button>
@@ -126,14 +126,14 @@ export function FormularioComidaPlan({ diaActual }: { diaActual: number }) {
       <div className="flex items-center gap-3">
         <Boton texto="Añadir al plan" cargando="Añadiendo…" />
         {estado.error && (
-          <span role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <span role="alert" className="text-sm text-error">
             {estado.error}
           </span>
         )}
         {estado.aviso && (
           <span
             role="status"
-            className="text-sm text-emerald-700 dark:text-emerald-400"
+            className="text-sm text-exito"
           >
             {estado.aviso}
           </span>
@@ -165,11 +165,11 @@ export function CheckinComida({
 
   if (yaRegistrada) {
     return (
-      <li className="rounded-xl border border-neutral-200 p-4 opacity-60 dark:border-neutral-800">
+      <li className="rounded-xl border border-borde p-4 opacity-60">
         <p className="text-sm font-medium">
           {momento}: {descripcion}
         </p>
-        <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400">
+        <p className="mt-1 text-xs text-exito">
           Ya registrada hoy.
         </p>
       </li>
@@ -177,12 +177,12 @@ export function CheckinComida({
   }
 
   return (
-    <li className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+    <li className="rounded-xl border border-borde p-4">
       <p className="text-sm font-medium">
         {momento}: {descripcion}
       </p>
       {cantidad && (
-        <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-0.5 text-xs text-suave">
           {cantidad}
         </p>
       )}
@@ -202,8 +202,8 @@ export function CheckinComida({
               key={o.valor}
               className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm transition-colors ${
                 adherencia === o.valor
-                  ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900"
-                  : "border-neutral-300 dark:border-neutral-700"
+                  ? "border-accion bg-accion text-sobre-accion"
+                  : "border-borde"
               }`}
             >
               <input
@@ -232,7 +232,7 @@ export function CheckinComida({
               placeholder="el doble de arroz, unos 200 g"
               className={claseCampo}
             />
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p className="text-xs text-suave">
               Sin esto, la desviación no explica nada después.
             </p>
           </div>
@@ -241,7 +241,7 @@ export function CheckinComida({
         <div className="flex items-center gap-3">
           <Boton texto="Registrar" cargando="Guardando…" />
           {estado.error && (
-            <span role="alert" className="text-sm text-red-600 dark:text-red-400">
+            <span role="alert" className="text-sm text-error">
               {estado.error}
             </span>
           )}

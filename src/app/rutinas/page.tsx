@@ -21,7 +21,7 @@ export default async function Rutinas() {
         <h1 className="text-2xl font-semibold tracking-tight">Rutinas</h1>
         <Link
           href="/"
-          className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
         >
           Volver
         </Link>
@@ -36,11 +36,11 @@ export default async function Rutinas() {
         <h2 className="text-sm font-medium">Tus rutinas</h2>
 
         {!rutinas || rutinas.length === 0 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             Todavía no tienes ninguna. Crea una arriba y añádele ejercicios.
           </p>
         ) : (
-          <ul className="mt-4 divide-y divide-neutral-200 dark:divide-neutral-800">
+          <ul className="mt-4 divide-y divide-borde">
             {rutinas.map((r) => {
               const numEjercicios =
                 (r.plantilla_item as unknown as { count: number }[])?.[0]
@@ -58,7 +58,7 @@ export default async function Rutinas() {
                     >
                       {r.nombre}
                     </Link>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    <p className="text-xs text-suave">
                       {numEjercicios}{" "}
                       {numEjercicios === 1 ? "ejercicio" : "ejercicios"}
                     </p>
@@ -69,7 +69,7 @@ export default async function Rutinas() {
                       <input type="hidden" name="rutina_id" value={r.id} />
                       <button
                         type="submit"
-                        className="shrink-0 rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white dark:bg-white dark:text-neutral-900"
+                        className="shrink-0 rounded-lg bg-accion px-3 py-1.5 text-sm font-medium text-sobre-accion"
                       >
                         Empezar
                       </button>

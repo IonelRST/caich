@@ -113,26 +113,28 @@ export default async function SesionEnVivo({
   );
 
   return (
-    <main className="mx-auto min-h-dvh max-w-lg px-4 py-8">
+    // §21.2: esta pantalla va siempre en oscuro reforzado, sea cual sea el tema
+    // del resto de la app. La clase redefine los tokens para todo el subárbol.
+    <main className="sesion-viva mx-auto min-h-dvh max-w-lg px-4 py-8">
       <header className="flex items-baseline justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">
             {entreno.completado ? "Entreno" : "Entreno en curso"}
           </h1>
-          <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="mt-0.5 text-xs text-suave">
             {totalSeries} {totalSeries === 1 ? "serie registrada" : "series registradas"}
           </p>
         </div>
         <Link
           href="/"
-          className="text-sm text-neutral-500 underline underline-offset-4"
+          className="text-sm text-suave underline underline-offset-4"
         >
           Salir
         </Link>
       </header>
 
       {!entreno.completado && (
-        <p className="mt-4 rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
+        <p className="mt-4 rounded-lg bg-superficie px-3 py-2 text-xs text-suave">
           Puedes cerrar esta pantalla y volver: la sesión se guarda sola y la
           retomas donde la dejaste.
         </p>
@@ -164,7 +166,7 @@ export default async function SesionEnVivo({
           <input type="hidden" name="id" value={id} />
           <button
             type="submit"
-            className="h-12 w-full rounded-lg border border-neutral-300 text-sm font-medium dark:border-neutral-700"
+            className="h-12 w-full rounded-lg border border-borde text-sm font-medium"
           >
             Terminar entreno
           </button>

@@ -49,7 +49,7 @@ export default async function Evolucion() {
         <h1 className="text-2xl font-semibold tracking-tight">Evolución</h1>
         <Link
           href="/"
-          className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
         >
           Volver
         </Link>

@@ -126,7 +126,7 @@ export default async function Historial({
         <h1 className="text-2xl font-semibold tracking-tight">Historial</h1>
         <Link
           href="/"
-          className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
         >
           Volver
         </Link>
@@ -143,7 +143,7 @@ export default async function Historial({
             id="tipo"
             name="tipo"
             defaultValue={tipo ?? ""}
-            className="rounded-lg border border-neutral-300 bg-transparent px-3 py-1.5 text-sm dark:border-neutral-700"
+            className="rounded-lg border border-borde bg-transparent px-3 py-1.5 text-sm"
           >
             <option value="">Todo</option>
             <option value="entreno">Entrenos</option>
@@ -166,7 +166,7 @@ export default async function Historial({
             name="desde"
             type="date"
             defaultValue={desde ?? ""}
-            className="rounded-lg border border-neutral-300 bg-transparent px-3 py-1.5 text-sm dark:border-neutral-700"
+            className="rounded-lg border border-borde bg-transparent px-3 py-1.5 text-sm"
           />
         </div>
 
@@ -179,13 +179,13 @@ export default async function Historial({
             name="hasta"
             type="date"
             defaultValue={hasta ?? ""}
-            className="rounded-lg border border-neutral-300 bg-transparent px-3 py-1.5 text-sm dark:border-neutral-700"
+            className="rounded-lg border border-borde bg-transparent px-3 py-1.5 text-sm"
           />
         </div>
 
         <button
           type="submit"
-          className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-900"
+          className="rounded-lg border border-borde px-3 py-1.5 text-sm hover:bg-superficie"
         >
           Filtrar
         </button>
@@ -193,7 +193,7 @@ export default async function Historial({
         {hayFiltros && (
           <Link
             href="/historial"
-            className="py-1.5 text-sm text-neutral-500 underline underline-offset-4"
+            className="py-1.5 text-sm text-suave underline underline-offset-4"
           >
             Quitar filtros
           </Link>
@@ -201,13 +201,13 @@ export default async function Historial({
       </form>
 
       {entradas.length === 0 ? (
-        <p className="mt-8 text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="mt-8 text-sm text-suave">
           {hayFiltros
             ? "No hay registros que encajen con esos filtros."
             : "Todavía no hay nada registrado."}
         </p>
       ) : (
-        <ul className="mt-8 divide-y divide-neutral-200 dark:divide-neutral-800">
+        <ul className="mt-8 divide-y divide-borde">
           {entradas.map((e) => (
             <li
               key={`${e.tipo}-${e.id}`}
@@ -216,11 +216,11 @@ export default async function Historial({
               <div className="min-w-0">
                 <p className="text-sm font-medium">
                   {e.titulo}{" "}
-                  <span className="font-normal text-neutral-500 dark:text-neutral-400">
+                  <span className="font-normal text-suave">
                     {e.detalle}
                   </span>
                 </p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                <p className="text-xs text-suave">
                   {formatoFecha.format(new Date(e.fecha))}
                 </p>
               </div>
@@ -230,7 +230,7 @@ export default async function Historial({
                   <input type="hidden" name="id" value={e.id} />
                   <button
                     type="submit"
-                    className="shrink-0 rounded-lg px-2 py-1 text-xs text-neutral-500 hover:bg-red-50 hover:text-red-700 dark:text-neutral-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+                    className="shrink-0 rounded-lg px-2 py-1 text-xs text-suave hover:bg-error/10 hover:text-error"
                   >
                     Borrar
                   </button>

@@ -1,26 +1,138 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Tokens de la §21 de ESPECIFICACION.md.
+   Los componentes usan SIEMPRE los nombres semánticos (bg-superficie,
+   text-suave, border-borde...), nunca un color crudo de Tailwind ni un hex.
+   Así el tema oscuro y el modo de sesión en vivo se resuelven aquí y no
+   obligan a duplicar cada clase con su variante dark:. */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  /* §21.3 — tema claro */
+  --fondo: #f7f7f8;
+  --superficie: #ffffff;
+  --borde: #e4e4e7;
+  --texto: #18181b;
+  --suave: #52525b;
+
+  /* §21.4 — acento único de acción y colores de estado.
+     Nunca aparecen como color de serie en un gráfico. */
+  --accion: #c2410c;
+  --sobre-accion: #ffffff;
+  --exito: #15803d;
+  --error: #dc2626;
+  --aviso: #b45309;
+
+  /* §21.5 — paleta categórica de gráficos, disjunta de la de interfaz.
+     El tono nunca es el único canal: cada serie lleva además su estilo
+     de línea (ver la tabla de la §21.5). */
+  --serie-1: #2563eb;
+  --serie-2: #7c3aed;
+  --serie-3: #0891b2;
+  --serie-4: #db2777;
+  --serie-5: #475569;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --fondo: #0b0f1a;
+    --superficie: #141a26;
+    --borde: #263041;
+    --texto: #f8fafc;
+    --suave: #94a3b8;
+
+    --accion: #f97316;
+    --sobre-accion: #0f172a;
+    --exito: #22c55e;
+    --error: #f87171;
+    --aviso: #fbbf24;
+
+    --serie-1: #60a5fa;
+    --serie-2: #a78bfa;
+    --serie-3: #22d3ee;
+    --serie-4: #f472b6;
+    --serie-5: #94a3b8;
   }
 }
 
+/* §21.2 y §22.3 — la sesión de entreno en vivo arranca siempre en oscuro
+   reforzado, sea cual sea el tema del resto de la app. No es el tema oscuro
+   normal: es más contrastado, para leerse de pie y con el brazo estirado.
+   Al redefinir los mismos tokens, los componentes de dentro no cambian. */
+.sesion-viva {
+  --fondo: #020617;
+  --superficie: #0e1223;
+  --borde: #334155;
+  --texto: #f8fafc;
+  --suave: #94a3b8;
+
+  --accion: #f97316;
+  --sobre-accion: #0f172a;
+  --exito: #22c55e;
+  --error: #f87171;
+  --aviso: #fbbf24;
+
+  background-color: var(--fondo);
+  color: var(--texto);
+}
+
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-borde: var(--borde);
+  --color-texto: var(--texto);
+  --color-suave: var(--suave);
+
+  --color-accion: var(--accion);
+  --color-sobre-accion: var(--sobre-accion);
+  --color-exito: var(--exito);
+  --color-error: var(--error);
+  --color-aviso: var(--aviso);
+
+  --color-serie-1: var(--serie-1);
+  --color-serie-2: var(--serie-2);
+  --color-serie-3: var(--serie-3);
+  --color-serie-4: var(--serie-4);
+  --color-serie-5: var(--serie-5);
+
+  /* §21.6 — una sola familia para toda la interfaz. La condensada existe
+     solo para los dígitos grandes de la sesión en vivo. */
+  --font-sans: var(--font-inter);
+  --font-cifra: var(--font-barlow-condensed);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--fondo);
+  color: var(--texto);
+}
+
+/* §21.6 — los pesos y macros se leen en columna; sin cifras de ancho fijo
+   los dígitos bailan entre filas y la tabla deja de poder compararse de un
+   vistazo. Se aplica a todo y se desactiva donde estorbe, no al revés. */
+:where(table, .cifras) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* §21.8 — estado de carga: esqueleto con la forma del dato final y pulso de
+   opacidad. Ni spinner, ni barrido de brillo. */
+@keyframes pulso-carga {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.esqueleto {
+  animation: pulso-carga 1600ms ease-in-out infinite;
+  background-color: var(--borde);
+  border-radius: 0.375rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+    opacity: 0.6;
+  }
 }

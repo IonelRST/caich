@@ -108,7 +108,7 @@ export default async function Objetivos() {
         <h1 className="text-2xl font-semibold tracking-tight">Objetivos</h1>
         <Link
           href="/"
-          className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
         >
           Volver
         </Link>
@@ -118,7 +118,7 @@ export default async function Objetivos() {
         <h2 className="text-sm font-medium">En curso</h2>
 
         {activos.length === 0 ? (
-          <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-4 text-sm text-suave">
             No tienes objetivos activos.
           </p>
         ) : (
@@ -133,11 +133,11 @@ export default async function Objetivos() {
               return (
                 <li
                   key={o.id}
-                  className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800"
+                  className="rounded-xl border border-borde p-4"
                 >
                   <div className="flex items-baseline justify-between gap-3">
                     <p className="text-sm font-medium">{o.descripcion}</p>
-                    <span className="shrink-0 text-xs text-neutral-500 dark:text-neutral-400">
+                    <span className="shrink-0 text-xs text-suave">
                       {p.valorActual == null
                         ? "sin datos"
                         : `${p.valorActual} → ${o.valor_objetivo} ${o.unidad}`}
@@ -147,7 +147,7 @@ export default async function Objetivos() {
                   {p.porcentaje != null && (
                     <div className="mt-3">
                       <div
-                        className="h-2 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800"
+                        className="h-2 w-full overflow-hidden rounded-full bg-borde"
                         role="progressbar"
                         aria-valuenow={p.porcentaje}
                         aria-valuemin={0}
@@ -155,11 +155,11 @@ export default async function Objetivos() {
                         aria-label={`Progreso de ${o.descripcion}`}
                       >
                         <div
-                          className="h-full rounded-full bg-neutral-900 dark:bg-white"
+                          className="h-full rounded-full bg-accion"
                           style={{ width: `${p.porcentaje}%` }}
                         />
                       </div>
-                      <p className="mt-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+                      <p className="mt-1.5 text-xs text-suave">
                         {p.alcanzado
                           ? "Objetivo alcanzado."
                           : `${p.porcentaje} % del recorrido`}
@@ -185,7 +185,7 @@ export default async function Objetivos() {
                       <input type="hidden" name="id" value={o.id} />
                       <button
                         type="submit"
-                        className="text-xs text-neutral-500 underline underline-offset-4 hover:text-red-700 dark:text-neutral-400 dark:hover:text-red-400"
+                        className="text-xs text-suave underline underline-offset-4 hover:text-error"
                       >
                         Borrar
                       </button>
@@ -206,11 +206,11 @@ export default async function Objetivos() {
       {cumplidos.length > 0 && (
         <section className="mt-10">
           <h2 className="text-sm font-medium">Cumplidos</h2>
-          <ul className="mt-4 divide-y divide-neutral-200 dark:divide-neutral-800">
+          <ul className="mt-4 divide-y divide-borde">
             {cumplidos.map((o) => (
               <li key={o.id} className="flex justify-between gap-4 py-2.5">
                 <span className="text-sm">{o.descripcion}</span>
-                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                <span className="text-xs text-suave">
                   {new Date(o.cumplido_en!).toLocaleDateString("es-ES")}
                 </span>
               </li>

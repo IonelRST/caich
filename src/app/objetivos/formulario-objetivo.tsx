@@ -16,7 +16,7 @@ export type OpcionMetrica = {
 };
 
 const claseCampo =
-  "w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:focus:border-neutral-300";
+  "w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
 
 function Boton() {
   const { pending } = useFormStatus();
@@ -24,7 +24,7 @@ function Boton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion disabled:opacity-50"
     >
       {pending ? "Creando…" : "Crear objetivo"}
     </button>
@@ -41,7 +41,7 @@ export function FormularioObjetivo({
 
   if (opciones.length === 0) {
     return (
-      <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+      <p className="mt-4 text-sm text-suave">
         Para fijar un objetivo necesitas al menos una medida registrada o un
         ejercicio en alguna rutina.
       </p>
@@ -134,14 +134,14 @@ export function FormularioObjetivo({
       <div className="flex items-center gap-3">
         <Boton />
         {estado.error && (
-          <span role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <span role="alert" className="text-sm text-error">
             {estado.error}
           </span>
         )}
         {estado.aviso && (
           <span
             role="status"
-            className="text-sm text-emerald-700 dark:text-emerald-400"
+            className="text-sm text-exito"
           >
             {estado.aviso}
           </span>

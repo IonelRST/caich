@@ -17,7 +17,7 @@ function Boton({ modo }: { modo: "entrar" | "registrar" }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-neutral-900"
+      className="w-full rounded-lg bg-accion px-4 py-2.5 text-sm font-medium text-sobre-accion transition-opacity hover:opacity-90 disabled:opacity-50"
     >
       {/* §13: feedback visual mientras se procesa, no un botón muerto */}
       {pending
@@ -52,7 +52,7 @@ export function FormularioLogin({
   return (
     <div className="w-full max-w-sm">
       <h1 className="text-2xl font-semibold tracking-tight">caich</h1>
-      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+      <p className="mt-1 text-sm text-suave">
         {modo === "entrar"
           ? "Entra para ver tus entrenos y medidas."
           : "Crea una cuenta para empezar a registrar."}
@@ -71,7 +71,7 @@ export function FormularioLogin({
             type="email"
             autoComplete="email"
             required
-            className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:focus:border-neutral-300"
+            className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
           />
         </div>
 
@@ -88,10 +88,10 @@ export function FormularioLogin({
             }
             required
             minLength={8}
-            className="w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-900 dark:border-neutral-700 dark:focus:border-neutral-300"
+            className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
           />
           {modo === "registrar" && (
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p className="text-xs text-suave">
               Mínimo 8 caracteres.
             </p>
           )}
@@ -100,7 +100,7 @@ export function FormularioLogin({
         {error && (
           <p
             role="alert"
-            className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+            className="rounded-lg bg-error/10 px-3 py-2 text-sm text-error"
           >
             {error}
           </p>
@@ -109,7 +109,7 @@ export function FormularioLogin({
         {estado.aviso && (
           <p
             role="status"
-            className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+            className="rounded-lg bg-exito/10 px-3 py-2 text-sm text-exito"
           >
             {estado.aviso}
           </p>
@@ -118,12 +118,12 @@ export function FormularioLogin({
         <Boton modo={modo} />
       </form>
 
-      <p className="mt-6 text-center text-sm text-neutral-500 dark:text-neutral-400">
+      <p className="mt-6 text-center text-sm text-suave">
         {modo === "entrar" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
         <button
           type="button"
           onClick={() => setModo(modo === "entrar" ? "registrar" : "entrar")}
-          className="font-medium text-neutral-900 underline underline-offset-4 dark:text-white"
+          className="font-medium text-texto underline underline-offset-4"
         >
           {modo === "entrar" ? "Crear una" : "Entrar"}
         </button>
