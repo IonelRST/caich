@@ -616,12 +616,15 @@ principio_base                     ← base curada (sección 11.4)
 
 | # | Punto | Sección | Cuándo decidir |
 |---|-------|---------|----------------|
-| 1 | Refinamiento del marco de insights (nivel 2 y 3) con uso real | 11 | Tras la Fase 2, con histórico acumulado |
+| 1 | Cómo distingue el sistema una pregunta médica de una de entrenamiento | 11.5 | Al implementar la §11 revisada: es donde el límite se hace o se rompe |
 | 2 | Ampliación del catálogo de ejercicios de 10-15 a 40-60 | 4.1 | Al empezar a usar la app en serio |
-| 3 | Ampliación de la base curada de principios más allá de 15-20 | 11.4 | Gradual, según haga falta |
+| 3 | Ampliación de la base de conocimiento del dominio | 11.6 | Gradual, según haga falta |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
+| 5 | Segunda persona (Carol): plan propio, compra conjunta, rutinas coordinadas | Anexo C.5 | Cuando la §11 revisada esté implementada |
 
-*Cerrado:* la dirección visual (§21) era el punto 5 de esta tabla. Se decidió el 14 de agosto de 2026 — ver §21 y decisión 13 del anexo B.
+*Cerrado:* la dirección visual (§21). Decidida el 14 de agosto de 2026 — ver §21 y decisión 13 del anexo B.
+
+*Cerrado:* el refinamiento del marco de insights con uso real era el punto 1. Se hizo el 15 de agosto de 2026 al contrastar con la conversación real (anexo C), y produjo la §11 revisada.
 
 ---
 
