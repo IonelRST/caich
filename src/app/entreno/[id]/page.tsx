@@ -120,7 +120,7 @@ export default async function SesionEnVivo({
             {entreno.completado ? "Entreno" : "Entreno en curso"}
           </h1>
           <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
-            {totalSeries} {totalSeries === 1 ? "serie" : "series"} registradas
+            {totalSeries} {totalSeries === 1 ? "serie registrada" : "series registradas"}
           </p>
         </div>
         <Link

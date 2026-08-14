@@ -652,7 +652,7 @@ Dos restricciones condicionan todo lo que sigue:
 
 | Rol | Sobre fondo oscuro | Sobre fondo claro | Significado |
 |-----|--------------------|-------------------|-------------|
-| Acción | `#F97316` (texto encima `#0F172A`) | `#EA580C` (texto encima `#FFFFFF`); como texto sobre claro, `#C2410C` | Confirmar serie, guardar, enviar |
+| Acción | `#F97316` (texto encima `#0F172A`) | `#C2410C` (texto encima `#FFFFFF`) | Confirmar serie, guardar, enviar |
 | Éxito | `#22C55E` | `#15803D` | Adherencia cumplida, objetivo alcanzado, dato guardado |
 | Error | `#F87171` | `#DC2626` | Parseo fallido, validación, fallo de conexión |
 | Aviso | `#FBBF24` | `#B45309` | Desviación de plan, dato estimado, histórico insuficiente |

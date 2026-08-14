@@ -218,6 +218,18 @@ export async function borrarSerie(formData: FormData): Promise<void> {
   if (typeof entrenoId === "string") revalidatePath(`/entreno/${entrenoId}`);
 }
 
+export async function borrarEntreno(formData: FormData): Promise<void> {
+  const id = formData.get("id");
+  if (typeof id !== "string") return;
+
+  const { supabase } = await usuarioOFallo();
+  // Ejercicios y series caen por ON DELETE CASCADE.
+  await supabase.from("registro_entreno").delete().eq("id", id);
+
+  revalidatePath("/");
+  revalidatePath("/historial");
+}
+
 export async function terminarSesion(formData: FormData): Promise<void> {
   const id = formData.get("id");
   if (typeof id !== "string") return;
