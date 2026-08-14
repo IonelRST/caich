@@ -566,6 +566,7 @@ principio_base                     ← base curada (sección 11.4)
 | 2 | Ampliación del catálogo de ejercicios de 10-15 a 40-60 | 4.1 | Al empezar a usar la app en serio |
 | 3 | Ampliación de la base curada de principios más allá de 15-20 | 11.4 | Gradual, según haga falta |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
+| 5 | Dirección visual (paleta, tipografía, carácter) | 21 | Antes de construir más interfaz |
 
 ---
 
@@ -582,6 +583,32 @@ principio_base                     ← base curada (sección 11.4)
 | Voz | API de reconocimiento de voz del navegador | Sin servicio externo (3.4) |
 
 ---
+
+## 21. Dirección visual
+
+`ABIERTO` — pendiente de definir.
+
+La §13 menciona *"acorde al estilo definido: shimmer/pulso sutil, no un spinner
+genérico"*, pero ese estilo **nunca llegó a definirse** en este documento. Hasta
+que se defina, la interfaz construida usa neutros por defecto: no es una
+decisión estética, es la ausencia de una.
+
+Lo que hay que fijar aquí:
+
+- **Paleta**: fondo, texto, acento, y los colores de estado (error, éxito, aviso)
+- **Tipografía**: familia para titulares y para cuerpo
+- **Carácter**: qué debe transmitir la app al usarla
+- **Antipatrones**: qué evitar explícitamente para este tipo de producto
+- **Estados de carga**: la forma concreta del shimmer/pulso que pide la §13
+
+Dos restricciones que ya se conocen y condicionan la decisión:
+
+1. **La sesión de entreno en vivo es la pantalla crítica** (§5.2, §13). Se usa de
+   pie, con una mano, con prisa y a veces con las manos sudadas. Contraste alto y
+   objetivos táctiles grandes no son preferencias estéticas aquí: son requisitos
+   de uso.
+2. **Los gráficos de evolución** (§10) necesitan una paleta que funcione para
+   series de datos, no solo para interfaz.
 
 ## Anexo A — Semilla inicial del catálogo de ejercicios (MVP)
 
