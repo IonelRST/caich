@@ -1,8 +1,8 @@
 # Especificación funcional — App de tracking fitness con IA
 
-**Versión:** 2.0
-**Fecha:** 14 de agosto de 2026
-**Estado:** especificación aprobada para construcción de MVP
+**Versión:** 3.0
+**Fecha:** 15 de agosto de 2026
+**Estado:** en construcción; §11 revisada tras contrastar con el uso real
 **Autor:** Ionel
 
 ---
@@ -13,7 +13,21 @@ Cada sección describe **qué hace el sistema** y, cuando la decisión no es obv
 
 Cuando una sección dice que algo "no se hace" o "queda fuera", es una exclusión deliberada, no un olvido.
 
-### 0.1 Cambios respecto a la v1.0
+### 0.1 Cambios de la v3.0 (revisión tras el uso real)
+
+| # | Cambio | Sección |
+|---|--------|---------|
+| 1 | La §11 se reescribe entera. Se separa "aplicar conocimiento establecido" (permitido) de "inferir patrones del histórico propio" (restringido); la v2.0 los trataba igual y bloqueaba lo útil junto con lo peligroso | 11 |
+| 2 | La IA puede recomendar progresiones, ajustes de dieta y estructura de rutina, diciendo en qué se apoya | 11.3 |
+| 3 | Límite médico explícito y no negociable, motivado por condiciones reales del usuario | 11.5 |
+| 4 | La "base curada de principios" pasa de lista de anclas a base de conocimiento del dominio | 11.6 |
+| 5 | Tono: feedback honesto por defecto, sin validación automática | 11.7 |
+| 6 | El chat responde preguntas sobre el propio histórico, no solo registra | 11.2 |
+| 7 | Nuevo anexo C con el análisis del uso real que motiva la revisión | Anexo C |
+
+*Motivo de la revisión:* en un mes de uso real con un asistente genérico, solo 1 de cada 6 mensajes era registrar datos. La v2.0 solo admitía ese sexto.
+
+### 0.2 Cambios de la v2.0 respecto a la v1.0
 
 | # | Cambio | Sección |
 |---|--------|---------|
@@ -307,62 +321,102 @@ Visualización de evolución temporal para cada tipo de dato:
 
 ---
 
-## 11. Insights
+## 11. Análisis y acompañamiento
 
-`DECISIÓN`: esta es la sección más reformulada respecto a la v1.0. El motivo es explícito: **son datos de salud, y una IA interpretando libremente un histórico personal no es una base aceptable para decidir sobre entreno o dieta.** La v1.0 dejaba que la IA detectara patrones y recomendara sin más ancla que un nivel de confianza declarado. Eso se sustituye por tres niveles con reglas distintas.
+`DECISIÓN` (revisada): la v2.0 restringía a la IA a tres niveles, exigiendo un principio aprobado detrás de cualquier recomendación. Se revisa tras contrastar la especificación con el uso real (anexo C): en un mes de conversación con un asistente genérico, **solo 1 de cada 6 mensajes era registrar datos**; el resto era decidir progresiones, rediseñar la rutina, resolver dudas de comida y sostener el proceso. Una app que solo admite el sexto de mensajes que son datos no sustituye a esa conversación, y el usuario acabaría teniendo las dos cosas abiertas.
 
-### 11.1 Nivel 1 — Estadísticas puras
+*Lo que no se revisa:* el motivo original sigue en pie. Con un solo usuario y pocas semanas de histórico, muchas "correlaciones" son ruido, y en salud una conclusión falsa pesa más que en otros dominios.
 
-Aritmética sobre los propios datos del usuario. Sin interpretación.
+La revisión distingue **qué tipo de afirmación** se hace, en vez de restringirlas todas por igual.
 
-- Ejemplos: *"tu peso ha bajado 2kg este mes"*, *"tu volumen de pierna ha subido un 15%"*, *"has cumplido el plan de dieta 5 de 7 días"*.
-- No requieren ancla externa: son hechos, no afirmaciones sobre causas.
-- Se calculan sobre los datos estructurados, no los genera un modelo de lenguaje.
+### 11.1 La distinción central
 
-### 11.2 Nivel 2 — Relaciones y recomendaciones
+Al analizar el uso real aparece algo que la v2.0 no separaba: casi nada de lo valioso que hacía el asistente era *inferir patrones del histórico personal*. Era **aplicar conocimiento de entrenamiento y nutrición bien establecido** a la situación concreta del usuario.
 
-Cualquier afirmación de que X influye en Y, o cualquier sugerencia de cambiar algo.
+> *"Has cerrado las 12 repeticiones limpias en el jalón → sube a 60 kg"* no sale de analizar sus datos buscando correlaciones. Sale de una regla de progresión conocida, aplicada a un dato suyo.
 
-**Regla:** la IA solo puede afirmar una relación causal o dar una recomendación si **conecta con un principio de la base curada** (11.4), y **lo dice explícitamente** al presentarlo.
+Son dos cosas distintas y merecen reglas distintas:
 
-Ejemplo correcto:
-> *"Tu volumen de pierna bajó un 20% en 2 semanas. Esto suele asociarse con fatiga acumulada; puede valer la pena revisar sueño y descanso."*
+| | Qué es | Riesgo real | Regla |
+|---|---|---|---|
+| **Aplicar conocimiento establecido** | Regla conocida + dato del usuario | Bajo: la regla es válida independientemente de su histórico | Permitido, diciendo en qué se apoya |
+| **Inferir del histórico propio** | "En tus datos, X parece influir en Y" | Alto: n=1, pocas semanas, confusores por todas partes | Restringido (§11.4) |
 
-Requisitos de presentación:
-- El principio invocado se nombra explícitamente. No basta con que la IA lo tenga en cuenta internamente.
-- Se muestran **los datos concretos que sostienen el insight**, no solo la conclusión (ej. las fechas y valores implicados), para que el usuario pueda verificarlo por sí mismo.
-- Se indica cuántos datos lo respaldan (ej. *"con solo 5 días de datos, esta tendencia es débil"*).
+La v2.0 metía ambas en el mismo saco y por eso bloqueaba lo útil junto con lo peligroso.
 
-### 11.3 Nivel 3 — Observaciones sin conclusión
+### 11.2 Nivel 1 — Estadística
 
-Cuando la IA detecta algo en los datos que **no encaja con ningún principio de la base curada**, no inventa una relación nueva.
+Aritmética sobre los propios datos, sin interpretación: *"has bajado 5,4 kg desde el inicio"*, *"tu volumen de pierna ha subido un 15%"*, *"has cumplido el plan 5 de 7 días"*.
 
-- Como mucho, señala la coincidencia en bruto: *"estos dos datos han coincidido estas semanas"*, sin afirmar causalidad ni recomendar nada.
-- Para cualquier cosa fuera de los principios básicos, lo dice explícitamente y remite a un profesional real (entrenador, nutricionista, médico) en vez de improvisar.
+Se calcula en código sobre los datos estructurados, no lo genera un modelo de lenguaje. Son hechos, no afirmaciones sobre causas.
 
-### 11.4 Base curada de principios
+**Se responden también preguntas del usuario que sean de este tipo** (*"¿cuánto he perdido?"*, *"¿cuántas calorías estoy comiendo?"*), porque son consultas al histórico, no opiniones.
 
-Una lista revisada y aprobada por el usuario de principios de entrenamiento y nutrición **bien establecidos y no controvertidos**.
+### 11.3 Nivel 2 — Aplicación de conocimiento establecido
 
-- **Generación:** la IA redacta un borrador inicial con su conocimiento; el usuario lo revisa y aprueba una vez. Mismo patrón que el catálogo de ejercicios.
-- **Tamaño para MVP:** 15-20 principios. No una enciclopedia.
-- **Contenido inicial:** sobrecarga progresiva, rangos de proteína para hipertrofia, papel del sueño en la recuperación, déficit/superávit calórico para cambio de peso, volumen mínimo efectivo, gestión de fatiga y deloads.
-- **Ampliación:** posterior y gradual.
+`DECISIÓN`: la IA **puede** recomendar progresiones de carga, ajustes de dieta, estructura de rutina y sustituciones de ejercicio, apoyándose en conocimiento estándar de entrenamiento y nutrición.
 
-*Nota:* revisar una lista pequeña y estable una sola vez es cualitativamente distinto de confiar en que la IA razone en caliente sobre la salud del usuario en cada consulta.
+Requisitos:
 
-`ABIERTO`: el marco de tres niveles se considera suficiente para el MVP, pero se pulirá con uso real. Ver sección 19.
+- **Dice en qué se apoya.** No *"sube a 60 kg"*, sino *"cerraste las 12 repeticiones en las tres series, así que toca subir"*. El usuario tiene que poder discrepar del razonamiento, no solo del número.
+- **Usa los datos reales del usuario**, no recomendaciones genéricas. Es la diferencia entre un entrenador y un artículo de revista.
+- **Se apoya en la base de conocimiento** (§11.6), que deja de ser una lista corta de 15-20 anclas y pasa a ser el material de referencia del dominio.
+- **Nada de esto es prescripción médica.** Ver §11.5.
 
-### 11.5 Modos de entrega
+### 11.4 Nivel 3 — Inferencia sobre el histórico propio (restringido)
 
-- **Bajo demanda:** el usuario pregunta en el chat (*"¿cómo voy esta semana?"*) y recibe una lectura inmediata.
-- **Automático periódico:** resúmenes generados sin petición (ej. resumen semanal), cruzando el histórico acumulado.
+Aquí sí se mantiene el freno de la v2.0, y por el motivo original.
 
-### 11.6 Datos insuficientes
+Cuando la IA cree ver una relación **en los datos del usuario** — *"cuando comes más proteína rindes mejor"* — no la presenta como conclusión. La presenta como observación, con:
 
-Si el histórico es demasiado corto para un análisis fiable, la IA lo reconoce explícitamente (*"aún no tengo suficiente historial para detectar patrones fiables"*) en vez de forzar una respuesta con poca base.
+- **Los datos concretos** que la sostienen (fechas y valores), no solo la conclusión.
+- **Cuántos datos la respaldan** y durante cuánto tiempo.
+- **Los confusores evidentes** que no puede descartar (día de pierna vs. día de brazo, sueño, semana de vacaciones).
 
----
+*Motivo:* el usuario conoce su propia vida mucho mejor que la app. Con los datos crudos delante puede caer en *"ah, ese día también dormí nueve horas"* y descartarla él. Sin ellos, solo le queda confiar a ciegas.
+
+### 11.5 Límite médico (no negociable)
+
+`DECISIÓN`: la ampliación de §11.3 **no alcanza a lo médico**. Ante síntomas, condiciones diagnosticadas, medicación o adicciones, la app describe lo registrado y remite a un profesional. No interpreta, no tranquiliza y no recomienda.
+
+Esto no es cautela genérica: el usuario tiene **hígado graso diagnosticado**, **probable apnea del sueño** y está **dejando de fumar**. En el uso real aparecieron dolor bajo el diafragma y ansiedad por abstinencia. Son exactamente los temas donde una app de fitness no debe opinar.
+
+Casos que quedan fuera, explícitamente:
+
+- Síntomas de cualquier tipo (dolor, mareo, molestia digestiva).
+- Condiciones diagnosticadas y su evolución.
+- Medicación, suplementación con interacción, o dosis.
+- Deshabituación tabáquica y manejo de la ansiedad asociada.
+- Interpretación de analíticas.
+
+La app **sí** puede registrar que ocurrieron (§4.3, medidas de modelo abierto) para que el usuario los lleve a su médico. Lo que no hace es opinar sobre ellos.
+
+### 11.6 Base de conocimiento
+
+Sustituye a la "base curada de principios" de la v2.0, que nació como lista de 15-20 anclas para autorizar afirmaciones. Con §11.3 abierta, cambia de función: es el **material de referencia** del que sale el razonamiento.
+
+- Sigue generándose con IA y **aprobándose por el usuario**: ese orden no cambia.
+- Sigue cubriendo lo no controvertido: sobrecarga progresiva, rangos de proteína, sueño y recuperación, déficit y superávit, volumen mínimo efectivo, gestión de fatiga y descargas.
+- Se amplía con reglas de progresión operativas (rangos de repeticiones, cuándo subir, cuándo consolidar) y estructura de rutinas, que es lo que el uso real demandaba.
+- **Lo que no esté aprobado no se usa como apoyo.** Una base que se autoaprueba no cura nada.
+
+### 11.7 Tono
+
+`DECISIÓN`: feedback honesto por defecto, no validación. El usuario lo pidió explícitamente en el uso real: *"que no se le dé siempre la razón"*.
+
+- Si los datos contradicen lo que el usuario cree, se dice.
+- Si una decisión suya parece un error, se dice una vez, con el motivo, y se sigue.
+- Nada de celebrar cada registro: choca con el carácter definido en la §21.1 y con el principio 6 de la §1.1.
+- Sin motivación vacía ni respuestas genéricas.
+
+### 11.8 Modos de entrega
+
+- **Bajo demanda:** el usuario pregunta en el chat y recibe respuesta inmediata.
+- **Automático periódico:** resúmenes sin petición (ej. semanal), cruzando el histórico acumulado.
+
+### 11.9 Datos insuficientes
+
+Si el histórico es demasiado corto para lo que se pregunta, se reconoce explícitamente en vez de forzar una respuesta con poca base. Aplica sobre todo al nivel 3: aplicar una regla conocida (§11.3) no necesita histórico largo, inferir un patrón (§11.4) sí.
 
 ## 12. Arquitectura de comunicación IA ↔ datos (MCP)
 
@@ -828,3 +882,53 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 15 | Esqueleto con pulso de opacidad | Spinner genérico / barrido de brillo | Reserva el espacio del dato y evita el reenvío por impaciencia | 21.8 |
 | 16 | Drawer en móvil + barra lateral en desktop | Barra de navegación inferior de 5 iconos | Hay 7 destinos; los dos sobrantes acabarían en un "más" arbitrario | 22.1 |
 | 17 | Sesión en vivo sin navegación | Cabecera con menú igual que el resto de pantallas | Superficie táctil escasa y riesgo de salir del entreno sin querer | 22.3 |
+
+---
+
+## Anexo C — Análisis del uso real (contraste con la v2.0)
+
+Origen de la revisión de la §11. Se analizó una conversación de un mes con un asistente genérico (Gemini), que es como el usuario llevaba el seguimiento antes de esta app.
+
+### C.1 Reparto de los mensajes
+
+De 113 mensajes del usuario:
+
+| Qué hacía | Mensajes | % |
+|-----------|---------:|--:|
+| Pegar entrenos exportados de Hevy | 9 | 8 % |
+| Registrar peso | ~9 | 8 % |
+| Registrar medidas corporales | 1 | 1 % |
+| **Conversación: preguntas, decisiones, acompañamiento** | **~94** | **83 %** |
+
+**Solo 1 de cada 6 mensajes era registrar datos.** Una app que solo acepta ese sexto no sustituye la conversación: obliga a mantener las dos abiertas.
+
+### C.2 De qué trataba la conversación
+
+| Tema | Mensajes aprox. |
+|------|----------------:|
+| Dejar de fumar (ansiedad, recaída, impacto en la relación) | 17 |
+| Rediseño de rutina (de full-body a split de 4 días) | 19 |
+| Dudas de comida y sustituciones | 12 |
+| Preguntas sobre el propio histórico (cuánto he perdido, cuántas kcal como) | 8 |
+| Composición corporal y medidas | 5 |
+| Equipamiento (pulseras de actividad) | 5 |
+| Carol (segunda persona) | 4 |
+| Síntomas físicos | 2 |
+
+### C.3 Hallazgo que motivó la revisión
+
+Casi nada de lo valioso que hacía el asistente era **inferir patrones del histórico personal** — el riesgo contra el que se diseñó la v2.0. Era **aplicar conocimiento establecido** a la situación concreta:
+
+> *"Cerraste las 12 repeticiones limpias en el jalón → sube a 60 kg"* no sale de buscar correlaciones en sus datos. Sale de una regla de progresión conocida.
+
+La v2.0 trataba ambas cosas igual y bloqueaba lo útil junto con lo peligroso. La §11 revisada las separa.
+
+### C.4 Lo que confirmó las cautelas existentes
+
+- **Señales médicas reales:** dolor bajo el diafragma con hígado graso diagnosticado, apnea del sueño probable, deshabituación tabáquica. El hilo más largo de toda la conversación no era de fitness. Motiva el límite de la §11.5.
+- **Tono pedido explícitamente:** *"feedback honesto; que no se le dé siempre la razón"*. Recogido en la §11.7.
+- **Pérdida de contexto:** un mensaje del usuario reprocha al asistente haber olvidado sus referencias. Es justo lo que evita tener el histórico estructurado (§7.1) en vez de dentro de un hilo de chat.
+
+### C.5 Pendiente derivado: segunda persona
+
+La conversación incluye a una segunda persona (Carol) con plan propio, compra conjunta y rutinas coordinadas para coincidir en grupos musculares. El modelo de datos ya lo soporta (`user_id` desde la primera migración), pero no hay nada construido. Ver §19.
