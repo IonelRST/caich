@@ -1,39 +1,47 @@
-# Claude Code — configuración local (rutas y permisos de cada máquina)
-.claude/settings.local.json
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencias
-node_modules/
-.pnp
-.pnp.js
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Build / Next.js
-.next/
-out/
-build/
-dist/
+# testing
+/coverage
 
-# Variables de entorno — NUNCA subir claves de Supabase ni de la API de Claude
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# next.js
+/.next/
+/out/
 
-# Supabase
-.branches
-.temp
+# production
+/build
 
-# Logs
-*.log
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# Sistema operativo
-.DS_Store
-Thumbs.db
+# env files (can opt-in for committing if needed)
+.env*
 
-# Editores
-.vscode/
-.idea/
-*.swp
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Claude Code — configuración local (rutas y permisos de cada máquina)
+.claude/settings.local.json
+
+# La plantilla de entorno SI se versiona (no contiene secretos)
+!.env.example
