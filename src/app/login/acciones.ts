@@ -26,11 +26,26 @@ function destinoSeguro(valor: FormDataEntryValue | null): string {
 /**
  * Traduce los errores de Supabase, que llegan en inglés y a veces con jerga.
  * §13: "mensajes claros si falla, sin pantallas rotas".
+ *
+ * Se mira primero `code`, que es estable, y solo después el texto: Supabase
+ * responde "invalid login credentials" tanto para una contraseña mala como para
+ * una cuenta sin confirmar (a propósito, para no revelar qué emails existen),
+ * así que fiarse del texto daría un mensaje engañoso justo en ese caso.
  */
-function traducirError(mensaje: string): string {
-  const m = mensaje.toLowerCase();
+function traducirError(error: { message: string; code?: string }): string {
+  if (error.code === "email_not_confirmed") {
+    return "Todavía no has confirmado tu email. Revisa tu bandeja de entrada.";
+  }
+  if (error.code === "user_already_exists") {
+    return "Ya existe una cuenta con ese email. Inicia sesión.";
+  }
+  if (error.code === "weak_password") {
+    return "La contraseña es demasiado débil. Prueba con una más larga.";
+  }
+
+  const m = error.message.toLowerCase();
   if (m.includes("invalid login credentials")) {
-    return "Email o contraseña incorrectos.";
+    return "Email o contraseña incorrectos. Si acabas de registrarte, puede que falte confirmar el email.";
   }
   if (m.includes("email not confirmed")) {
     return "Todavía no has confirmado tu email. Revisa tu bandeja de entrada.";
@@ -44,7 +59,7 @@ function traducirError(mensaje: string): string {
   if (m.includes("password")) {
     return "La contraseña no cumple los requisitos mínimos.";
   }
-  return `No se ha podido completar la operación: ${mensaje}`;
+  return `No se ha podido completar la operación: ${error.message}`;
 }
 
 export async function iniciarSesion(
@@ -64,7 +79,7 @@ export async function iniciarSesion(
   const { error } = await supabase.auth.signInWithPassword(datos.data);
 
   if (error) {
-    return { error: traducirError(error.message) };
+    return { error: traducirError(error) };
   }
 
   revalidatePath("/", "layout");
@@ -88,7 +103,7 @@ export async function registrarse(
   const { data, error } = await supabase.auth.signUp(datos.data);
 
   if (error) {
-    return { error: traducirError(error.message) };
+    return { error: traducirError(error) };
   }
 
   // Si el proyecto exige confirmación por email, la sesión llega vacía: la

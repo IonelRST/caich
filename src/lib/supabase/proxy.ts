@@ -43,7 +43,20 @@ export async function actualizarSesion(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  // Un enlace de confirmación de email puede aterrizar en cualquier ruta, según
+  // cómo esté configurada la Site URL en Supabase. Si trae código de un solo
+  // uso, se encamina al handler que lo canjea — si no, se perdería y la cuenta
+  // se quedaría sin confirmar sin que nada lo avisara.
+  const traeCodigoAuth =
+    searchParams.has("code") || searchParams.has("token_hash");
+
+  if (traeCodigoAuth && !pathname.startsWith("/auth")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/confirmar";
+    return NextResponse.redirect(url);
+  }
 
   // Sin sesión en ruta protegida → al login, recordando a dónde iba.
   if (!user && !esRutaPublica(pathname)) {

@@ -31,12 +31,23 @@ function Boton({ modo }: { modo: "entrar" | "registrar" }) {
   );
 }
 
-export function FormularioLogin({ destino }: { destino: string }) {
+export function FormularioLogin({
+  destino,
+  errorInicial,
+}: {
+  destino: string;
+  errorInicial?: string;
+}) {
   const [modo, setModo] = useState<"entrar" | "registrar">("entrar");
   const [estado, accion] = useActionState(
     modo === "entrar" ? iniciarSesion : registrarse,
     ESTADO_INICIAL,
   );
+
+  // Un error del callback de confirmación llega por la URL. Se muestra solo
+  // hasta que el usuario envía el formulario, momento en el que manda el
+  // resultado de esa acción.
+  const error = estado.error ?? errorInicial;
 
   return (
     <div className="w-full max-w-sm">
@@ -86,12 +97,12 @@ export function FormularioLogin({ destino }: { destino: string }) {
           )}
         </div>
 
-        {estado.error && (
+        {error && (
           <p
             role="alert"
             className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
           >
-            {estado.error}
+            {error}
           </p>
         )}
 
