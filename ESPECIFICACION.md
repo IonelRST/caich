@@ -566,7 +566,8 @@ principio_base                     ← base curada (sección 11.4)
 | 2 | Ampliación del catálogo de ejercicios de 10-15 a 40-60 | 4.1 | Al empezar a usar la app en serio |
 | 3 | Ampliación de la base curada de principios más allá de 15-20 | 11.4 | Gradual, según haga falta |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
-| 5 | Dirección visual (paleta, tipografía, carácter) | 21 | Antes de construir más interfaz |
+
+*Cerrado:* la dirección visual (§21) era el punto 5 de esta tabla. Se decidió el 14 de agosto de 2026 — ver §21 y decisión 13 del anexo B.
 
 ---
 
@@ -586,29 +587,155 @@ principio_base                     ← base curada (sección 11.4)
 
 ## 21. Dirección visual
 
-`ABIERTO` — pendiente de definir.
+**Nombre de la dirección: "Instrumento dual".**
 
-La §13 menciona *"acorde al estilo definido: shimmer/pulso sutil, no un spinner
-genérico"*, pero ese estilo **nunca llegó a definirse** en este documento. Hasta
-que se defina, la interfaz construida usa neutros por defecto: no es una
-decisión estética, es la ausencia de una.
+La app es un instrumento de medida, no un entrenador motivacional. Debe leerse como algo preciso y sin ruido, con una única excepción deliberada: la sesión de entreno en vivo, que se comporta como un panel de gimnasio — oscuro, enorme y de un solo golpe de vista.
 
-Lo que hay que fijar aquí:
+Dos restricciones condicionan todo lo que sigue:
 
-- **Paleta**: fondo, texto, acento, y los colores de estado (error, éxito, aviso)
-- **Tipografía**: familia para titulares y para cuerpo
-- **Carácter**: qué debe transmitir la app al usarla
-- **Antipatrones**: qué evitar explícitamente para este tipo de producto
-- **Estados de carga**: la forma concreta del shimmer/pulso que pide la §13
+1. **La sesión de entreno en vivo es la pantalla crítica** (§5.2, §13). Se usa de pie, con una mano, con prisa y a veces con las manos sudadas. Contraste alto y objetivos táctiles grandes no son preferencias estéticas aquí: son requisitos de uso.
+2. **Los gráficos de evolución** (§10) necesitan una paleta que funcione para series de datos, no solo para interfaz.
 
-Dos restricciones que ya se conocen y condicionan la decisión:
+### 21.1 Carácter
 
-1. **La sesión de entreno en vivo es la pantalla crítica** (§5.2, §13). Se usa de
-   pie, con una mano, con prisa y a veces con las manos sudadas. Contraste alto y
-   objetivos táctiles grandes no son preferencias estéticas aquí: son requisitos
-   de uso.
-2. **Los gráficos de evolución** (§10) necesitan una paleta que funcione para
-   series de datos, no solo para interfaz.
+| Es | No es |
+|----|-------|
+| Instrumento de precisión: el dato manda sobre la decoración | App motivacional que celebra cada registro |
+| Silencioso en reposo, contundente en la sesión en vivo | Uniformemente enérgico en todas las pantallas |
+| Honesto con la incertidumbre (§4.2, §11.6): un dato estimado no se ve igual que uno declarado | Presentador de conclusiones seguras |
+| Denso donde hay datos, espacioso donde hay decisiones | Dashboard saturado por defecto |
+
+*Motivo:* el principio 6 de la §1.1 (*en salud, la precisión importa más que la fluidez*) tiene consecuencia visual directa. Una interfaz que se celebra a sí misma empuja a registrar para sentirse bien, no para medir bien.
+
+### 21.2 Modo dual
+
+`DECISIÓN`: dos temas de primera clase — claro y oscuro — y **la sesión de entreno en vivo arranca siempre en oscuro reforzado**, independientemente del tema elegido en el resto de la app.
+
+*Motivo:* son dos contextos de uso opuestos. El análisis se hace sentado, con calma, donde el fondo claro da mejor densidad de lectura para tablas e historial. La sesión en vivo se hace de pie, con el brazo estirado y a veces con luz de fluorescente contra la pantalla; ahí un fondo claro es un foco en la cara y una pérdida real de legibilidad. No es una preferencia del usuario: es una propiedad de la pantalla.
+
+`DECISIÓN`: se descarta que la sesión en vivo herede el tema general. Obligaría al usuario a cambiar el tema al entrar y salir del gimnasio, que es fricción (principio 1) por una consistencia que a nadie le sirve.
+
+### 21.3 Paleta de interfaz
+
+**Tema claro** (análisis, historial, chat, planificación):
+
+| Rol | Valor | Uso |
+|-----|-------|-----|
+| Fondo | `#F7F7F8` | Lienzo de la app |
+| Superficie | `#FFFFFF` | Tarjetas, tablas, modales |
+| Borde | `#E4E4E7` | Separadores y contornos |
+| Texto | `#18181B` | Cuerpo y cifras |
+| Texto atenuado | `#52525B` | Etiquetas, unidades, metadatos |
+
+**Tema oscuro** (misma app, de noche):
+
+| Rol | Valor |
+|-----|-------|
+| Fondo | `#0B0F1A` |
+| Superficie | `#141A26` |
+| Borde | `#263041` |
+| Texto | `#F8FAFC` |
+| Texto atenuado | `#94A3B8` |
+
+**Sesión en vivo** (oscuro reforzado, no es el tema oscuro normal):
+
+| Rol | Valor |
+|-----|-------|
+| Fondo | `#020617` |
+| Superficie | `#0E1223` |
+| Borde | `#334155` |
+| Texto | `#F8FAFC` |
+
+### 21.4 Acento y estados
+
+`DECISIÓN`: **un solo acento, reservado exclusivamente a la acción primaria.** El naranja no aparece en gráficos, ni en iconos decorativos, ni en cabeceras. Si algo es naranja, se toca.
+
+| Rol | Sobre fondo oscuro | Sobre fondo claro | Significado |
+|-----|--------------------|-------------------|-------------|
+| Acción | `#F97316` (texto encima `#0F172A`) | `#EA580C` (texto encima `#FFFFFF`); como texto sobre claro, `#C2410C` | Confirmar serie, guardar, enviar |
+| Éxito | `#22C55E` | `#15803D` | Adherencia cumplida, objetivo alcanzado, dato guardado |
+| Error | `#F87171` | `#DC2626` | Parseo fallido, validación, fallo de conexión |
+| Aviso | `#FBBF24` | `#B45309` | Desviación de plan, dato estimado, histórico insuficiente |
+
+*Motivo del acento único:* en una pantalla que se usa con prisa y a una mano, el color tiene que responder a una sola pregunta — "¿dónde toco?". Repartir el acento entre decoración y acción destruye esa señal justo donde más importa.
+
+**Regla de estimación** (§4.2): un valor de origen `estimado` se marca siempre con el color de aviso **y** con un indicador no cromático (icono o etiqueta textual). Nunca solo con color.
+
+### 21.5 Paleta de series de datos
+
+`DECISIÓN`: los gráficos (§10) usan una **paleta categórica propia, disjunta de la paleta de interfaz**. Ningún color de estado ni el acento de acción aparece como color de serie.
+
+| # | Valor | Estilo de línea |
+|---|-------|-----------------|
+| 1 | `#2563EB` | Sólida |
+| 2 | `#7C3AED` | Discontinua |
+| 3 | `#0891B2` | Punteada |
+| 4 | `#DB2777` | Sólida fina |
+| 5 | `#475569` | Discontinua larga |
+
+Reglas de uso:
+
+- **El tono nunca es el único canal.** Cada serie lleva además estilo de línea propio y etiqueta directa sobre el trazo cuando el espacio lo permite. Un gráfico legible solo en color no es legible.
+- **Máximo 5-6 series por gráfico.** Por encima de eso el gráfico deja de comunicar; se parte en varios.
+- **Zonas de referencia** (rango objetivo, banda de plan): relleno del tono correspondiente al 15% de opacidad, nunca línea sólida — se distingue del dato real por forma, no por intensidad.
+- Los objetivos (§9) se dibujan como línea horizontal de referencia en `#475569` discontinua, con etiqueta del valor.
+- Todo gráfico tiene equivalente accesible: tabla de datos visible o desplegable, y navegación por teclado que revela los valores punto a punto.
+
+*Motivo:* si el verde de "éxito" es también el color de una serie de calorías, un pico de esa serie se lee como una señal positiva que nadie ha querido decir. Separar los dos vocabularios evita afirmar cosas por accidente — que es la versión visual del principio 4 (*la IA nunca inventa*).
+
+### 21.6 Tipografía
+
+`DECISIÓN`: **una sola familia para toda la interfaz — Inter** —, con una segunda familia acotada a un único uso.
+
+| Uso | Familia | Notas |
+|-----|---------|-------|
+| Titulares, cuerpo, etiquetas, tablas | Inter | Variable; pesos 400 / 500 / 600 / 700 |
+| Cifras en tablas, historial y gráficos | Inter con `font-variant-numeric: tabular-nums` | Obligatorio: los pesos y macros deben alinearse en columna |
+| Dígitos grandes de la sesión en vivo | Barlow Condensed 600-700 | **Solo aquí.** No aparece en ninguna otra pantalla |
+
+*Motivo de la segunda familia:* en la sesión en vivo, "112,5 kg × 8" tiene que caber grande en un móvil estrecho y leerse con el brazo estirado. Una condensada gana el tamaño que hace falta sin partir la línea. Fuera de esa pantalla no aporta nada, así que no entra.
+
+Escala mínima: cuerpo 16px, nunca texto informativo por debajo de 12px, interlineado 1.5 en texto corrido. En la sesión en vivo, el valor de la serie se muestra a 32px o más.
+
+### 21.7 Objetivos táctiles y espaciado
+
+- **Mínimo global:** 44×44px con 8px de separación entre objetivos.
+- **En la sesión en vivo:** 56px de alto mínimo para steppers y botón de confirmar serie, con al menos 12px de separación. El botón de confirmar serie es el elemento más grande de la pantalla y está en el tercio inferior, alcanzable con el pulgar.
+- **Densidad:** alta en historial, tablas y gráficos (escala de 8-32px); espaciada en chat, planificación y ajustes (16-48px).
+- Se respetan las áreas seguras del dispositivo (notch, barra inferior); nada accionable queda debajo del borde de gesto.
+
+### 21.8 Estados de carga
+
+Esto resuelve lo que la §13 pedía sin definir.
+
+`DECISIÓN`: **esqueleto con la forma del contenido final + pulso de opacidad.** Sin spinner genérico, y sin el barrido de brillo diagonal habitual.
+
+- El esqueleto reserva el espacio exacto del dato que va a llegar, para que nada salte al aparecer.
+- Animación: opacidad `0.45 → 1 → 0.45`, 1600ms, `ease-in-out`, en bucle. Es un pulso, no un barrido.
+- Con `prefers-reduced-motion: reduce`, el esqueleto se queda estático a opacidad 0.6. No se sustituye por un spinner.
+- **Mientras la IA parsea un mensaje** (§3.1), el pulso ocurre sobre el hueco de la respuesta en el hilo del chat, no sobre un overlay que bloquee la pantalla: el usuario puede seguir escribiendo.
+- **Duración de transiciones de interfaz:** 150-250ms. Un único valor para todo es un antipatrón; las salidas van más rápidas que las entradas.
+
+*Motivo:* un spinner dice "algo está pasando". Un esqueleto dice "va a aparecer esto, aquí". Con datos que tardan lo que tarda una llamada a la API de Claude, la segunda frase es la que evita que el usuario reenvíe el mensaje.
+
+### 21.9 Antipatrones
+
+Explícitamente prohibido en este producto:
+
+| Antipatrón | Motivo |
+|------------|--------|
+| **Gamificación**: rachas, medallas, confeti, celebraciones al registrar | Premia registrar, no medir. Choca con el carácter (21.1) y con el principio 6 |
+| **Emoji como iconos** | Se usa un set SVG coherente (Lucide). Los emoji cambian de forma según el sistema operativo |
+| **Color como único canal de significado** | Estados, series y desviaciones llevan siempre forma, icono o texto además del color |
+| **Gris sobre gris** | Todo texto informativo cumple 4.5:1 como mínimo; el texto atenuado de la 21.3 ya está calculado para eso |
+| **Spinner genérico** | Sustituido por 21.8 |
+| **Fondo claro en la sesión en vivo** | Contradice 21.2 |
+| **El acento de acción en gráficos o decoración** | Contradice 21.4 |
+| **Quitar el anillo de foco** | El chat y los formularios se usan con teclado en desktop |
+| **Números que se animan al cambiar** (contadores que suben) | Un peso corporal no "sube": se mide. Animarlo lo convierte en espectáculo |
+| **Fotos de gimnasio, siluetas musculadas, imágenes de stock fitness** | Es una herramienta personal de medición, no una marca deportiva |
+
+`DECISIÓN`: se descartan las dos direcciones alternativas evaluadas. Una paleta de gimnasio saturada (naranja de marca sobre fondo oscuro en toda la app) fallaba en las pantallas de análisis, donde el acento compite con las series de datos. Una dirección minimalista en claro para todo fallaba en la sesión en vivo, que es exactamente la pantalla que no se puede permitir fallar.
 
 ## Anexo A — Semilla inicial del catálogo de ejercicios (MVP)
 
@@ -650,3 +777,6 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 10 | Fase 1.5 antes de insights | Objetivos e insights primero | Sin registro cómodo no hay histórico que analizar | 17 |
 | 11 | Sin imágenes de ejecución | Generar imágenes con IA | Biomecánica incorrecta = riesgo de lesión | 4.1 |
 | 12 | Plantilla+adherencia como patrón único | Rutinas y dieta como sistemas separados | Misma lógica; duplicarla obliga a arreglar bugs dos veces | 6.5 |
+| 13 | Dirección visual "Instrumento dual": tema dual + sesión en vivo siempre oscura | Paleta de gimnasio saturada en toda la app / minimalismo claro en toda la app | Análisis y sesión en vivo son contextos de uso opuestos; una sola piel falla en uno de los dos | 21 |
+| 14 | Acento único de acción, disjunto de la paleta de series | Reutilizar el acento y los colores de estado en los gráficos | Un color de estado en una serie afirma cosas que nadie ha querido decir | 21.4, 21.5 |
+| 15 | Esqueleto con pulso de opacidad | Spinner genérico / barrido de brillo | Reserva el espacio del dato y evita el reenvío por impaciencia | 21.8 |
