@@ -403,7 +403,7 @@ Por eso está en Fase 3 y no bloquea el MVP.
 - **Perfil de usuario:** nombre, unidades preferidas (kg/lbs, cm/in), gestión de objetivos.
 - **Responsive real:** chat, gráficos y sesión de entreno en vivo usables en móvil y desktop. La sesión en vivo se diseña **mobile-first**: es la única pantalla que se usa de pie, con una mano y con prisa.
 - **Manejo de errores:** mensajes claros si la IA no consigue parsear un mensaje o falla la conexión, sin pantallas rotas.
-- **Estados de carga:** feedback visual mientras la IA procesa un mensaje o genera un insight (shimmer/pulso sutil, no un spinner genérico).
+- **Estados de carga:** feedback visual mientras la IA procesa un mensaje o genera un insight (shimmer/pulso sutil, no un spinner genérico). La forma concreta está definida en §21.8.
 - **Exportación/backup:** el usuario puede exportar todo su histórico (CSV/JSON), tanto por ser datos de salud personales como por no depender al 100% de la infraestructura propia.
 - **Ajustes:** cambiar unidades, editar objetivos, gestionar rutinas y plan de dieta, borrar cuenta y datos.
 

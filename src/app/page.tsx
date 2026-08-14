@@ -14,11 +14,22 @@ export default async function Portada() {
   const usuario = await usuarioActual();
   const supabase = await crearClienteServidor();
 
-  const { data: ultimas } = await supabase
-    .from("registro_medida")
-    .select("id, nombre, valor, unidad, fecha_evento")
-    .order("fecha_evento", { ascending: false })
-    .limit(5);
+  const [{ data: ultimas }, { data: enCurso }] = await Promise.all([
+    supabase
+      .from("registro_medida")
+      .select("id, nombre, valor, unidad, fecha_evento")
+      .order("fecha_evento", { ascending: false })
+      .limit(5),
+    // §5.3: una sesión sin terminar se puede retomar. Si no se mostrara aquí,
+    // un entreno interrumpido quedaría enterrado y se daría por perdido.
+    supabase
+      .from("registro_entreno")
+      .select("id, fecha_evento")
+      .eq("completado", false)
+      .order("fecha_evento", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
@@ -40,6 +51,32 @@ export default async function Portada() {
         </form>
       </header>
 
+      {enCurso && (
+        <Link
+          href={`/entreno/${enCurso.id}`}
+          className="mt-8 flex items-center justify-between gap-4 rounded-xl bg-neutral-900 px-5 py-4 text-white dark:bg-white dark:text-neutral-900"
+        >
+          <span className="text-sm font-medium">Tienes un entreno en curso</span>
+          <span className="text-sm">Retomar →</span>
+        </Link>
+      )}
+
+      <nav className="mt-8 grid grid-cols-3 gap-3">
+        {[
+          { href: "/rutinas", texto: "Rutinas" },
+          { href: "/evolucion", texto: "Evolución" },
+          { href: "/historial", texto: "Historial" },
+        ].map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className="rounded-xl border border-neutral-200 px-4 py-3 text-center text-sm font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:hover:bg-neutral-900"
+          >
+            {l.texto}
+          </Link>
+        ))}
+      </nav>
+
       <section className="mt-10">
         <h2 className="text-sm font-medium">Registrar una medida</h2>
         <div className="mt-4">
@@ -48,15 +85,7 @@ export default async function Portada() {
       </section>
 
       <section className="mt-10">
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-medium">Últimos registros</h2>
-          <Link
-            href="/historial"
-            className="text-sm text-neutral-500 underline underline-offset-4 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-          >
-            Ver historial
-          </Link>
-        </div>
+        <h2 className="text-sm font-medium">Últimos registros</h2>
 
         {!ultimas || ultimas.length === 0 ? (
           <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
@@ -82,12 +111,11 @@ export default async function Portada() {
       </section>
 
       <section className="mt-10 rounded-xl border border-dashed border-neutral-300 p-5 dark:border-neutral-700">
-        <h2 className="text-sm font-medium">Siguiente</h2>
+        <h2 className="text-sm font-medium">Pendiente</h2>
         <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-          Gráficos de evolución, y después el registro de entreno en vivo — que
-          por diseño no usa la IA. El chat con parseo llegará cuando cargues
-          créditos de la API de Claude. La dirección visual está pendiente
-          (§21): esto todavía es andamiaje, no diseño.
+          El chat con parseo y los insights necesitan créditos de la API de
+          Claude. La dirección visual está sin definir (§21): esto todavía es
+          andamiaje, no diseño.
         </p>
       </section>
     </main>
