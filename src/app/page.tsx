@@ -35,10 +35,9 @@ export default async function Portada() {
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">caich</h1>
-          <p className="mt-1 text-sm text-suave">
-            {usuario?.email}
-          </p>
+          {/* La marca ya está en la barra lateral; repetirla aquí no aporta. */}
+          <h1 className="text-2xl font-semibold tracking-tight">Hoy</h1>
+          <p className="mt-1 text-sm text-suave">{usuario?.email}</p>
         </div>
 
         <form action={cerrarSesion}>
@@ -61,23 +60,18 @@ export default async function Portada() {
         </Link>
       )}
 
-      <nav className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {[
-          { href: "/rutinas", texto: "Rutinas" },
-          { href: "/dieta", texto: "Dieta" },
-          { href: "/objetivos", texto: "Objetivos" },
-          { href: "/evolucion", texto: "Evolución" },
-          { href: "/historial", texto: "Historial" },
-        ].map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="rounded-xl border border-borde px-4 py-3 text-center text-sm font-medium transition-colors hover:bg-superficie"
-          >
-            {l.texto}
-          </Link>
-        ))}
-      </nav>
+      <Link
+        href="/chat"
+        className="mt-8 flex items-center justify-between gap-4 rounded-xl border border-borde bg-superficie px-5 py-4 transition-colors hover:border-accion"
+      >
+        <span className="text-sm font-medium">
+          Registrar escribiendo
+          <span className="mt-0.5 block font-normal text-suave">
+            Peso, comida o entreno en lenguaje normal
+          </span>
+        </span>
+        <span className="text-sm text-suave">→</span>
+      </Link>
 
       <section className="mt-10">
         <h2 className="text-sm font-medium">Registrar una medida</h2>
@@ -94,17 +88,23 @@ export default async function Portada() {
             Nada registrado todavía. Guarda tu primera medida arriba.
           </p>
         ) : (
-          <ul className="mt-4 divide-y divide-borde">
+          <ul className="mt-4 divide-y divide-borde rounded-xl border border-borde bg-superficie px-4">
             {ultimas.map((r) => (
-              <li key={r.id} className="flex justify-between gap-4 py-2.5">
-                <span className="text-sm">
-                  {etiquetaDeMedida(r.nombre)}{" "}
-                  <span className="text-suave">
-                    {r.valor} {r.unidad}
+              <li
+                key={r.id}
+                className="flex items-baseline justify-between gap-4 py-3"
+              >
+                <span className="text-sm">{etiquetaDeMedida(r.nombre)}</span>
+                <span className="flex items-baseline gap-3">
+                  {/* §21.6: cifras con tabular-nums, obligatorio para que los
+                      valores se alineen en columna. */}
+                  <span className="tabular-nums">
+                    {r.valor}{" "}
+                    <span className="text-sm text-suave">{r.unidad}</span>
                   </span>
-                </span>
-                <span className="text-xs text-suave">
-                  {formatoFecha.format(new Date(r.fecha_evento))}
+                  <span className="w-16 text-right text-xs text-suave tabular-nums">
+                    {formatoFecha.format(new Date(r.fecha_evento))}
+                  </span>
                 </span>
               </li>
             ))}
@@ -137,9 +137,8 @@ export default async function Portada() {
       <section className="mt-10 rounded-xl border border-dashed border-borde p-5">
         <h2 className="text-sm font-medium">Pendiente</h2>
         <p className="mt-2 text-sm text-suave">
-          El chat con parseo y los insights necesitan créditos de la API de
-          Claude. La dirección visual está sin definir (§21): esto todavía es
-          andamiaje, no diseño.
+          Falta el dictado por voz (§3.4), los resúmenes automáticos periódicos
+          (§11.5) y la capa MCP (§12).
         </p>
       </section>
     </main>

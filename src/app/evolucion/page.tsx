@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { GraficosEvolucion, type SerieMedida } from "./grafico";
 import { etiquetaDeMedida } from "@/lib/datos/medidas";
 import { crearClienteServidor } from "@/lib/supabase/server";
@@ -45,14 +44,8 @@ export default async function Evolucion() {
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
-      <header className="flex items-baseline justify-between gap-4">
+      <header>
         <h1 className="text-2xl font-semibold tracking-tight">Evolución</h1>
-        <Link
-          href="/"
-          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
-        >
-          Volver
-        </Link>
       </header>
 
       <GraficosEvolucion series={series} />

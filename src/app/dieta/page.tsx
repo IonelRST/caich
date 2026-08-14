@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CheckinComida, FormularioComidaPlan } from "./formularios";
 import { DIAS, diaSemanaHoy } from "@/lib/datos/dieta";
 import { quitarComidaDelPlan } from "@/lib/datos/dieta-acciones";
@@ -44,14 +43,8 @@ export default async function Dieta() {
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
-      <header className="flex items-baseline justify-between gap-4">
+      <header>
         <h1 className="text-2xl font-semibold tracking-tight">Dieta</h1>
-        <Link
-          href="/"
-          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
-        >
-          Volver
-        </Link>
       </header>
 
       <section className="mt-8">

@@ -122,14 +122,8 @@ export default async function Historial({
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
-      <header className="flex items-baseline justify-between gap-4">
+      <header>
         <h1 className="text-2xl font-semibold tracking-tight">Historial</h1>
-        <Link
-          href="/"
-          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
-        >
-          Volver
-        </Link>
       </header>
 
       {/* §8: filtrable por tipo de dato y rango de fechas. Como formulario GET,

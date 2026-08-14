@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   FormularioObjetivo,
   type OpcionMetrica,
@@ -104,14 +103,8 @@ export default async function Objetivos() {
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
-      <header className="flex items-baseline justify-between gap-4">
+      <header>
         <h1 className="text-2xl font-semibold tracking-tight">Objetivos</h1>
-        <Link
-          href="/"
-          className="text-sm text-suave underline underline-offset-4 hover:text-texto"
-        >
-          Volver
-        </Link>
       </header>
 
       <section className="mt-8">
