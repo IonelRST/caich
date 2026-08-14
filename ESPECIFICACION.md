@@ -737,6 +737,52 @@ Explícitamente prohibido en este producto:
 
 `DECISIÓN`: se descartan las dos direcciones alternativas evaluadas. Una paleta de gimnasio saturada (naranja de marca sobre fondo oscuro en toda la app) fallaba en las pantallas de análisis, donde el acento compite con las series de datos. Una dirección minimalista en claro para todo fallaba en la sesión en vivo, que es exactamente la pantalla que no se puede permitir fallar.
 
+## 22. Estructura de navegación
+
+### 22.1 Patrón
+
+`DECISIÓN`: **drawer en móvil, barra lateral persistente en pantalla grande.** Un único componente de navegación con dos presentaciones según el ancho disponible, no dos menús distintos que haya que mantener en paralelo.
+
+| Ancho | Presentación |
+|-------|--------------|
+| < 1024px | Oculto. Se abre con un botón en la cabecera y se superpone al contenido sobre un velo |
+| ≥ 1024px | Barra lateral fija a la izquierda, 240px, siempre visible. Sin botón de menú |
+
+`DECISIÓN`: se descarta la barra de navegación inferior de cinco iconos. La app tiene siete destinos (chat, entreno, dieta, historial, evolución, objetivos, ajustes) y una barra inferior soporta cinco como máximo antes de degradarse. Meter los dos restantes en un botón "más" convierte esa entrada en un cajón sin significado, y decidir cuáles caen dentro es una decisión arbitraria que el usuario tiene que aprender de memoria.
+
+*Motivo del patrón dual:* en desktop hay espacio horizontal de sobra y esconder la navegación detrás de un clic no gana nada. En móvil, ese mismo espacio es el que necesitan los gráficos y las tablas del historial.
+
+### 22.2 Destinos
+
+Orden fijo en ambas presentaciones. La navegación no se reordena por uso reciente: la memoria muscular de "el tercero de la lista" vale más que la optimización.
+
+| # | Destino | Contenido |
+|---|---------|-----------|
+| 1 | Hoy | Chat de entrada libre (§3) y check-in de dieta del día (§6.2) |
+| 2 | Entreno | Rutinas guardadas (§5.1) y arranque de sesión en vivo |
+| 3 | Dieta | Plan semanal (§6.1) |
+| 4 | Historial | Lista filtrable de todos los registros (§8) |
+| 5 | Evolución | Gráficos (§10) e insights (§11) |
+| 6 | Objetivos | Objetivos y progreso (§9) |
+| 7 | Ajustes | Unidades, exportación, cuenta (§13) |
+
+El destino activo se marca con indicador de forma (barra lateral de acento) **además** de color, nunca solo con color — misma regla que §21.4.
+
+### 22.3 La sesión en vivo no tiene navegación
+
+`DECISIÓN`: la pantalla de sesión de entreno en vivo (§5.2) **no muestra el botón de menú ni la barra lateral**, en ningún ancho. Su única salida es un control explícito de terminar o pausar la sesión.
+
+*Motivo:* es la pantalla que se usa de pie, con prisa y con las manos sudadas (§5.2, §21.2). Un icono de menú ahí ocupa la superficie táctil más escasa de la app y añade una forma de salirse del entreno por accidente. La sesión persistente de §5.3 protege contra perder los datos, pero no contra la interrupción.
+
+### 22.4 Requisitos de comportamiento
+
+- **Foco:** al abrirse el drawer, el foco entra en él y queda contenido mientras está abierto; al cerrarse, vuelve al botón que lo abrió.
+- **Cierre:** con `Escape`, tocando el velo, o deslizando hacia el lado. El botón de menú refleja su estado con `aria-expanded` y apunta al panel con `aria-controls`.
+- **Historial del navegador:** abrir el drawer **no** crea una entrada de historial. El botón atrás vuelve a la página anterior, no cierra el menú.
+- **Objetivos táctiles:** botón de menú y entradas del drawer cumplen el mínimo de 44×44px de §21.7.
+- **Sin desplazamiento del contenido:** el drawer se superpone, no empuja la página. En la barra lateral persistente sí se reserva el espacio en el layout, sin solapar.
+- **Movimiento:** entrada 200ms, salida 150ms; bajo `prefers-reduced-motion: reduce`, aparece y desaparece sin desplazamiento.
+
 ## Anexo A — Semilla inicial del catálogo de ejercicios (MVP)
 
 Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en español e inglés.
@@ -780,3 +826,5 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 13 | Dirección visual "Instrumento dual": tema dual + sesión en vivo siempre oscura | Paleta de gimnasio saturada en toda la app / minimalismo claro en toda la app | Análisis y sesión en vivo son contextos de uso opuestos; una sola piel falla en uno de los dos | 21 |
 | 14 | Acento único de acción, disjunto de la paleta de series | Reutilizar el acento y los colores de estado en los gráficos | Un color de estado en una serie afirma cosas que nadie ha querido decir | 21.4, 21.5 |
 | 15 | Esqueleto con pulso de opacidad | Spinner genérico / barrido de brillo | Reserva el espacio del dato y evita el reenvío por impaciencia | 21.8 |
+| 16 | Drawer en móvil + barra lateral en desktop | Barra de navegación inferior de 5 iconos | Hay 7 destinos; los dos sobrantes acabarían en un "más" arbitrario | 22.1 |
+| 17 | Sesión en vivo sin navegación | Cabecera con menú igual que el resto de pantallas | Superficie táctil escasa y riesgo de salir del entreno sin querer | 22.3 |

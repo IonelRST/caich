@@ -61,9 +61,10 @@ export default async function Portada() {
         </Link>
       )}
 
-      <nav className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <nav className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
         {[
           { href: "/rutinas", texto: "Rutinas" },
+          { href: "/dieta", texto: "Dieta" },
           { href: "/objetivos", texto: "Objetivos" },
           { href: "/evolucion", texto: "Evolución" },
           { href: "/historial", texto: "Historial" },
