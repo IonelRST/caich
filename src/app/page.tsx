@@ -61,9 +61,10 @@ export default async function Portada() {
         </Link>
       )}
 
-      <nav className="mt-8 grid grid-cols-3 gap-3">
+      <nav className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { href: "/rutinas", texto: "Rutinas" },
+          { href: "/objetivos", texto: "Objetivos" },
           { href: "/evolucion", texto: "Evolución" },
           { href: "/historial", texto: "Historial" },
         ].map((l) => (
@@ -108,6 +109,28 @@ export default async function Portada() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="mt-10 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+        <h2 className="text-sm font-medium">Tus datos</h2>
+        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+          Son datos de salud personales. Puedes descargarlos cuando quieras, sin
+          depender de que esta app siga existiendo.
+        </p>
+        <div className="mt-3 flex gap-4">
+          <a
+            href="/api/exportar?formato=json"
+            className="text-sm underline underline-offset-4"
+          >
+            Descargar todo (JSON)
+          </a>
+          <a
+            href="/api/exportar?formato=csv"
+            className="text-sm underline underline-offset-4"
+          >
+            Medidas (CSV)
+          </a>
+        </div>
       </section>
 
       <section className="mt-10 rounded-xl border border-dashed border-neutral-300 p-5 dark:border-neutral-700">
