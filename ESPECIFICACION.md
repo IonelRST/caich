@@ -630,6 +630,18 @@ principio_base                     ← base curada (sección 11.4)
 | 3 | Ampliación de la base de conocimiento del dominio | 11.6 | Gradual, según haga falta |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
 | 5 | Segunda persona (Carol): plan propio, compra conjunta, rutinas coordinadas | Anexo C.5 | Cuando la §11 revisada esté implementada |
+| 6 | Ejecución de la rutina 1:1 con Hevy: qué se copia exactamente | 5.2, 21 | Antes de tocar la sesión en vivo |
+| 7 | Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6) | 11.3, 11.6 | Antes de aplicar la migración `0003` |
+| 8 | Lista de la compra derivada del plan de dieta semanal | 6.1 | Con la Fase 1.5 en uso real |
+| 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
+
+**Sobre el 6.** "1:1 con Hevy" está sin acotar, y la respuesta cambia el trabajo entero. Copiar el *flujo* —serie a serie, temporizador de descanso, valores de la última sesión precargados, deslizar para completar— es compatible con lo que ya hay. Copiar además el *lenguaje visual* choca de frente con la §21, cerrada el 14 de agosto: la §21.2 obliga a arrancar la sesión en vivo en oscuro reforzado, y la §21.1 descarta el carácter de app que se celebra a sí misma. Hasta que no se decida cuál de las dos cosas es, no se empieza.
+
+**Sobre el 7.** Las dos piezas no hacen el mismo trabajo, así que una no sustituye a la otra. El límite médico **corta**: hay preguntas que no se responden. La base de conocimiento **sostiene**: la §11.3 exige que toda recomendación de progresión o de dieta se apoye en material aprobado y diga en qué se apoya. Sin ella, el nivel 2 no desaparece — queda apoyado en lo que el modelo recuerde, que es justo lo que la §11.6 evita al exigir aprobación previa (*"una base que se autoaprueba no cura nada"*).
+
+Si aun así se retira, hay que decidir qué pasa con el nivel 2: o baja entero a nivel 3 (observaciones sin conclusión), o se acepta recomendación sin anclaje. Y quedan sin uso la migración `0003`, `src/app/principios/`, `src/lib/ia/principios.ts` y `src/lib/datos/principios-acciones.ts`.
+
+**Sobre el 9.** `src/lib/ia/proveedor.ts` es hoy, por decisión escrita en el propio archivo, *"un interruptor de desarrollo, no una capa de abstracción de proveedores"*. Dejar elegir proveedor y modelo al usuario lo convierte exactamente en lo segundo. Antes hay que resolver dos cosas que la §14 no cubre: dónde se guarda una clave de terceros (no en `mensaje_original`, no en texto plano) y qué se le enseña al usuario cuando su elección manda datos de salud a un tercero ajeno a Anthropic. La advertencia de la §14 deja de ser una nota para desarrolladores y pasa a ser interfaz.
 
 *Cerrado:* la dirección visual (§21). Decidida el 14 de agosto de 2026 — ver §21 y decisión 13 del anexo B.
 
