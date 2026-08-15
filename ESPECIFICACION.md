@@ -406,8 +406,17 @@ Sustituye a la "base curada de principios" de la v2.0, que nació como lista de 
 
 - Si los datos contradicen lo que el usuario cree, se dice.
 - Si una decisión suya parece un error, se dice una vez, con el motivo, y se sigue.
-- Nada de celebrar cada registro: choca con el carácter definido en la §21.1 y con el principio 6 de la §1.1.
 - Sin motivación vacía ni respuestas genéricas.
+
+**Animar sí; celebrar el registro no.** Son cosas distintas y la v3.0 las separa:
+
+| Sí | No |
+|----|-----|
+| El mensaje cambia porque **el dato cambió**: "te faltan 800 g" donde antes decía "te faltan 3 kg" | Celebrar el acto de registrar: "¡bien hecho por apuntarlo!" |
+| Señalar un hito real cuando se cruza | Rachas, medallas, confeti, contadores de días seguidos |
+| Reconocer una tendencia sostenida que está en los datos | Ánimo genérico que diría lo mismo con cualquier dato |
+
+*Motivo:* lo que la §21.1 prohíbe es premiar el registro, porque empuja a registrar para sentirse bien en vez de para medir bien. Que el texto se vuelva más cercano según te acercas al objetivo no es eso: es el dato hablando. La prueba para distinguirlos es simple — **si el mensaje diría lo mismo con datos peores, es motivación vacía.**
 
 ### 11.8 Modos de entrega
 
@@ -839,6 +848,53 @@ El destino activo se marca con indicador de forma (barra lateral de acento) **ad
 - **Objetivos táctiles:** botón de menú y entradas del drawer cumplen el mínimo de 44×44px de §21.7.
 - **Sin desplazamiento del contenido:** el drawer se superpone, no empuja la página. En la barra lateral persistente sí se reserva el espacio en el layout, sin solapar.
 - **Movimiento:** entrada 200ms, salida 150ms; bajo `prefers-reduced-motion: reduce`, aparece y desaparece sin desplazamiento.
+
+---
+
+## 23. Devolución
+
+`DECISIÓN`: la entrada por lenguaje natural **no produce una conversación**. Produce una **devolución**: la app digiere lo que escribes y te devuelve una lectura estructurada, en su propio lenguaje visual. Sin burbujas de mensaje, sin hilo, sin historial de chat.
+
+*Motivo:* el uso real (anexo C) mostraba a un asistente devolviendo lecturas del estado —"has roto la barrera de los 117, la tendencia sigue bajando"—, y eso es lo que hacía falta. Pero un hilo de conversación arrastra consigo el formato chat, que empuja al tono que la §21.1 descarta y abre la puerta a preguntar cualquier cosa, incluido lo que la §11.5 no debe responder. Un panel devuelve lo que la app sabe calcular.
+
+`DECISIÓN`: se descarta el chat conversacional con historial. La entrada de texto se mantiene —es la vía más rápida de soltar *"hoy 116,9, comí X, entrené Y"*— pero es un campo de entrada, no un interlocutor.
+
+### 23.1 Dos superficies
+
+| Superficie | Cuándo | Qué muestra |
+|------------|--------|-------------|
+| **Devolución inmediata** | Justo después de registrar | La lectura de lo que acabas de meter. Se queda hasta el siguiente registro |
+| **Panel de estado** | Cuando quieras consultarlo | Tu situación general: peso y tendencia, adherencia, cargas, progreso hacia objetivos |
+
+La primera responde a *"¿y esto qué significa?"*; la segunda a *"¿cómo voy?"*. Comparten el mismo motor de cálculo: la devolución inmediata es ese motor aplicado a un registro concreto.
+
+### 23.2 Qué devuelve cada tipo de dato
+
+**Medida corporal** — el valor, el cambio desde el inicio y desde el registro anterior, la tendencia reciente, y el progreso hacia el objetivo si existe.
+
+**Entreno** — series y volumen de la sesión, qué ejercicios subieron respecto a la última vez, PRs si los hubo, y qué toca la próxima vez según la regla de progresión (§11.3).
+
+**Comida** — adherencia al plan del día y macros acumulados frente al objetivo.
+
+### 23.3 Preguntas
+
+Una pregunta que no es un registro **también devuelve un bloque**, no prosa: *"¿cuánto he perdido?"* devuelve el bloque de evolución de peso; *"¿cuántas calorías estoy comiendo?"* devuelve el de ingesta. La pregunta elige qué te enseña la app.
+
+El bloque puede ir acompañado de **una frase corta** cuando aporta algo que el bloque no dice por sí solo (*"llevas tres semanas bajando de forma sostenida"*).
+
+`ABIERTO`: esa frase es la puerta por la que puede volver a entrar el tono de chat. Regla de contención mientras se ajusta: **una sola frase, y solo si dice algo que los números no dicen ya.** Si repite lo que hay justo encima, sobra.
+
+### 23.4 Tono de la devolución
+
+Se rige por la §11.7. En concreto: el texto **puede cambiar según te acerques al objetivo** —"te faltan 800 g" donde antes decía "te faltan 3 kg"— porque eso es el dato hablando. Lo que no hace es premiar el hecho de haber registrado.
+
+La prueba para distinguirlos, tomada de la §11.7: **si el mensaje diría lo mismo con datos peores, sobra.**
+
+### 23.5 Qué pasa cuando salta el límite médico
+
+Si el texto activa el límite (§11.5), la devolución **no interpreta**: registra lo registrable y muestra el aviso. No se acompaña de lectura ni de frase de ánimo. Un panel que devuelve "vas muy bien" junto a un síntoma sin interpretar sería peor que no decir nada.
+
+---
 
 ## Anexo A — Semilla inicial del catálogo de ejercicios (MVP)
 
