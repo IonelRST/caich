@@ -45,3 +45,5 @@ next-env.d.ts
 
 # La plantilla de entorno SI se versiona (no contiene secretos)
 !.env.example
+# Added by code-review-graph
+.code-review-graph/
