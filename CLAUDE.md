@@ -1,38 +1,42 @@
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 
-**IMPORTANT: This project has a knowledge graph. ALWAYS use the
-code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
-the codebase.** The graph is faster, cheaper (fewer tokens), and gives
-you structural context (callers, dependents, test coverage) that file
-scanning cannot.
+Este proyecto tiene un grafo de conocimiento del código (`.code-review-graph/graph.db`,
+fuera del repositorio, se reconstruye con `scripts/grafo.sh build`). Para algunas
+preguntas es más barato que leer archivos: da contexto estructural —quién llama a qué,
+qué depende de qué— sin cargar el código entero.
 
-### When to use graph tools FIRST
+No sustituye a Grep/Glob/Read. Úsalo donde gana, y lee los archivos donde no.
 
-- **Exploring code**: `semantic_search_nodes_tool` or `query_graph_tool` instead of Grep
-- **Understanding impact**: `get_impact_radius_tool` instead of manually tracing imports
-- **Code review**: `detect_changes_tool` + `get_review_context_tool` instead of reading entire files
-- **Finding relationships**: `query_graph_tool` with callers_of/callees_of/imports_of/tests_for
-- **Architecture questions**: `get_architecture_overview_tool` + `list_communities_tool`
+### Dónde gana
 
-Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+- **Revisar cambios**: `detect_changes_tool` + `get_review_context_tool`. Es su mejor
+  caso: en un commit real, 2.328 tokens de contexto completo frente a 70 con el grafo.
+- **Radio de impacto**: `get_impact_radius_tool` en vez de rastrear imports a mano.
+- **Relaciones dentro de `src/`**: `query_graph_tool` con `callers_of`, `callees_of`,
+  `importers_of`.
+- **Estructura general**: `get_architecture_overview_tool`, `list_communities_tool`.
 
-### Key Tools
+### Dónde no es fiable en este repositorio
 
-| Tool | Use when |
-| ------ | ---------- |
-| `detect_changes_tool` | Reviewing code changes — gives risk-scored analysis |
-| `get_review_context_tool` | Need source snippets for review — token-efficient |
-| `get_impact_radius_tool` | Understanding blast radius of a change |
-| `get_affected_flows_tool` | Finding which execution paths are impacted |
-| `query_graph_tool` | Tracing callers, callees, imports, tests, dependencies |
-| `semantic_search_nodes_tool` | Finding functions/classes by name or keyword |
-| `get_architecture_overview_tool` | Understanding high-level codebase structure |
-| `refactor_tool` | Planning renames, finding dead code |
+Medido el 15 de agosto de 2026 con la versión 2.3.7.
 
-### Workflow
+- **`pruebas/` no está en el grafo.** El parser no reconoce la extensión `.mts`, así que
+  las dos suites (`pruebas/limite-medico.mts`, `pruebas/lectura.mts`) son invisibles.
+  **`tests_for` devuelve 0 para todo**, incluido `src/lib/devolucion/lectura.ts`, que sí
+  está probado a fondo. Para saber qué hay cubierto, lee `pruebas/` y `package.json`.
+- **`dead-code` da falsos positivos en masa.** Marca como muertas las tablas de las
+  migraciones SQL, los `export default` de las páginas de Next.js, los handlers `GET` de
+  las rutas y los server actions: no modela que ahí quien llama es el framework.
+- **El proyecto es pequeño** (60 archivos). Para explorar, un Grep suele salir igual de
+  barato y no arrastra estos huecos.
 
-1. The graph auto-updates on file changes (via hooks).
-2. Use `detect_changes_tool` for code review.
-3. Use `get_affected_flows_tool` to understand impact.
-4. Use `query_graph_tool` pattern="tests_for" to check coverage.
+### Mantenimiento
+
+- `scripts/grafo.sh` resuelve el binario por `CRG_BIN`, PATH, venvs habituales o `uvx`.
+  Los hooks de `.claude/settings.json` y el pre-commit pasan por él.
+- El grafo se actualiza solo al editar archivos y antes de cada commit.
+- El `cwd` de `.mcp.json` es una ruta absoluta del contenedor donde se instaló. En otra
+  máquina hay que volver a correr `code-review-graph install`.
+- Ese mismo comando reinyecta su versión de este archivo. Si se vuelve a ejecutar,
+  revisar que estas advertencias sigan aquí.
