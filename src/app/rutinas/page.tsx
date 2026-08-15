@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FormularioRutina } from "./formulario-rutina";
-import { empezarSesion } from "@/lib/datos/entrenos-acciones";
+import { empezarSesion, empezarSesionVacia } from "@/lib/datos/entrenos-acciones";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export const metadata = { title: "Rutinas · caich" };
@@ -20,6 +20,19 @@ export default async function Rutinas() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Rutinas</h1>
       </header>
+
+      {/* §5.2: entreno vacío — se arranca sin plan y se añaden ejercicios
+          sobre la marcha. */}
+      <section className="mt-8">
+        <form action={empezarSesionVacia}>
+          <button
+            type="submit"
+            className="h-14 w-full rounded-lg border border-borde text-base font-medium"
+          >
+            Empezar entreno vacío
+          </button>
+        </form>
+      </section>
 
       <section className="mt-8">
         <h2 className="text-sm font-medium">Nueva rutina</h2>

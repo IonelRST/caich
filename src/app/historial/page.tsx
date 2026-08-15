@@ -57,7 +57,7 @@ export default async function Historial({
           let q = supabase
             .from("registro_entreno")
             .select(
-              "id, fecha_evento, completado, registro_entreno_ejercicio(catalogo_ejercicio(nombre_canonico), registro_entreno_serie(peso, repeticiones))",
+              "id, fecha_evento, completado, registro_entreno_ejercicio(catalogo_ejercicio(nombre_canonico), registro_entreno_serie(peso, repeticiones, completada))",
             )
             .order("fecha_evento", { ascending: false })
             .limit(100);
@@ -91,10 +91,17 @@ export default async function Historial({
     ...(entrenos.data ?? []).map((e) => {
       const ejercicios = (e.registro_entreno_ejercicio ?? []) as unknown as {
         catalogo_ejercicio: { nombre_canonico: string } | null;
-        registro_entreno_serie: { peso: number | null; repeticiones: number | null }[];
+        registro_entreno_serie: {
+          peso: number | null;
+          repeticiones: number | null;
+          completada: boolean;
+        }[];
       }[];
+      // Solo cuentan las series marcadas: en una sesión en curso las filas
+      // existen desde que arranca, hechas o no (§5.2).
       const numSeries = ejercicios.reduce(
-        (n, ej) => n + (ej.registro_entreno_serie?.length ?? 0),
+        (n, ej) =>
+          n + (ej.registro_entreno_serie ?? []).filter((s) => s.completada).length,
         0,
       );
       const nombres = ejercicios

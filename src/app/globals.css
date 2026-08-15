@@ -95,7 +95,8 @@
   --color-serie-5: var(--serie-5);
 
   /* §21.6 — una sola familia para toda la interfaz. La condensada existe
-     solo para los dígitos grandes de la sesión en vivo. */
+     solo para el temporizador de descanso de la sesión en vivo: en la tabla
+     de series las cifras van en Inter, que a 16px se lee mejor. */
   --font-sans: var(--font-inter);
   --font-cifra: var(--font-barlow-condensed);
 }

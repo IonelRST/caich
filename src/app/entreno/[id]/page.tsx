@@ -1,8 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { EjercicioEnVivo } from "./ejercicio-en-vivo";
-import { terminarSesion } from "@/lib/datos/entrenos-acciones";
-import type { SerieAnterior } from "@/lib/datos/entrenos";
+import { PanelSesion, type EjercicioSesion } from "./panel-sesion";
+import type { Ejercicio, SerieAnterior, SerieRegistrada } from "@/lib/datos/entrenos";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export const metadata = { title: "Entreno · caich" };
@@ -11,13 +9,11 @@ type FilaEjercicio = {
   id: string;
   orden: number;
   ejercicio_id: string;
+  nota: string | null;
+  descanso_segundos: number | null;
+  superset_grupo: number | null;
   catalogo_ejercicio: { nombre_canonico: string } | null;
-  registro_entreno_serie: {
-    id: string;
-    numero_serie: number;
-    peso: number | null;
-    repeticiones: number | null;
-  }[];
+  registro_entreno_serie: SerieRegistrada[];
 };
 
 export default async function SesionEnVivo({
@@ -36,142 +32,113 @@ export default async function SesionEnVivo({
 
   if (!entreno) notFound();
 
-  const { data: filas } = await supabase
-    .from("registro_entreno_ejercicio")
-    .select(
-      "id, orden, ejercicio_id, catalogo_ejercicio(nombre_canonico), registro_entreno_serie(id, numero_serie, peso, repeticiones)",
-    )
-    .eq("entreno_id", id)
-    .order("orden");
+  const [{ data: filas }, { data: catalogo }] = await Promise.all([
+    supabase
+      .from("registro_entreno_ejercicio")
+      .select(
+        "id, orden, ejercicio_id, nota, descanso_segundos, superset_grupo, catalogo_ejercicio(nombre_canonico), registro_entreno_serie(id, numero_serie, tipo, peso, repeticiones, completada, peso_objetivo, reps_min, reps_max)",
+      )
+      .eq("entreno_id", id)
+      .order("orden"),
+    supabase
+      .from("catalogo_ejercicio")
+      .select("id, nombre_canonico, grupo_muscular, equipo")
+      .order("nombre_canonico"),
+  ]);
 
   const ejercicios = (filas ?? []) as unknown as FilaEjercicio[];
 
-  // Objetivos de la rutina de la que salió la sesión, si la hubo.
-  const objetivos = new Map<
-    string,
-    { series: number | null; reps: number | null; peso: number | null }
-  >();
-
-  if (entreno.plantilla_id) {
-    const { data: items } = await supabase
-      .from("plantilla_item")
-      .select("ejercicio_id, series_objetivo, reps_objetivo, peso_objetivo")
-      .eq("plantilla_id", entreno.plantilla_id);
-
-    for (const it of items ?? []) {
-      objetivos.set(it.ejercicio_id, {
-        series: it.series_objetivo,
-        reps: it.reps_objetivo,
-        peso: it.peso_objetivo,
-      });
-    }
-  }
-
-  // Referencia de la última vez (§5.2). Se traen las series recientes de esos
-  // ejercicios en otros entrenos y se elige la más reciente de cada uno.
-  const anteriores = new Map<string, SerieAnterior>();
-  const idsEjercicio = ejercicios.map((e) => e.ejercicio_id);
-
-  if (idsEjercicio.length > 0) {
-    const { data: previas } = await supabase
-      .from("registro_entreno_ejercicio")
-      .select(
-        "ejercicio_id, registro_entreno!inner(fecha_evento), registro_entreno_serie(peso, repeticiones, numero_serie)",
-      )
-      .in("ejercicio_id", idsEjercicio)
-      .neq("entreno_id", id)
-      .limit(100);
-
-    const ordenadas = (previas ?? []).slice().sort((a, b) => {
-      const fa = (a.registro_entreno as unknown as { fecha_evento: string })
-        .fecha_evento;
-      const fb = (b.registro_entreno as unknown as { fecha_evento: string })
-        .fecha_evento;
-      return fb.localeCompare(fa);
-    });
-
-    for (const p of ordenadas) {
-      if (anteriores.has(p.ejercicio_id)) continue;
-      const series = (p.registro_entreno_serie ?? []) as {
-        peso: number | null;
-        repeticiones: number | null;
-        numero_serie: number;
-      }[];
-      if (series.length === 0) continue;
-      // La serie más pesada de aquel día es la referencia más útil.
-      const mejor = series.reduce((a, b) => ((b.peso ?? 0) > (a.peso ?? 0) ? b : a));
-      anteriores.set(p.ejercicio_id, {
-        peso: mejor.peso,
-        repeticiones: mejor.repeticiones,
-      });
-    }
-  }
-
-  const totalSeries = ejercicios.reduce(
-    (n, e) => n + e.registro_entreno_serie.length,
-    0,
+  const anteriores = await leerAnteriores(
+    supabase,
+    id,
+    ejercicios.map((e) => e.ejercicio_id),
   );
+
+  const datos: EjercicioSesion[] = ejercicios.map((e) => ({
+    id: e.id,
+    nombre: e.catalogo_ejercicio?.nombre_canonico ?? "Ejercicio",
+    nota: e.nota,
+    descanso_segundos: e.descanso_segundos,
+    superset_grupo: e.superset_grupo,
+    series: e.registro_entreno_serie
+      .slice()
+      .sort((a, b) => a.numero_serie - b.numero_serie),
+    anteriores: [...(anteriores.get(e.ejercicio_id) ?? new Map())],
+  }));
 
   return (
     // §21.2: esta pantalla va siempre en oscuro reforzado, sea cual sea el tema
     // del resto de la app. La clase redefine los tokens para todo el subárbol.
+    // §22.3: sin navegación — la única salida es terminar o descartar.
     <main className="sesion-viva mx-auto min-h-dvh max-w-lg px-4 py-8">
-      <header className="flex items-baseline justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">
-            {entreno.completado ? "Entreno" : "Entreno en curso"}
-          </h1>
-          <p className="mt-0.5 text-xs text-suave">
-            {totalSeries} {totalSeries === 1 ? "serie registrada" : "series registradas"}
-          </p>
-        </div>
-        <Link
-          href="/"
-          className="text-sm text-suave underline underline-offset-4"
-        >
-          Salir
-        </Link>
-      </header>
-
-      {!entreno.completado && (
-        <p className="mt-4 rounded-lg bg-superficie px-3 py-2 text-xs text-suave">
-          Puedes cerrar esta pantalla y volver: la sesión se guarda sola y la
-          retomas donde la dejaste.
-        </p>
-      )}
-
-      <div className="mt-6 space-y-4">
-        {ejercicios.map((e) => {
-          const obj = objetivos.get(e.ejercicio_id);
-          return (
-            <EjercicioEnVivo
-              key={e.id}
-              entrenoId={id}
-              entrenoEjercicioId={e.id}
-              nombre={e.catalogo_ejercicio?.nombre_canonico ?? "Ejercicio"}
-              seriesObjetivo={obj?.series ?? null}
-              repsObjetivo={obj?.reps ?? null}
-              pesoObjetivo={obj?.peso ?? null}
-              seriesHechas={e.registro_entreno_serie
-                .slice()
-                .sort((a, b) => a.numero_serie - b.numero_serie)}
-              anterior={anteriores.get(e.ejercicio_id) ?? null}
-            />
-          );
-        })}
-      </div>
-
-      {!entreno.completado && (
-        <form action={terminarSesion} className="mt-8">
-          <input type="hidden" name="id" value={id} />
-          <button
-            type="submit"
-            className="h-12 w-full rounded-lg border border-borde text-sm font-medium"
-          >
-            Terminar entreno
-          </button>
-        </form>
-      )}
+      <PanelSesion
+        entrenoId={id}
+        inicio={entreno.fecha_evento}
+        ejercicios={datos}
+        catalogo={(catalogo as Ejercicio[]) ?? []}
+        completado={entreno.completado}
+      />
     </main>
   );
+}
+
+/**
+ * Lo que se hizo la vez anterior, serie a serie (§5.2).
+ *
+ * La referencia va por índice: la serie 3 de hoy enseña la serie 3 del último
+ * día que se hizo ese ejercicio. Si aquel día hubo menos series, no hay
+ * referencia y la celda queda vacía — que es exactamente lo que pasó.
+ *
+ * Se toma el entreno más reciente completo, no la mejor marca histórica: la
+ * pregunta que resuelve esta columna es "¿qué hice la última vez?", no "¿cuál
+ * es mi récord?".
+ */
+async function leerAnteriores(
+  supabase: Awaited<ReturnType<typeof crearClienteServidor>>,
+  entrenoActualId: string,
+  idsEjercicio: string[],
+): Promise<Map<string, Map<number, SerieAnterior>>> {
+  const porEjercicio = new Map<string, Map<number, SerieAnterior>>();
+  if (idsEjercicio.length === 0) return porEjercicio;
+
+  const { data: previas } = await supabase
+    .from("registro_entreno_ejercicio")
+    .select(
+      "ejercicio_id, registro_entreno!inner(fecha_evento, completado), registro_entreno_serie(numero_serie, peso, repeticiones, completada)",
+    )
+    .in("ejercicio_id", idsEjercicio)
+    .neq("entreno_id", entrenoActualId)
+    .eq("registro_entreno.completado", true)
+    .limit(200);
+
+  const ordenadas = (previas ?? []).slice().sort((a, b) => {
+    const fa = (a.registro_entreno as unknown as { fecha_evento: string }).fecha_evento;
+    const fb = (b.registro_entreno as unknown as { fecha_evento: string }).fecha_evento;
+    return fb.localeCompare(fa);
+  });
+
+  for (const p of ordenadas) {
+    if (porEjercicio.has(p.ejercicio_id)) continue;
+
+    const series = ((p.registro_entreno_serie ?? []) as {
+      numero_serie: number;
+      peso: number | null;
+      repeticiones: number | null;
+      completada: boolean;
+    }[]).filter((s) => s.completada);
+
+    if (series.length === 0) continue;
+
+    porEjercicio.set(
+      p.ejercicio_id,
+      new Map(
+        series.map((s) => [
+          s.numero_serie,
+          { peso: s.peso, repeticiones: s.repeticiones },
+        ]),
+      ),
+    );
+  }
+
+  return porEjercicio;
 }

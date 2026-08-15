@@ -1,200 +1,294 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useActionState, useRef } from "react";
 import {
+  anadirSerieSesion,
   borrarSerie,
-  registrarSerie,
+  completarSerie,
   type EstadoRutina,
 } from "@/lib/datos/entrenos-acciones";
-import type { SerieAnterior, SerieRegistrada } from "@/lib/datos/entrenos";
+import {
+  TIPOS_SERIE,
+  colorSuperset,
+  etiquetaSuperset,
+  textoObjetivoReps,
+  type SerieAnterior,
+  type SerieRegistrada,
+} from "@/lib/datos/entrenos";
 
 const INICIAL: EstadoRutina = {};
 
 /**
- * Un ejercicio dentro de la sesión en vivo.
+ * Un ejercicio dentro de la sesión en vivo (§5.2).
  *
- * Todo se maneja con steppers y no con teclado: esta pantalla se usa de pie,
- * con una mano y con prisa (§5.2). Los objetivos táctiles son grandes a
- * propósito — un botón pequeño es inservible con las manos sudadas.
+ * La unidad es la fila de serie, no el ejercicio: número · anterior · peso ·
+ * reps · completado. Es la densidad de la referencia, y la §21.7 la admite
+ * como única excepción al mínimo táctil global — con un suelo de 40px de alto
+ * de fila y 40×32px en el control de marcar.
  */
 export function EjercicioEnVivo({
   entrenoId,
   entrenoEjercicioId,
   nombre,
-  seriesObjetivo,
-  repsObjetivo,
-  pesoObjetivo,
-  seriesHechas,
-  anterior,
+  nota,
+  descansoSegundos,
+  supersetGrupo,
+  series,
+  anteriores,
+  alCompletar,
 }: {
   entrenoId: string;
   entrenoEjercicioId: string;
   nombre: string;
-  seriesObjetivo: number | null;
-  repsObjetivo: number | null;
-  pesoObjetivo: number | null;
-  seriesHechas: (SerieRegistrada & { id: string })[];
-  anterior: SerieAnterior | null;
+  nota: string | null;
+  descansoSegundos: number | null;
+  supersetGrupo: number | null;
+  series: SerieRegistrada[];
+  anteriores: Map<number, SerieAnterior>;
+  alCompletar: (descanso: number | null) => void;
 }) {
-  // Se arranca con lo de la última vez si existe; si no, con el objetivo de la
-  // rutina. Así lo normal es tocar "Guardar serie" sin ajustar nada.
-  const [peso, setPeso] = useState<number>(
-    anterior?.peso ?? pesoObjetivo ?? 20,
-  );
-  const [reps, setReps] = useState<number>(
-    anterior?.repeticiones ?? repsObjetivo ?? 8,
-  );
-
-  const [estado, accion] = useActionState(registrarSerie, INICIAL);
-
-  const siguienteSerie = seriesHechas.length + 1;
-  const completado =
-    seriesObjetivo != null && seriesHechas.length >= seriesObjetivo;
+  const hechas = series.filter((s) => s.completada).length;
 
   return (
-    <section className="rounded-xl border border-borde p-4">
+    <section
+      className="rounded-xl border border-borde p-3"
+      style={
+        supersetGrupo != null
+          ? {
+              borderLeftWidth: "4px",
+              borderLeftColor: colorSuperset(supersetGrupo),
+            }
+          : undefined
+      }
+    >
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="text-base font-medium">{nombre}</h2>
         <span className="shrink-0 text-xs text-suave">
-          {seriesHechas.length}
-          {seriesObjetivo != null && `/${seriesObjetivo}`} series
+          {hechas}/{series.length} series
         </span>
       </div>
 
-      {anterior && (
-        <p className="mt-1 text-xs text-suave">
-          Última vez: {anterior.peso ?? "–"} kg × {anterior.repeticiones ?? "–"}
+      {/* §21.9: el color del superset nunca es el único canal — va con borde
+          lateral y con esta etiqueta, legible en escala de grises. */}
+      {supersetGrupo != null && (
+        <p className="mt-1 text-xs font-medium text-suave">
+          Superserie {etiquetaSuperset(supersetGrupo)}
         </p>
       )}
 
-      {seriesHechas.length > 0 && (
-        <ul className="mt-3 space-y-1">
-          {seriesHechas.map((s) => (
-            <li
-              key={s.id}
-              className="flex items-center justify-between gap-3 rounded-lg bg-superficie px-3 py-1.5 text-sm"
-            >
-              <span>
-                <span className="text-suave">
-                  {s.numero_serie}.
-                </span>{" "}
-                {s.peso} kg × {s.repeticiones}
-              </span>
-              <form action={borrarSerie}>
-                <input type="hidden" name="id" value={s.id} />
-                <input type="hidden" name="entreno_id" value={entrenoId} />
-                <button
-                  type="submit"
-                  aria-label={`Borrar serie ${s.numero_serie}`}
-                  className="rounded px-2 py-0.5 text-xs text-suave hover:text-error"
-                >
-                  ✕
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-      )}
+      {nota && <p className="mt-1 text-xs text-suave">{nota}</p>}
 
-      <form action={accion} className={`mt-4 ${completado ? "opacity-60" : ""}`}>
+      <table className="mt-3 w-full text-sm">
+        <thead>
+          <tr className="text-left text-[11px] uppercase tracking-wide text-suave">
+            <th scope="col" className="w-9 pb-1 font-medium">
+              Serie
+            </th>
+            <th scope="col" className="pb-1 font-medium">
+              Anterior
+            </th>
+            <th scope="col" className="w-20 pb-1 font-medium">
+              Kg
+            </th>
+            <th scope="col" className="w-20 pb-1 font-medium">
+              Reps
+            </th>
+            <th scope="col" className="w-11 pb-1">
+              <span className="sr-only">Completada</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {series.map((s, i) => (
+            <FilaSerie
+              key={s.id}
+              entrenoId={entrenoId}
+              entrenoEjercicioId={entrenoEjercicioId}
+              serie={s}
+              anterior={anteriores.get(s.numero_serie) ?? null}
+              // §5.1: una serie descendente se encadena a la anterior, así que
+              // completar la de antes no debe abrir un descanso en medio.
+              descanso={
+                series[i + 1]?.tipo === "descendente" ? null : descansoSegundos
+              }
+              alCompletar={alCompletar}
+            />
+          ))}
+        </tbody>
+      </table>
+
+      <form action={anadirSerieSesion} className="mt-2">
         <input
           type="hidden"
           name="entreno_ejercicio_id"
           value={entrenoEjercicioId}
         />
         <input type="hidden" name="entreno_id" value={entrenoId} />
-        <input type="hidden" name="numero_serie" value={siguienteSerie} />
-        <input type="hidden" name="peso" value={peso} />
-        <input type="hidden" name="repeticiones" value={reps} />
-
-        <div className="grid grid-cols-2 gap-3">
-          <Stepper
-            etiqueta="Peso (kg)"
-            valor={peso}
-            paso={2.5}
-            minimo={0}
-            onCambio={setPeso}
-          />
-          <Stepper
-            etiqueta="Reps"
-            valor={reps}
-            paso={1}
-            minimo={0}
-            onCambio={setReps}
-          />
-        </div>
-
-        <BotonSerie numero={siguienteSerie} />
-
-        {estado.error && (
-          <p
-            role="alert"
-            className="mt-2 text-sm text-error"
-          >
-            {estado.error}
-          </p>
-        )}
+        <button
+          type="submit"
+          className="h-11 w-full rounded-lg border border-borde text-sm font-medium text-suave"
+        >
+          + Añadir serie
+        </button>
       </form>
     </section>
   );
 }
 
-function Stepper({
-  etiqueta,
-  valor,
-  paso,
-  minimo,
-  onCambio,
+function FilaSerie({
+  entrenoId,
+  entrenoEjercicioId,
+  serie,
+  anterior,
+  descanso,
+  alCompletar,
 }: {
-  etiqueta: string;
-  valor: number;
-  paso: number;
-  minimo: number;
-  onCambio: (v: number) => void;
+  entrenoId: string;
+  entrenoEjercicioId: string;
+  serie: SerieRegistrada;
+  anterior: SerieAnterior | null;
+  descanso: number | null;
+  alCompletar: (descanso: number | null) => void;
 }) {
-  const ajustar = (delta: number) =>
-    onCambio(Math.max(minimo, Math.round((valor + delta) * 10) / 10));
+  const pesoRef = useRef<HTMLInputElement>(null);
+  const repsRef = useRef<HTMLInputElement>(null);
+  const [estado, accion] = useActionState(completarSerie, INICIAL);
+
+  const sigla = TIPOS_SERIE.find((t) => t.valor === serie.tipo)?.sigla ?? "";
+  const objetivo = textoObjetivoReps(serie.reps_min, serie.reps_max);
+
+  // Precarga en cascada: lo ya tecleado, si no lo de la última vez, si no el
+  // objetivo del plan. Lo normal es marcar la serie sin tocar nada (§5.2).
+  const pesoInicial = serie.peso ?? anterior?.peso ?? serie.peso_objetivo ?? "";
+  const repsInicial = serie.repeticiones ?? anterior?.repeticiones ?? serie.reps_min ?? "";
+
+  const copiarAnterior = () => {
+    if (!anterior) return;
+    if (pesoRef.current && anterior.peso != null) {
+      pesoRef.current.value = String(anterior.peso);
+    }
+    if (repsRef.current && anterior.repeticiones != null) {
+      repsRef.current.value = String(anterior.repeticiones);
+    }
+  };
+
+  const textoAnterior = anterior
+    ? `${anterior.peso ?? "–"} kg × ${anterior.repeticiones ?? "–"}`
+    : "—";
 
   return (
-    <div>
-      <p className="text-xs font-medium text-suave">
-        {etiqueta}
-      </p>
-      <div className="mt-1 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => ajustar(-paso)}
-          aria-label={`Bajar ${etiqueta}`}
-          className="h-14 w-14 shrink-0 rounded-lg border border-borde text-2xl leading-none"
+    <tr className={serie.completada ? "bg-exito/10" : undefined}>
+      <td className="py-0.5">
+        <span
+          className="inline-flex h-10 w-9 items-center justify-center text-xs text-suave"
+          title={TIPOS_SERIE.find((t) => t.valor === serie.tipo)?.etiqueta}
         >
-          −
-        </button>
-        <output className="flex-1 text-center font-cifra text-4xl font-semibold tabular-nums">
-          {valor}
-        </output>
-        <button
-          type="button"
-          onClick={() => ajustar(paso)}
-          aria-label={`Subir ${etiqueta}`}
-          className="h-14 w-14 shrink-0 rounded-lg border border-borde text-2xl leading-none"
-        >
-          +
-        </button>
-      </div>
-    </div>
-  );
-}
+          {sigla || serie.numero_serie}
+        </span>
+      </td>
 
-function BotonSerie({ numero }: { numero: number }) {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="mt-4 h-14 w-full rounded-lg bg-accion text-base font-medium text-sobre-accion disabled:opacity-50"
-    >
-      {pending ? "Guardando…" : `Guardar serie ${numero}`}
-    </button>
+      <td className="py-0.5">
+        {/* Tocar el valor anterior lo copia a la fila (§5.2). */}
+        <button
+          type="button"
+          onClick={copiarAnterior}
+          disabled={!anterior}
+          className="h-10 w-full truncate text-left text-xs text-suave disabled:opacity-60"
+          aria-label={
+            anterior
+              ? `Usar lo de la última vez: ${textoAnterior}`
+              : "Sin referencia anterior"
+          }
+        >
+          {textoAnterior}
+        </button>
+      </td>
+
+      <td className="py-0.5">
+        <input
+          ref={pesoRef}
+          form={`serie-${serie.id}`}
+          name="peso"
+          type="number"
+          inputMode="decimal"
+          step="0.5"
+          min={0}
+          defaultValue={pesoInicial}
+          placeholder={serie.peso_objetivo != null ? String(serie.peso_objetivo) : "–"}
+          aria-label={`Peso de la serie ${serie.numero_serie}`}
+          className="h-10 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
+        />
+      </td>
+
+      <td className="py-0.5">
+        <input
+          ref={repsRef}
+          form={`serie-${serie.id}`}
+          name="repeticiones"
+          type="number"
+          inputMode="numeric"
+          step="1"
+          min={0}
+          defaultValue={repsInicial}
+          placeholder={objetivo || "–"}
+          aria-label={`Repeticiones de la serie ${serie.numero_serie}${objetivo ? `, objetivo ${objetivo}` : ""}`}
+          className="h-10 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
+        />
+      </td>
+
+      <td className="py-0.5">
+        <form id={`serie-${serie.id}`} action={accion}>
+          <input type="hidden" name="id" value={serie.id} />
+          <input type="hidden" name="entreno_id" value={entrenoId} />
+          <input
+            type="hidden"
+            name="completada"
+            value={serie.completada ? "false" : "true"}
+          />
+          <button
+            type="submit"
+            // El descanso arranca en el cliente al pulsar y no al volver del
+            // servidor: entre una cosa y otra hay una ida y vuelta de red, y
+            // el descanso ya está corriendo en la vida real.
+            onClick={() => {
+              if (!serie.completada) alCompletar(descanso);
+            }}
+            aria-pressed={serie.completada}
+            aria-label={`${serie.completada ? "Desmarcar" : "Marcar"} la serie ${serie.numero_serie}`}
+            className={`h-10 w-10 rounded-md border text-base leading-none ${
+              serie.completada
+                ? "border-exito bg-exito text-fondo"
+                : "border-borde text-suave"
+            }`}
+          >
+            ✓
+          </button>
+        </form>
+        {estado.error && (
+          <p role="alert" className="mt-1 text-[11px] text-error">
+            {estado.error}
+          </p>
+        )}
+      </td>
+
+      <td className="w-7 py-0.5">
+        <form action={borrarSerie}>
+          <input type="hidden" name="id" value={serie.id} />
+          <input type="hidden" name="entreno_id" value={entrenoId} />
+          <input
+            type="hidden"
+            name="entreno_ejercicio_id"
+            value={entrenoEjercicioId}
+          />
+          <button
+            type="submit"
+            aria-label={`Borrar la serie ${serie.numero_serie}`}
+            className="h-10 w-7 text-xs text-suave hover:text-error"
+          >
+            ✕
+          </button>
+        </form>
+      </td>
+    </tr>
   );
 }

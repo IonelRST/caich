@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     supabase
       .from("plantilla")
       .select(
-        "nombre, tipo, plantilla_item(orden, series_objetivo, reps_objetivo, peso_objetivo, descripcion, cantidad, catalogo_ejercicio(nombre_canonico))",
+        "nombre, tipo, plantilla_item(orden, nota, descanso_segundos, superset_grupo, descripcion, cantidad, catalogo_ejercicio(nombre_canonico), plantilla_serie(numero_serie, tipo, peso_objetivo, reps_min, reps_max))",
       ),
     supabase
       .from("objetivo")
