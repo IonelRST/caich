@@ -87,6 +87,29 @@ export function volumenDeSerie(peso: number | null, reps: number | null) {
   return (peso ?? 0) * (reps ?? 0);
 }
 
+/**
+ * Etiqueta de la columna SERIE, siguiendo el criterio de la referencia.
+ *
+ * El calentamiento no se numera: se marca con "C" y no gasta número, de modo
+ * que las series de trabajo van 1, 2, 3 tanto si hay calentamiento delante
+ * como si no. Las de fallo y descendente sí llevan número, con su letra al
+ * lado — son series de trabajo y saber por cuál vas importa.
+ *
+ * Numerar todo del 1 al N y luego tapar algunos números con letras daba
+ * "C, 2, 3, D": ni la cuenta de la referencia ni ninguna otra.
+ */
+export function etiquetasDeSerie(
+  tipos: TipoSerie[],
+): { numero: string; sigla: string }[] {
+  let trabajo = 0;
+  return tipos.map((tipo) => {
+    if (tipo === "calentamiento") return { numero: "", sigla: "C" };
+    trabajo++;
+    const sigla = TIPOS_SERIE.find((t) => t.valor === tipo)?.sigla ?? "";
+    return { numero: String(trabajo), sigla };
+  });
+}
+
 /** Formatea el objetivo de una serie: "8" si es fijo, "6-8" si es rango. */
 export function textoObjetivoReps(
   repsMin: number | null,

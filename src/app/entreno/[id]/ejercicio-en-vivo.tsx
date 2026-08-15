@@ -10,6 +10,7 @@ import {
 import {
   TIPOS_SERIE,
   colorSuperset,
+  etiquetasDeSerie,
   etiquetaSuperset,
   textoObjetivoReps,
   type SerieAnterior,
@@ -48,6 +49,7 @@ export function EjercicioEnVivo({
   alCompletar: (descanso: number | null) => void;
 }) {
   const hechas = series.filter((s) => s.completada).length;
+  const etiquetas = etiquetasDeSerie(series.map((s) => s.tipo));
 
   return (
     <section
@@ -105,6 +107,7 @@ export function EjercicioEnVivo({
               entrenoId={entrenoId}
               entrenoEjercicioId={entrenoEjercicioId}
               serie={s}
+              etiqueta={etiquetas[i]}
               anterior={anteriores.get(s.numero_serie) ?? null}
               // §5.1: una serie descendente se encadena a la anterior, así que
               // completar la de antes no debe abrir un descanso en medio.
@@ -139,6 +142,7 @@ function FilaSerie({
   entrenoId,
   entrenoEjercicioId,
   serie,
+  etiqueta,
   anterior,
   descanso,
   alCompletar,
@@ -146,6 +150,7 @@ function FilaSerie({
   entrenoId: string;
   entrenoEjercicioId: string;
   serie: SerieRegistrada;
+  etiqueta: { numero: string; sigla: string };
   anterior: SerieAnterior | null;
   descanso: number | null;
   alCompletar: (descanso: number | null) => void;
@@ -154,7 +159,6 @@ function FilaSerie({
   const repsRef = useRef<HTMLInputElement>(null);
   const [estado, accion] = useActionState(completarSerie, INICIAL);
 
-  const sigla = TIPOS_SERIE.find((t) => t.valor === serie.tipo)?.sigla ?? "";
   const objetivo = textoObjetivoReps(serie.reps_min, serie.reps_max);
 
   // Precarga en cascada: lo ya tecleado, si no lo de la última vez, si no el
@@ -180,10 +184,15 @@ function FilaSerie({
     <tr className={serie.completada ? "bg-exito/10" : undefined}>
       <td className="py-0.5">
         <span
-          className="inline-flex h-10 w-9 items-center justify-center text-xs text-suave"
+          className="inline-flex h-10 w-9 items-center justify-center gap-px text-xs text-suave"
           title={TIPOS_SERIE.find((t) => t.valor === serie.tipo)?.etiqueta}
         >
-          {sigla || serie.numero_serie}
+          <span className="tabular-nums">{etiqueta.numero}</span>
+          {etiqueta.sigla && (
+            <span className="text-[10px] font-semibold text-aviso">
+              {etiqueta.sigla}
+            </span>
+          )}
         </span>
       </td>
 

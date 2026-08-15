@@ -816,6 +816,21 @@ export async function guardarCierre(
       .delete()
       .in("entreno_ejercicio_id", idsFila)
       .eq("completada", false);
+
+    // Un ejercicio que se queda sin ninguna serie es un ejercicio que no se
+    // hizo: la sesión lo traía del plan y el usuario lo saltó. Dejarlo haría
+    // que el histórico dijera "press de banca" en un día en que no se tocó.
+    const { data: conSeries } = await supabase
+      .from("registro_entreno_serie")
+      .select("entreno_ejercicio_id")
+      .in("entreno_ejercicio_id", idsFila);
+
+    const usados = new Set((conSeries ?? []).map((s) => s.entreno_ejercicio_id));
+    const vacios = idsFila.filter((f) => !usados.has(f));
+
+    if (vacios.length > 0) {
+      await supabase.from("registro_entreno_ejercicio").delete().in("id", vacios);
+    }
   }
 
   if (actualizarPlantilla) await volcarSesionEnPlantilla(id, user.id);
