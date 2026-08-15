@@ -630,12 +630,18 @@ principio_base                     ← base curada (sección 11.4)
 | 3 | Ampliación de la base de conocimiento del dominio | 11.6 | Gradual, según haga falta |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
 | 5 | Segunda persona (Carol): plan propio, compra conjunta, rutinas coordinadas | Anexo C.5 | Cuando la §11 revisada esté implementada |
-| 6 | Ejecución de la rutina 1:1 con Hevy: qué se copia exactamente | 5.2, 21 | Antes de tocar la sesión en vivo |
+| 6 | Rutinas 1:1 con Hevy — crear, editar y ejecutar: qué se copia exactamente | 5.1, 5.2, 21 | Siguiente en construirse, en cuanto haya material de referencia |
 | 7 | Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6) | 11.3, 11.6 | Antes de aplicar la migración `0003` |
 | 8 | Lista de la compra derivada del plan de dieta semanal | 6.1 | Con la Fase 1.5 en uso real |
 | 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
 
-**Sobre el 6.** "1:1 con Hevy" está sin acotar, y la respuesta cambia el trabajo entero. Copiar el *flujo* —serie a serie, temporizador de descanso, valores de la última sesión precargados, deslizar para completar— es compatible con lo que ya hay. Copiar además el *lenguaje visual* choca de frente con la §21, cerrada el 14 de agosto: la §21.2 obliga a arrancar la sesión en vivo en oscuro reforzado, y la §21.1 descarta el carácter de app que se celebra a sí misma. Hasta que no se decida cuál de las dos cosas es, no se empieza.
+**Orden decidido el 15 de agosto de 2026.** Primero el punto 6; el 7, el 8 y el 9 quedan en cola. No están pendientes por olvido: están aplazados a propósito. Las notas siguientes recogen la fricción de cada uno para no tener que volver a descubrirla.
+
+**Sobre el 6.** Acotado el 15 de agosto de 2026 a tres flujos: **crear una rutina, editarla y ejecutarla**. El resto de Hevy queda fuera por ahora.
+
+Material de referencia indicado por el usuario: <https://www.hevyapp.com/features/best-way-to-track-workouts/> y las guías enlazadas desde ahí. *No leído todavía:* el entorno de desarrollo bloquea el dominio por política de red. Hasta tener capturas, el texto de las guías o el dominio permitido, el flujo de Hevy no está observado, y reconstruirlo de memoria sería suposición disfrazada de especificación.
+
+Queda una pregunta que el material no responde por sí solo: **qué se copia exactamente.** El *flujo* —serie a serie, temporizador de descanso, valores de la última sesión precargados, deslizar para completar— es compatible con lo que ya hay. El *lenguaje visual* choca de frente con la §21, cerrada el 14 de agosto: la §21.2 obliga a arrancar la sesión en vivo en oscuro reforzado, y la §21.1 descarta el carácter de app que se celebra a sí misma. Donde las dos cosas discrepen, hay que elegir una.
 
 **Sobre el 7.** Las dos piezas no hacen el mismo trabajo, así que una no sustituye a la otra. El límite médico **corta**: hay preguntas que no se responden. La base de conocimiento **sostiene**: la §11.3 exige que toda recomendación de progresión o de dieta se apoye en material aprobado y diga en qué se apoya. Sin ella, el nivel 2 no desaparece — queda apoyado en lo que el modelo recuerde, que es justo lo que la §11.6 evita al exigir aprobación previa (*"una base que se autoaprueba no cura nada"*).
 
