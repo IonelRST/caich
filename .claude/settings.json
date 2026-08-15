@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat >/dev/null || true; RAIZ=\"$(git rev-parse --show-toplevel 2>/dev/null)\" || exit 0; [ -x \"$RAIZ/scripts/grafo.sh\" ] || exit 0; \"$RAIZ/scripts/grafo.sh\" update --skip-flows --repo \"$RAIZ\" || true",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat >/dev/null || true; RAIZ=\"$(git rev-parse --show-toplevel 2>/dev/null)\" || exit 0; [ -x \"$RAIZ/scripts/grafo.sh\" ] || exit 0; \"$RAIZ/scripts/grafo.sh\" status --repo \"$RAIZ\" || true",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

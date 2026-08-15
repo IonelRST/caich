@@ -36,7 +36,9 @@ export default async function Objetivos() {
         .from("registro_entreno_serie")
         .select(
           "peso, registro_entreno_ejercicio!inner(ejercicio_id, catalogo_ejercicio(nombre_canonico))",
-        ),
+        )
+        // Una serie planificada y no marcada no es una marca conseguida (§5.2).
+        .eq("completada", true),
     ]);
 
   // Valor actual e inicial de cada medida, para calcular el progreso.

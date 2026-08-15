@@ -16,7 +16,7 @@ function Boton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion disabled:opacity-50"
+      className="h-11 rounded-lg bg-accion px-4 text-sm font-medium text-sobre-accion disabled:opacity-50"
     >
       {pending ? "Añadiendo…" : "Añadir"}
     </button>
@@ -24,8 +24,15 @@ function Boton() {
 }
 
 const claseCampo =
-  "w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
+  "h-11 w-full rounded-lg border border-borde bg-transparent px-3 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
 
+/**
+ * Alta de un ejercicio en la rutina (§5.1).
+ *
+ * Pide "cuántas series" por comodidad, pero lo que se crea son N filas
+ * independientes. A partir de ahí cada una se edita por separado arriba: es
+ * ahí donde se marca el calentamiento o la serie descendente.
+ */
 export function FormularioEjercicio({
   rutinaId,
   ejercicios,
@@ -43,12 +50,7 @@ export function FormularioEjercicio({
         <label htmlFor="ejercicio_id" className="block text-sm font-medium">
           Ejercicio
         </label>
-        <select
-          id="ejercicio_id"
-          name="ejercicio_id"
-          required
-          className={claseCampo}
-        >
+        <select id="ejercicio_id" name="ejercicio_id" required className={claseCampo}>
           {ejercicios.map((e) => (
             <option key={e.id} value={e.id}>
               {e.nombre_canonico}
@@ -59,13 +61,13 @@ export function FormularioEjercicio({
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <div className="w-24 space-y-1.5">
-          <label htmlFor="series_objetivo" className="block text-sm font-medium">
+        <div className="w-20 space-y-1.5">
+          <label htmlFor="series" className="block text-sm font-medium">
             Series
           </label>
           <input
-            id="series_objetivo"
-            name="series_objetivo"
+            id="series"
+            name="series"
             type="number"
             min={1}
             max={20}
@@ -75,13 +77,13 @@ export function FormularioEjercicio({
           />
         </div>
 
-        <div className="w-24 space-y-1.5">
-          <label htmlFor="reps_objetivo" className="block text-sm font-medium">
+        <div className="w-20 space-y-1.5">
+          <label htmlFor="reps_min" className="block text-sm font-medium">
             Reps
           </label>
           <input
-            id="reps_objetivo"
-            name="reps_objetivo"
+            id="reps_min"
+            name="reps_min"
             type="number"
             min={1}
             max={100}
@@ -91,7 +93,22 @@ export function FormularioEjercicio({
           />
         </div>
 
-        <div className="w-28 space-y-1.5">
+        <div className="w-20 space-y-1.5">
+          <label htmlFor="reps_max" className="block text-sm font-medium">
+            a
+          </label>
+          <input
+            id="reps_max"
+            name="reps_max"
+            type="number"
+            min={1}
+            max={100}
+            placeholder="rango"
+            className={claseCampo}
+          />
+        </div>
+
+        <div className="w-24 space-y-1.5">
           <label htmlFor="peso_objetivo" className="block text-sm font-medium">
             Peso (kg)
           </label>
@@ -105,6 +122,25 @@ export function FormularioEjercicio({
             className={claseCampo}
           />
         </div>
+
+        <div className="w-32 space-y-1.5">
+          <label htmlFor="descanso_segundos" className="block text-sm font-medium">
+            Descanso
+          </label>
+          <select
+            id="descanso_segundos"
+            name="descanso_segundos"
+            defaultValue="90"
+            className={claseCampo}
+          >
+            <option value="">Sin temporizador</option>
+            {[30, 45, 60, 90, 120, 150, 180, 240, 300].map((s) => (
+              <option key={s} value={s}>
+                {s < 60 ? `${s} s` : `${Math.floor(s / 60)} min${s % 60 ? ` ${s % 60} s` : ""}`}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
@@ -115,10 +151,7 @@ export function FormularioEjercicio({
           </span>
         )}
         {estado.aviso && (
-          <span
-            role="status"
-            className="text-sm text-exito"
-          >
+          <span role="status" className="text-sm text-exito">
             {estado.aviso}
           </span>
         )}

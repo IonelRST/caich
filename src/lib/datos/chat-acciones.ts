@@ -242,6 +242,10 @@ export async function registrarPorChat(
         numero_serie: i + 1,
         peso: s.peso,
         repeticiones: s.repeticiones,
+        // Una serie contada por chat ya se hizo: no hay nada que marcar
+        // después. El default de la tabla es false porque lo pensado para la
+        // sesión en vivo, donde la fila nace antes de hacerse (§5.2).
+        completada: true,
       })),
     );
 

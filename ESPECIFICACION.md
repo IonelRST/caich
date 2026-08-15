@@ -24,8 +24,12 @@ Cuando una sección dice que algo "no se hace" o "queda fuera", es una exclusió
 | 5 | Tono: feedback honesto por defecto, sin validación automática | 11.7 |
 | 6 | El chat responde preguntas sobre el propio histórico, no solo registra | 11.2 |
 | 7 | Nuevo anexo C con el análisis del uso real que motiva la revisión | Anexo C |
+| 8 | La §5 se revisa contra la documentación de Hevy: filas de serie explícitas, tipos de serie, temporizador de descanso, supersets, anterior por índice de serie y pregunta de actualizar plantilla al cerrar | 5 |
+| 9 | La §21 se enmienda donde el flujo de Hevy la contradecía: densidad de la tabla de series, color de superset y alcance de la prohibición de números animados | 21.4, 21.5, 21.6, 21.7, 21.9 |
 
 *Motivo de la revisión:* en un mes de uso real con un asistente genérico, solo 1 de cada 6 mensajes era registrar datos. La v2.0 solo admitía ese sexto.
+
+*Motivo de los cambios 8 y 9:* la §5 describía el flujo de Hevy de memoria, porque el dominio estaba bloqueado por red. Al leerlo (§19 punto 6), parte de lo escrito resultó ser suposición — incluido "deslizar para completar", que Hevy no hace.
 
 ### 0.2 Cambios de la v2.0 respecto a la v1.0
 
@@ -163,23 +167,47 @@ Replica el flujo de registro de Hevy: crear rutinas y ejecutarlas serie a serie.
 
 `DECISIÓN`: se replica **solo la parte de registro**. Todo el componente social de Hevy queda explícitamente fuera: sin feed, sin seguir a otros usuarios, sin likes ni comentarios, sin perfiles públicos, sin compartir entrenos.
 
+`DECISIÓN`: el alcance del 1:1 son **tres flujos** — crear una rutina, editarla y ejecutarla (§19 punto 6). Carpetas de rutinas, biblioteca de programas compartidos y catálogo masivo de ejercicios quedan fuera de esta revisión.
+
+**Procedencia de esta sección.** Revisada el 15 de agosto de 2026 contra la documentación de producto de Hevy (§19 punto 6). Lo marcado `[O]` está documentado por Hevy o leído en el código; lo marcado `[S]` es suposición. Hevy documenta su comportamiento, pero no se ha ejecutado la app: nada de lo de abajo está observado en pantalla.
+
 ### 5.1 Rutinas guardadas
 
-- Una rutina es una plantilla con nombre (ej. "Pierna A") y una lista ordenada de ejercicios, cada uno con series, repeticiones y peso objetivo.
+- Una rutina es una plantilla con nombre (ej. "Pierna A") y una lista **ordenada y reordenable** de ejercicios. `[O]`
 - Cada ejercicio de la rutina apunta al catálogo (sección 4.1), no a texto libre.
-- Las rutinas se crean, editan y borran **tanto por interfaz como por chat** (ej. *"guarda esta rutina como 'Pierna A'..."*), para no romper el principio chat-first en la configuración.
+- **Cada ejercicio contiene filas de serie explícitas**, no un contador. Cada fila lleva peso objetivo y repeticiones como **valor fijo o rango** (ej. 6-8). `[O]` Sustituye a los campos `series_objetivo` / `reps_objetivo` del modelo anterior, y es el cambio estructural de mayor alcance de esta revisión.
+- **Tipo por fila:** normal, calentamiento, al fallo, descendente. `[O]` Una serie descendente **no arranca el temporizador de descanso** de la siguiente. `[O]`
+- **Nota por ejercicio**, visible durante la sesión en vivo. `[O]`
+- **Descanso por ejercicio:** de 5 segundos a 5 minutos, o desactivado. `[O]`
+- **Supersets:** dos o más ejercicios agrupados, con desplazamiento automático al siguiente al completar una serie. `[O]`
+- Ejercicios de duración (columna de tiempo en lugar de repeticiones): **aplazado** hasta que el catálogo tenga alguno. `[S]`
+- Las rutinas se crean, editan y borran por interfaz. La entrada de texto de la §23 también las produce: devuelve la rutina estructurada para confirmar, no abre una conversación.
+
+`DECISIÓN`: se corrige la redacción anterior, que decía "tanto por interfaz como por chat". La §23 eliminó el chat conversacional el 15 de agosto de 2026 y esa frase quedó huérfana. La entrada de texto sigue existiendo; el interlocutor no.
 
 ### 5.2 Sesión en vivo
 
-- El usuario elige una rutina y empieza la sesión.
-- Por cada serie, la interfaz permite introducir peso y repeticiones con **controles rápidos (steppers), no escribiendo frases**.
-- Cada serie muestra como referencia lo que se hizo la vez anterior en ese mismo ejercicio (ej. *"última vez: 80kg × 8"*).
-- Se puede desviar de la rutina sobre la marcha: añadir un ejercicio no planificado, saltar uno, o cambiar series/peso.
-- Al terminar, la sesión se guarda como un entreno estructurado.
+- El usuario elige una rutina y empieza la sesión. La sesión copia los ejercicios y sus filas de serie planificadas, y a partir de ahí es independiente de la rutina.
+- **Cabecera fija** con duración transcurrida, volumen acumulado y series completadas. `[O]`
+- Cada serie es **una fila de tabla**: número · anterior · peso · repeticiones · completado. `[O]`
+- **La referencia anterior es por índice de serie**, no un único valor por ejercicio: la serie 3 de hoy muestra la serie 3 de la última vez. Si la vez anterior hubo menos series, la fila queda vacía. `[O]` Sustituye a la heurística de "serie más pesada del último entreno".
+- Tocar el valor anterior lo copia a la fila actual. `[O]`
+- **Completar una serie arranca el temporizador de descanso** del ejercicio, con `-15` / `+15` y aviso al llegar a cero. `[O]`
+- Deslizar una fila hacia la izquierda la borra. `[O]`
+- Se puede desviar de la rutina sobre la marcha: añadir un ejercicio no planificado, añadir o quitar series, saltar un ejercicio, o cambiar peso y repeticiones.
+- **Empezar sin rutina** (entreno vacío) y añadir ejercicios sobre la marcha. `[O]`
+- **Descartar la sesión**, con confirmación. `[O]`
 
 `DECISIÓN`: el entreno en vivo **no pasa por la IA en ningún momento**. Nace ya estructurado, así que no hay parseo, ni coste de API, ni riesgo de error de interpretación.
 
-### 5.3 Sesión interrumpida
+### 5.3 Cierre de sesión
+
+- Pantalla de cierre con duración, volumen, series y ejercicios, editable en fecha, hora y nombre. `[O]`
+- **Si la sesión se desvió de la rutina, se pregunta si actualizar la plantilla o dejarla como estaba.** `[O]` Ningún cambio hecho durante la sesión toca la rutina sin esa confirmación explícita.
+
+`DECISIÓN`: se descarta la capa celebratoria del cierre de Hevy — récords personales destacados, notificación de récord en vivo, comparación motivacional de volumen, métricas de constancia e ilustraciones compartibles. Contradice la §21.9 (gamificación) y el carácter de la §21.1.
+
+### 5.4 Sesión interrumpida
 
 Una sesión en curso se guarda de forma persistente mientras dura (no solo en memoria del navegador). Si se cierra la pestaña, se agota la batería o se pierde la conexión, al volver se puede retomar donde se dejó.
 
@@ -630,6 +658,37 @@ principio_base                     ← base curada (sección 11.4)
 | 3 | Ampliación de la base de conocimiento del dominio | 11.6 | Gradual, según haga falta |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
 | 5 | Segunda persona (Carol): plan propio, compra conjunta, rutinas coordinadas | Anexo C.5 | Cuando la §11 revisada esté implementada |
+| 6 | Rutinas 1:1 con Hevy — crear, editar y ejecutar: qué se copia exactamente | 5.1, 5.2, 21 | Siguiente en construirse, en cuanto haya material de referencia |
+| 7 | Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6) | 11.3, 11.6 | Antes de aplicar la migración `0003` |
+| 8 | Lista de la compra derivada del plan de dieta semanal | 6.1 | Con la Fase 1.5 en uso real |
+| 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
+
+**Orden decidido el 15 de agosto de 2026.** Primero el punto 6; el 7, el 8 y el 9 quedan en cola. No están pendientes por olvido: están aplazados a propósito. Las notas siguientes recogen la fricción de cada uno para no tener que volver a descubrirla.
+
+**Sobre el 6.** Acotado el 15 de agosto de 2026 a tres flujos: **crear una rutina, editarla y ejecutarla**. El resto de Hevy queda fuera por ahora.
+
+Material de referencia indicado por el usuario: <https://www.hevyapp.com/features/best-way-to-track-workouts/> y las guías enlazadas desde ahí.
+
+**Material leído el 15 de agosto de 2026**, una vez permitido el dominio en el entorno: la página raíz y nueve guías enlazadas (`gym-routines`, `exercise-programming-options`, `how-to-write-sets-and-reps`, `workout-set-types`, `workout-rest-timer`, `track-exercises`, `workout-log`, `what-are-supersets`, `start-empty-workout`). Son páginas de producto de Hevy describiendo su propia app, **no la app ejecutándose**: el comportamiento está documentado por el fabricante, no observado en pantalla. Ninguna publica medidas, de ahí que la altura de fila de la §21.7 sea estimación.
+
+**Corrección al enunciado original de este punto.** "Deslizar para completar" no es de Hevy. En Hevy se **marca** la serie como completada (y eso dispara el temporizador de descanso); **deslizar a la izquierda borra** la serie. La suposición estaba escrita aquí desde antes de leer el material. Si se quiere deslizar para completar, es una divergencia deliberada, no un 1:1.
+
+**Resuelto el 15 de agosto de 2026: qué se copia exactamente.** El *flujo* se adopta entero — serie a serie, temporizador de descanso, valores de la última sesión precargados por índice de serie. Del *lenguaje visual*, cuatro discrepancias con la §21 decididas por el usuario:
+
+1. **Fila de serie:** se adopta la tabla densa de Hevy tal cual. Obliga a enmendar la §21.6 (tamaño de cifra) y la §21.7 (objetivos táctiles), hecho en la misma revisión.
+2. **Supersets:** se adopta el color por superset de Hevy. Obliga a abrir excepción en la §21.4 y a extender la §21.5.
+3. **Cierre de sesión:** se rechaza la capa celebratoria de Hevy. Prevalece la §21.9 y el carácter de la §21.1.
+4. **Temporizador de descanso:** se acota la prohibición de la §21.9 a valores medidos; un cronómetro cuyo cambio es el dato queda fuera.
+
+La §21.2 no entra en conflicto: la sesión en vivo sigue arrancando en oscuro reforzado, sea cual sea el tema general, y el constructor de rutinas sigue el tema normal de la app.
+
+*Pendiente de cierre:* este punto se cierra cuando los tres flujos estén construidos. La especificación ya está decidida.
+
+**Sobre el 7.** Las dos piezas no hacen el mismo trabajo, así que una no sustituye a la otra. El límite médico **corta**: hay preguntas que no se responden. La base de conocimiento **sostiene**: la §11.3 exige que toda recomendación de progresión o de dieta se apoye en material aprobado y diga en qué se apoya. Sin ella, el nivel 2 no desaparece — queda apoyado en lo que el modelo recuerde, que es justo lo que la §11.6 evita al exigir aprobación previa (*"una base que se autoaprueba no cura nada"*).
+
+Si aun así se retira, hay que decidir qué pasa con el nivel 2: o baja entero a nivel 3 (observaciones sin conclusión), o se acepta recomendación sin anclaje. Y quedan sin uso la migración `0003`, `src/app/principios/`, `src/lib/ia/principios.ts` y `src/lib/datos/principios-acciones.ts`.
+
+**Sobre el 9.** `src/lib/ia/proveedor.ts` es hoy, por decisión escrita en el propio archivo, *"un interruptor de desarrollo, no una capa de abstracción de proveedores"*. Dejar elegir proveedor y modelo al usuario lo convierte exactamente en lo segundo. Antes hay que resolver dos cosas que la §14 no cubre: dónde se guarda una clave de terceros (no en `mensaje_original`, no en texto plano) y qué se le enseña al usuario cuando su elección manda datos de salud a un tercero ajeno a Anthropic. La advertencia de la §14 deja de ser una nota para desarrolladores y pasa a ser interfaz.
 
 *Cerrado:* la dirección visual (§21). Decidida el 14 de agosto de 2026 — ver §21 y decisión 13 del anexo B.
 
@@ -725,6 +784,8 @@ Dos restricciones condicionan todo lo que sigue:
 
 *Motivo del acento único:* en una pantalla que se usa con prisa y a una mano, el color tiene que responder a una sola pregunta — "¿dónde toco?". Repartir el acento entre decoración y acción destruye esa señal justo donde más importa.
 
+`DECISIÓN` (15 de agosto de 2026): el acento único **no impide el color de agrupación de supersets** (§5.1, §21.5). Ese color nunca es naranja y nunca marca algo accionable, así que no compite con la señal de "¿dónde toco?".
+
 **Regla de estimación** (§4.2): un valor de origen `estimado` se marca siempre con el color de aviso **y** con un indicador no cromático (icono o etiqueta textual). Nunca solo con color.
 
 ### 21.5 Paleta de series de datos
@@ -749,6 +810,10 @@ Reglas de uso:
 
 *Motivo:* si el verde de "éxito" es también el color de una serie de calorías, un pico de esa serie se lee como una señal positiva que nadie ha querido decir. Separar los dos vocabularios evita afirmar cosas por accidente — que es la versión visual del principio 4 (*la IA nunca inventa*).
 
+`DECISIÓN` (15 de agosto de 2026): los **colores de superset** de la sesión en vivo (§5.1) reutilizan esta misma paleta categórica, en orden. No hay conflicto de vocabularios: un superset y un gráfico no coinciden nunca en pantalla, y ningún color de estado ni el acento de acción entra en el juego.
+
+El color **nunca es el único canal** (§21.9): cada superset lleva además corchete lateral y etiqueta textual ("Superserie A"), y sigue siendo identificable en escala de grises.
+
 ### 21.6 Tipografía
 
 `DECISIÓN`: **una sola familia para toda la interfaz — Inter** —, con una segunda familia acotada a un único uso.
@@ -757,16 +822,23 @@ Reglas de uso:
 |-----|---------|-------|
 | Titulares, cuerpo, etiquetas, tablas | Inter | Variable; pesos 400 / 500 / 600 / 700 |
 | Cifras en tablas, historial y gráficos | Inter con `font-variant-numeric: tabular-nums` | Obligatorio: los pesos y macros deben alinearse en columna |
-| Dígitos grandes de la sesión en vivo | Barlow Condensed 600-700 | **Solo aquí.** No aparece en ninguna otra pantalla |
+| Temporizador de descanso de la sesión en vivo | Barlow Condensed 600-700 | **Solo aquí.** No aparece en ninguna otra pantalla |
 
 *Motivo de la segunda familia:* en la sesión en vivo, "112,5 kg × 8" tiene que caber grande en un móvil estrecho y leerse con el brazo estirado. Una condensada gana el tamaño que hace falta sin partir la línea. Fuera de esa pantalla no aporta nada, así que no entra.
 
-Escala mínima: cuerpo 16px, nunca texto informativo por debajo de 12px, interlineado 1.5 en texto corrido. En la sesión en vivo, el valor de la serie se muestra a 32px o más.
+Escala mínima: cuerpo 16px, nunca texto informativo por debajo de 12px, interlineado 1.5 en texto corrido.
+
+`DECISIÓN` (15 de agosto de 2026): en la **tabla de series** de la sesión en vivo (§5.2), las cifras de peso y repeticiones van a **16px en Inter** con `tabular-nums`, no en Barlow Condensed: a esa escala la condensada no aporta tamaño y perjudica la legibilidad. Barlow Condensed 600-700 queda reservada al **temporizador de descanso**, a 32px o más.
+
+*Nota sobre el motivo original:* la segunda familia entró para que "112,5 kg × 8" cupiese grande en un móvil estrecho. Al adoptar la tabla serie a serie de Hevy, ese motivo desaparece — las cifras de serie ya no son el elemento grande de la pantalla. La familia sigue justificada, pero por el temporizador, que es lo que se lee con el brazo estirado.
 
 ### 21.7 Objetivos táctiles y espaciado
 
-- **Mínimo global:** 44×44px con 8px de separación entre objetivos.
-- **En la sesión en vivo:** 56px de alto mínimo para steppers y botón de confirmar serie, con al menos 12px de separación. El botón de confirmar serie es el elemento más grande de la pantalla y está en el tercio inferior, alcanzable con el pulgar.
+- **Mínimo global:** 44×44px con 8px de separación entre objetivos. **Única excepción: la tabla de series de la sesión en vivo (§5.2)**, que se rige por el punto siguiente.
+- **En la tabla de series de la sesión en vivo:** la unidad táctil es la fila de serie, a la densidad de Hevy — **40px de alto**, con el control de completado ocupando toda la altura de la fila y un objetivo de **40×32px**. `[S]` Los 40px son estimación: Hevy no publica su altura de fila y la app no se ha ejecutado. El **suelo absoluto es 24×24px** (WCAG 2.2, criterio 2.5.8, nivel AA); por debajo no se baja en ningún caso.
+- **Botón de terminar sesión:** 56px de alto, en el tercio inferior, alcanzable con el pulgar.
+
+`DECISIÓN` (15 de agosto de 2026): se acepta bajar del mínimo global en esta tabla a cambio de la vista de conjunto serie a serie, que es el núcleo del flujo de Hevy (§5.2). **Es una concesión conocida, no un descuido:** los 56px originales protegían exactamente el caso de esta pantalla — de pie, con una mano, con las manos sudadas. Si el uso real muestra fallos de puntería al completar series, este es el primer parámetro que se revisa.
 - **Densidad:** alta en historial, tablas y gráficos (escala de 8-32px); espaciada en chat, planificación y ajustes (16-48px).
 - Se respetan las áreas seguras del dispositivo (notch, barra inferior); nada accionable queda debajo del borde de gesto.
 
@@ -798,7 +870,7 @@ Explícitamente prohibido en este producto:
 | **Fondo claro en la sesión en vivo** | Contradice 21.2 |
 | **El acento de acción en gráficos o decoración** | Contradice 21.4 |
 | **Quitar el anillo de foco** | El chat y los formularios se usan con teclado en desktop |
-| **Números que se animan al cambiar** (contadores que suben) | Un peso corporal no "sube": se mide. Animarlo lo convierte en espectáculo |
+| **Valores medidos que se animan al cambiar** (peso corporal, volumen o macros subiendo como contador) | Un peso corporal no "sube": se mide. Animarlo lo convierte en espectáculo. **No aplica al temporizador de descanso** (§5.2), donde el cambio del número *es* el dato |
 | **Fotos de gimnasio, siluetas musculadas, imágenes de stock fitness** | Es una herramienta personal de medición, no una marca deportiva |
 
 `DECISIÓN`: se descartan las dos direcciones alternativas evaluadas. Una paleta de gimnasio saturada (naranja de marca sobre fondo oscuro en toda la app) fallaba en las pantallas de análisis, donde el acento compite con las series de datos. Una dirección minimalista en claro para todo fallaba en la sesión en vivo, que es exactamente la pantalla que no se puede permitir fallar.
@@ -838,7 +910,7 @@ El destino activo se marca con indicador de forma (barra lateral de acento) **ad
 
 `DECISIÓN`: la pantalla de sesión de entreno en vivo (§5.2) **no muestra el botón de menú ni la barra lateral**, en ningún ancho. Su única salida es un control explícito de terminar o pausar la sesión.
 
-*Motivo:* es la pantalla que se usa de pie, con prisa y con las manos sudadas (§5.2, §21.2). Un icono de menú ahí ocupa la superficie táctil más escasa de la app y añade una forma de salirse del entreno por accidente. La sesión persistente de §5.3 protege contra perder los datos, pero no contra la interrupción.
+*Motivo:* es la pantalla que se usa de pie, con prisa y con las manos sudadas (§5.2, §21.2). Un icono de menú ahí ocupa la superficie táctil más escasa de la app y añade una forma de salirse del entreno por accidente. La sesión persistente de §5.4 protege contra perder los datos, pero no contra la interrupción.
 
 ### 22.4 Requisitos de comportamiento
 
@@ -941,6 +1013,10 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 15 | Esqueleto con pulso de opacidad | Spinner genérico / barrido de brillo | Reserva el espacio del dato y evita el reenvío por impaciencia | 21.8 |
 | 16 | Drawer en móvil + barra lateral en desktop | Barra de navegación inferior de 5 iconos | Hay 7 destinos; los dos sobrantes acabarían en un "más" arbitrario | 22.1 |
 | 17 | Sesión en vivo sin navegación | Cabecera con menú igual que el resto de pantallas | Superficie táctil escasa y riesgo de salir del entreno sin querer | 22.3 |
+| 18 | Filas de serie explícitas, con tipo y rango de reps | Contadores `series_objetivo` / `reps_objetivo` | Un contador no puede expresar calentamiento, serie descendente ni rango; es el mínimo para el 1:1 | 5.1 |
+| 19 | Tabla de series densa de Hevy (fila de 40px) | Mantener los steppers grandes de 56px | La vista de conjunto serie a serie es el núcleo del flujo; se acepta la concesión táctil a sabiendas | 5.2, 21.6, 21.7 |
+| 20 | Color por superset, reutilizando la paleta de series | Agrupación solo por forma, sin color | Supersets y gráficos no coinciden nunca en pantalla; el color va acompañado de corchete y etiqueta | 5.1, 21.4, 21.5 |
+| 21 | Cierre de sesión sobrio | Resumen celebratorio de Hevy (récords, comparativa de volumen, compartibles) | Premia registrar, no medir; la §21.9 lo prohíbe por nombre | 5.3, 21.9 |
 
 ---
 

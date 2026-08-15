@@ -7,7 +7,8 @@ App web de tracking fitness con IA: registro de entrenos, comida y medidas corpo
 | Área | Estado |
 |------|--------|
 | Login, RLS, historial, exportación | Funcionando |
-| Rutinas, entreno en vivo, plan de dieta | Funcionando |
+| Plan de dieta | Funcionando |
+| Rutinas y entreno en vivo 1:1 con Hevy (§5) | Construido, **requiere aplicar la migración 0004** |
 | Chat de texto libre + parseo a datos (§3, §7) | Funcionando |
 | Objetivos y gráficos de evolución | Funcionando |
 | Insights de nivel 1 — estadísticas puras (§11.1) | Funcionando |
@@ -34,9 +35,16 @@ En el panel de Supabase → **SQL Editor**, ejecutar en orden:
 1. `supabase/migrations/0001_esquema_inicial.sql` — tablas, RLS y políticas
 2. `supabase/migrations/0002_semilla_catalogo.sql` — 15 ejercicios iniciales
 3. `supabase/migrations/0003_principios_base.sql` — base curada de principios (§11.4)
+4. `supabase/migrations/0004_series_de_rutina.sql` — series como filas (§5.1, §5.2)
 
 > **La 0003 está sin aplicar.** Hasta que se ejecute, `/principios` muestra un aviso
 > de tabla ausente y los insights de nivel 2 no tienen anclaje posible.
+
+> **La 0004 está sin aplicar.** Es obligatoria para `/rutinas` y `/entreno`: crea
+> `plantilla_serie`, añade columnas a las tablas de sesión y **elimina**
+> `series_objetivo`, `reps_objetivo` y `peso_objetivo` de `plantilla_item`. Hasta
+> ejecutarla, esas dos pantallas fallan al consultar. Convierte sola las rutinas
+> que ya existan: cada ejercicio pasa a tener sus N series con el mismo objetivo.
 
 ### 3. Configurar las variables de entorno
 

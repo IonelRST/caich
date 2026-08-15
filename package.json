@@ -9,7 +9,8 @@
     "lint": "eslint",
     "prueba:limite": "node --experimental-strip-types --no-warnings pruebas/limite-medico.mts",
     "prueba:lectura": "node --experimental-strip-types --no-warnings pruebas/lectura.mts",
-    "pruebas": "npm run prueba:limite && npm run prueba:lectura"
+    "pruebas": "npm run prueba:limite && npm run prueba:lectura && npm run prueba:rutinas",
+    "prueba:rutinas": "node --experimental-strip-types --no-warnings pruebas/rutinas.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.117.1",

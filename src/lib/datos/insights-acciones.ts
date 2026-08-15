@@ -18,7 +18,11 @@ type FilaEntrenoCruda = {
   fecha_evento: string;
   registro_entreno_ejercicio: {
     catalogo_ejercicio: { grupo_muscular: string | null } | null;
-    registro_entreno_serie: { peso: number | null; repeticiones: number | null }[];
+    registro_entreno_serie: {
+      peso: number | null;
+      repeticiones: number | null;
+      completada: boolean;
+    }[];
   }[];
 };
 
@@ -37,7 +41,7 @@ async function leerDatos() {
     supabase
       .from("registro_entreno")
       .select(
-        "fecha_evento, registro_entreno_ejercicio(catalogo_ejercicio(grupo_muscular), registro_entreno_serie(peso, repeticiones))",
+        "fecha_evento, registro_entreno_ejercicio(catalogo_ejercicio(grupo_muscular), registro_entreno_serie(peso, repeticiones, completada))",
       )
       .gte("fecha_evento", desde),
     supabase
@@ -62,7 +66,10 @@ async function leerDatos() {
     fecha_evento: e.fecha_evento,
     ejercicios: e.registro_entreno_ejercicio.map((ej) => ({
       grupo_muscular: ej.catalogo_ejercicio?.grupo_muscular ?? null,
-      series: ej.registro_entreno_serie,
+      // Las series sin marcar son plan, no entrenamiento: una sesión en curso
+      // las tiene creadas desde que arranca (§5.2). Contarlas inflaría el
+      // volumen y las series por grupo muscular con trabajo que no se ha hecho.
+      series: ej.registro_entreno_serie.filter((s) => s.completada),
     })),
   }));
 
