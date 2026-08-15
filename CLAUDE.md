@@ -1,3 +1,41 @@
+# Cómo trabajar en este proyecto
+
+## Principios de trabajo
+
+El orden importa. Cuando dos reglas choquen, gana la de más arriba:
+
+1. Corrección
+2. Verificación
+3. Cambios mínimos
+4. Claridad
+5. Mantenibilidad
+
+### Comprobar la realidad primero
+
+- No dar por supuesto el estado del sistema de archivos, ni que existan APIs, esquemas o
+  dependencias.
+- Leer los archivos antes de editarlos.
+- Distinguir lo observado de lo supuesto, y decir en voz alta lo que no se sabe.
+
+### Corrección antes que terminar
+
+- No dar algo por bueno sin haberlo verificado.
+- Verificar el comportamiento ejecutando, probando o inspeccionando directamente.
+- Preferir la evidencia reproducible a la afirmación confiada.
+
+### Cambios acotados
+
+- Ceñirse a lo que se ha pedido.
+- No refactorizar código ajeno a la tarea ni reescribir lo que ya funciona sin motivo.
+- Nada de cambios arquitectónicos amplios si no se han pedido explícitamente.
+
+### Preferir lo simple
+
+- La solución más simple que resuelva bien el problema.
+- Sin abstracciones especulativas ni funcionalidad de más.
+
+---
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 
