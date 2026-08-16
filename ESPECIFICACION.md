@@ -1025,6 +1025,18 @@ Valores de luz y sombra: en claro `rgba(255,255,255,0.95)` y `rgba(13,50,59,0.16
 
 **Respuesta al tacto:** un control se hunde al pulsarlo (`apoyado` → `hundido`) y sube 1px al pasar por encima. Es la única señal de profundidad que la suavidad da gratis, y sustituye al cambio de color que aquí no existe. Bajo `prefers-reduced-motion: reduce` no hay desplazamiento.
 
+#### Excepción: los campos de las tablas de series
+
+`DECISIÓN` (16 de agosto de 2026): en las **tablas de series** —constructor de rutinas (§5.1) y sesión en vivo (§5.2)— los campos **no llevan relieve**. Son un subrayado de 1px, sin relleno y sin sombra. Clase `.celda-tabla`.
+
+*Motivo:* el relieve funciona cuando hay pocas superficies y cada una significa algo. En una tabla densa hay doce campos a la vista, cada uno con su sombra, y la cifra —que es el dato que se viene a leer— acaba flotando dentro de la decoración. La §21.7 ya aceptó bajar la densidad táctil aquí por la vista de conjunto; esta excepción va en la misma dirección y por el mismo motivo.
+
+**El subrayado no es "quitar el borde".** Con el relleno `hundido` sobre la superficie de la tarjeta, la celda quedaba a 1,17:1 y su borde a 1,30:1: un campo editable dejaba de parecerlo, que es peor problema que el ruido que se quería evitar. El color del subrayado (`--borde-campo`, `#6f8c96`) está elegido para pasar el 3:1 de contraste no textual **en los dos temas** — 3,39:1 sobre superficie clara y 3,86:1 sobre la oscura. La regla no negociable de arriba sigue en pie: lo que cambia es la forma del borde, no su existencia.
+
+Al foco, el subrayado pasa a 2px y al color de acción.
+
+*Alcance:* solo los campos de esas dos tablas. El resto de la app —incluidos los botones de esas mismas pantallas— mantiene el relieve.
+
 ## 22. Estructura de navegación
 
 ### 22.1 Patrón
@@ -1175,6 +1187,7 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 27 | Biblioteca de comidas como unidad, plan semanal opcional encima | Mantener el plan semanal como puerta de entrada / registro solo por chat sin biblioteca | Exigir el plan pone todo el coste en el primer día, que es cuando se abandona; la rejilla de 7 días tampoco describe cómo se come. Acota la decisión 12, no la sustituye | 6, 6.1, 6.4 |
 | 28 | Sin estimación de macros por fotografía | Registro por foto con IA, como el resto del mercado | Subestima en torno a un tercio de las calorías porque la grasa no se ve; sería precisión aparente sobre un dato peor que el declarado | 6.7 |
 | 29 | Se retira la base de principios y su puerta de aprobación | Mantenerla como material de referencia sin puerta / aprobar los 18 principios pendientes | 18 redactados, 0 aprobados: la puerta no filtraba, cerraba — con la base vacía el nivel 2 no podía emitirse. Y los escribió el propio modelo, así que aprobarlos no añadía anclaje. El límite médico (§11.5) y el freno del nivel 3 (§11.4) siguen intactos | 11.3, 11.6 |
+| 30 | Campos sin relieve en las tablas de series, con subrayado a 3:1 | Mantener el relieve como en el resto de la app / quitar el borde entero por limpieza | Doce campos en relieve a la vista dejan la cifra flotando en decoración; pero sin borde la celda cae a 1,17:1 y un campo editable deja de parecerlo | 21.10, 5.1, 5.2 |
 
 ---
 

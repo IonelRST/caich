@@ -213,7 +213,7 @@ function FilaSerie({
         </button>
       </td>
 
-      <td className="py-0.5">
+      <td className="py-0.5 pr-2">
         <input
           ref={pesoRef}
           form={`serie-${serie.id}`}
@@ -225,11 +225,11 @@ function FilaSerie({
           defaultValue={pesoInicial}
           placeholder={serie.peso_objetivo != null ? String(serie.peso_objetivo) : "–"}
           aria-label={`Peso de la serie ${serie.numero_serie}`}
-          className="hundido h-10 w-full rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
+          className="celda-tabla h-10 w-full rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
         />
       </td>
 
-      <td className="py-0.5">
+      <td className="py-0.5 pr-2">
         <input
           ref={repsRef}
           form={`serie-${serie.id}`}
@@ -241,7 +241,7 @@ function FilaSerie({
           defaultValue={repsInicial}
           placeholder={objetivo || "–"}
           aria-label={`Repeticiones de la serie ${serie.numero_serie}${objetivo ? `, objetivo ${objetivo}` : ""}`}
-          className="hundido h-10 w-full rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
+          className="celda-tabla h-10 w-full rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
         />
       </td>
 

@@ -30,8 +30,9 @@ const CORTAS: Record<string, string> = {
   descendente: "Desc.",
 };
 
+/** §21.10, excepción de tabla: celda plana, sin relieve. Ver `.celda-tabla`. */
 const claseCelda =
-  "hundido h-10 w-full min-w-0 rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion";
+  "celda-tabla h-10 w-full min-w-0 rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion";
 
 /** Guarda al salir del campo, como Hevy: aquí no hay botón de guardar. */
 function guardarAlSalir(e: { currentTarget: { form: HTMLFormElement | null } }) {

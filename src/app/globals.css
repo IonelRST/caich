@@ -14,6 +14,8 @@
   --superficie: #f4fafb;
   --hundido: #dfe9ec;
   --borde: #cfdfe4;
+  /* Solo para los campos de las tablas de series. Ver `.celda-tabla`. */
+  --borde-campo: #6f8c96;
   --texto: #0d323b;
   --suave: #47656e;
 
@@ -193,6 +195,30 @@ body:has(.sesion-viva) {
   background-color: var(--hundido);
   border: 1px solid var(--borde);
   box-shadow: var(--shadow-hundido);
+}
+
+/* Excepción de la §21.10 para las tablas de series (§5.1, §5.2).
+
+   El relieve blando es el lenguaje del resto de la app y ahí se queda. En una
+   tabla densa no funciona: cada celda en relieve compite con la de al lado, y
+   la cifra —que es el dato— acaba flotando dentro de la decoración en vez de
+   leerse.
+
+   Aquí la celda es un subrayado, no una caja. Quitar el relieve sin más no
+   valía: con el relleno `--hundido` sobre `--superficie` la celda quedaba a
+   1,17:1 y el borde a 1,30:1, así que un campo editable dejaba de parecerlo.
+   `--borde-campo` está elegido para pasar el 3:1 de contraste no textual que
+   exige la §21.10 en los dos temas: 3,39:1 en claro y 3,86:1 en oscuro. */
+.celda-tabla {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--borde-campo);
+  border-radius: 0;
+}
+
+.celda-tabla:focus {
+  border-bottom-color: var(--accion);
+  border-bottom-width: 2px;
 }
 
 /* §21.7 — un control blando tiene que seguir pareciendo tocable. Se hunde al
