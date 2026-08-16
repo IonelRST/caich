@@ -124,19 +124,31 @@ export function EditorEjercicio({
         </div>
       </div>
 
-      <table className="mt-3 w-full border-separate border-spacing-y-1 text-sm">
+      {/*
+        `table-fixed` con anchos explícitos y tope de ancho: una tabla de cuatro
+        cifras no tiene por qué crecer con la pantalla. Sin esto, en escritorio
+        los campos de repeticiones se estiraban hasta que un "8" flotaba solo en
+        el centro de una cápsula de 350px.
+      */}
+      <table className="mt-3 w-full max-w-[21rem] table-fixed border-separate border-spacing-y-1 text-sm">
+        <colgroup>
+          <col className="w-[7.5rem]" />
+          <col className="w-16" />
+          <col className="w-[7.5rem]" />
+          <col className="w-7" />
+        </colgroup>
         <thead>
           <tr className="text-[11px] uppercase tracking-wide text-suave">
-            <th scope="col" className="w-[5.5rem] pr-2 text-left font-medium">
+            <th scope="col" className="pr-2 text-left font-medium">
               Serie
             </th>
-            <th scope="col" className="w-[4.5rem] pr-2 text-center font-medium">
+            <th scope="col" className="pr-2 text-center font-medium">
               Kg
             </th>
             <th scope="col" className="pr-2 text-center font-medium">
               Reps
             </th>
-            <th scope="col" className="w-7">
+            <th scope="col">
               <span className="sr-only">Quitar</span>
             </th>
           </tr>
@@ -274,7 +286,7 @@ function FilaSerieRutina({
               defaultValue={serie.tipo}
               onChange={guardarAlSalir}
               aria-label={`Tipo de la serie ${serie.numero_serie}`}
-              className="h-10 min-w-0 flex-1 rounded-md bg-transparent px-0.5 text-[11px] text-suave outline-none focus:text-texto"
+              className="h-10 min-w-0 flex-1 rounded-md bg-transparent px-0.5 text-[11px] text-suave outline-none focus:text-texto sm:text-xs"
             >
               {TIPOS_SERIE.map((t) => (
                 <option key={t.valor} value={t.valor}>
