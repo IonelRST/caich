@@ -755,7 +755,7 @@ principio_base                     ← retirada (sección 11.6); tabla conservad
 | 17 | Comentario por ejercicio en la sesión en vivo | 5.2 | Con el punto 6 |
 | 18 | Ruido visual de los campos de texto en la sesión en vivo | 5.2, 21.6 | Con el punto 6 |
 | 19 | Reemplazar un ejercicio sin salir de la sesión | 5.2 | Con el punto 6 |
-| 20 | «Descartar sesión» no funciona | 5.4 | Es un fallo, no una decisión: se arregla, no se debate |
+| ~~20~~ | ~~«Descartar sesión» no funciona~~ | 5.4 | **Cerrado el 16 de agosto de 2026** — no era un fallo propio: ver nota al final |
 | ~~21~~ | ~~La vía de dieta hay que repensarla entera~~ | 6 | **Cerrado el 16 de agosto de 2026** — ver nota al final |
 
 **Lote añadido el 16 de agosto de 2026**, a partir del uso real de la app en un móvil. Doce puntos, que no son de la misma naturaleza y no deberían tratarse igual:
@@ -787,6 +787,10 @@ Material de referencia indicado por el usuario: <https://www.hevyapp.com/feature
 La §21.2 no entra en conflicto: la sesión en vivo sigue arrancando en oscuro reforzado, sea cual sea el tema general, y el constructor de rutinas sigue el tema normal de la app.
 
 *Pendiente de cierre:* este punto se cierra cuando los tres flujos estén construidos. La especificación ya está decidida.
+
+**Cerrado el 16 de agosto de 2026: el punto 20.** No era un fallo de «Descartar sesión». El formulario es un server action por POST, y Next 16 rechazaba con 403 las peticiones de desarrollo abiertas desde la IP de la red en vez de desde localhost — la misma causa por la que el menú de navegación no abría en el móvil. Se arregló declarando el origen en `next.config.ts`. Verificado de punta a punta: dos sesiones desechables creadas y descartadas, con borrado y redirección correctos.
+
+*Queda un hallazgo aparte, sin decidir:* el `confirm()` que protege el descarte vive en JavaScript, pero el formulario funciona sin JavaScript. En la ventana entre que carga el HTML y termina de hidratar, un toque descarta la sesión **sin preguntar nada**. La acción es destructiva y no tiene vuelta. Se arreglaría moviendo la confirmación a estado de React, de modo que sin JavaScript no haya forma de llegar al envío.
 
 **Cerrados el 16 de agosto de 2026: los puntos 3, 7 y 14 — la base de principios.** Eran la misma pregunta formulada tres veces, y la cierra un dato, no un argumento: la funcionalidad llevaba días construida con **18 principios redactados por la IA, 0 aprobados y 0 descartados**, y el servidor degradaba a nivel 3 todo lo que no citara un principio aprobado. Con la base vacía, la app no podía emitir una sola recomendación. Ver §11.6.
 
