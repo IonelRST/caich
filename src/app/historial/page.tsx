@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { borrarComidaRegistrada } from "@/lib/datos/dieta-acciones";
-import { borrarEntreno } from "@/lib/datos/entrenos-acciones";
+import { Entrada as FilaEntrada, type EntradaHistorial } from "./entrada";
 import { etiquetaDeMedida, MEDIDAS_HABITUALES } from "@/lib/datos/medidas";
-import { borrarMedida } from "@/lib/datos/medidas-acciones";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export const metadata = { title: "Historial · caich" };
@@ -17,19 +15,12 @@ const formatoFecha = new Intl.DateTimeFormat("es-ES", {
  * Entrada unificada del historial (§8): "vista de lista con todos los
  * registros guardados", no solo los de un tipo.
  */
-type Entrada = {
-  id: string;
-  tipo: "medida" | "entreno" | "comida";
-  fecha: string;
-  titulo: string;
-  detalle: string;
-};
+type Entrada = EntradaHistorial;
 
-const BORRADO: Record<Entrada["tipo"], (formData: FormData) => Promise<void>> = {
-  medida: borrarMedida,
-  entreno: borrarEntreno,
-  comida: borrarComidaRegistrada,
-};
+/** `YYYY-MM-DD` para los `input type="date"` de la edición. */
+function soloDia(iso: string): string {
+  return iso.slice(0, 10);
+}
 
 export default async function Historial({
   searchParams,
@@ -77,7 +68,7 @@ export default async function Historial({
       ? (async () => {
           let q = supabase
             .from("registro_comida")
-            .select("id, fecha_evento, descripcion, momento_dia, adherencia")
+            .select("id, fecha_evento, descripcion, momento_dia, adherencia, cantidad, calorias, proteina_g")
             .order("fecha_evento", { ascending: false })
             .limit(100);
           if (desde) q = q.gte("fecha_evento", `${desde}T00:00:00`);
@@ -94,6 +85,12 @@ export default async function Historial({
       fecha: m.fecha_evento,
       titulo: etiquetaDeMedida(m.nombre),
       detalle: `${m.valor} ${m.unidad}`,
+      medida: {
+        nombre: m.nombre,
+        valor: m.valor,
+        unidad: m.unidad,
+        fecha: soloDia(m.fecha_evento),
+      },
     })),
     ...(entrenos.data ?? []).map((e) => {
       const ejercicios = (e.registro_entreno_ejercicio ?? []) as unknown as {
@@ -129,6 +126,13 @@ export default async function Historial({
       fecha: c.fecha_evento,
       titulo: c.momento_dia ?? "Comida",
       detalle: c.descripcion ?? "",
+      comida: {
+        descripcion: c.descripcion ?? "",
+        cantidad: c.cantidad,
+        calorias: c.calorias,
+        proteina_g: c.proteina_g,
+        fecha: soloDia(c.fecha_evento),
+      },
     })),
   ].sort((a, b) => b.fecha.localeCompare(a.fecha));
 
@@ -216,36 +220,14 @@ export default async function Historial({
         </p>
       ) : (
         <ul className="mt-8 divide-y divide-borde">
+          {/* §8: lista filtrable con edición y borrado. Ninguna de las dos
+              admite excepciones por tipo de dato. */}
           {entradas.map((e) => (
-            <li
+            <FilaEntrada
               key={`${e.tipo}-${e.id}`}
-              className="flex items-center justify-between gap-4 py-3"
-            >
-              <div className="min-w-0">
-                <p className="text-sm font-medium">
-                  {e.titulo}{" "}
-                  <span className="font-normal text-suave">
-                    {e.detalle}
-                  </span>
-                </p>
-                <p className="text-xs text-suave">
-                  {formatoFecha.format(new Date(e.fecha))}
-                </p>
-              </div>
-
-              {/* §8: todo lo del historial se puede borrar, sin excepciones por
-                  tipo. Con el registro de un toque de la §6.2, no poder deshacer
-                  una comida dejaba un dato falso permanente. */}
-              <form action={BORRADO[e.tipo]}>
-                <input type="hidden" name="id" value={e.id} />
-                <button
-                  type="submit"
-                  className="shrink-0 rounded-lg px-2 py-1 text-xs text-suave hover:bg-error/10 hover:text-error"
-                >
-                  Borrar
-                </button>
-              </form>
-            </li>
+              entrada={e}
+              fechaLegible={formatoFecha.format(new Date(e.fecha))}
+            />
           ))}
         </ul>
       )}

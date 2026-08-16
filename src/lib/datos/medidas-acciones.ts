@@ -65,6 +65,50 @@ export async function registrarMedida(
   return { aviso: "Guardado." };
 }
 
+/**
+ * Corregir una medida ya registrada (§8: el historial tiene edición).
+ *
+ * No se toca `origen` ni `mensaje_original`: corregir el valor de un peso que
+ * se dictó por chat no lo convierte en un dato tecleado a mano, y el texto
+ * original sigue siendo la prueba de qué se dijo. Es la diferencia con borrar y
+ * volver a crear, que era la única salida hasta ahora y perdía las dos cosas.
+ */
+export async function actualizarMedida(
+  _previo: EstadoMedida,
+  formData: FormData,
+): Promise<EstadoMedida> {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Falta el registro." };
+
+  const datos = esquemaMedida.safeParse({
+    nombre: formData.get("nombre"),
+    valor: formData.get("valor"),
+    unidad: formData.get("unidad"),
+    fecha: formData.get("fecha"),
+  });
+
+  if (!datos.success) return { error: datos.error.issues[0].message };
+
+  const supabase = await crearClienteServidor();
+
+  const { error } = await supabase
+    .from("registro_medida")
+    .update({
+      fecha_evento: new Date(`${datos.data.fecha}T12:00:00`).toISOString(),
+      nombre: datos.data.nombre,
+      valor: datos.data.valor,
+      unidad: datos.data.unidad,
+    })
+    .eq("id", id);
+
+  if (error) return { error: `No se ha podido guardar: ${error.message}` };
+
+  revalidatePath("/");
+  revalidatePath("/historial");
+  revalidatePath("/evolucion");
+  return { aviso: "Corregido." };
+}
+
 export async function borrarMedida(formData: FormData): Promise<void> {
   const id = formData.get("id");
   if (typeof id !== "string") return;

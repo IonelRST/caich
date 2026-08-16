@@ -92,6 +92,77 @@ export async function anadirComidaAlPlan(
   return { aviso: "Comida añadida al plan." };
 }
 
+const esquemaComidaRegistrada = z.object({
+  descripcion: z.string().min(1, { message: "Describe qué comiste." }).max(200),
+  cantidad: z.string().max(60).optional(),
+  calorias: z.coerce.number().min(0).max(10000).optional(),
+  proteina_g: z.coerce.number().min(0).max(1000).optional(),
+  fecha: z.string().min(1, { message: "Falta la fecha." }),
+});
+
+/**
+ * Corregir una comida ya registrada (§8: el historial tiene edición).
+ *
+ * No se toca `origen` ni `mensaje_original`: corregir la cantidad de algo que
+ * se dictó por chat no lo convierte en un dato tecleado a mano, y el texto
+ * original sigue siendo la prueba de qué se dijo.
+ *
+ * `origen_dato` sí puede subir de "estimado" a "declarado" (§4.2): si el
+ * usuario escribe la cantidad a mano, deja de ser una estimación de la IA y los
+ * insights tienen derecho a tratarla como dato declarado. Nunca baja.
+ */
+export async function actualizarComidaRegistrada(
+  _previo: EstadoDieta,
+  formData: FormData,
+): Promise<EstadoDieta> {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Falta el registro." };
+
+  const cantidad = formData.get("cantidad");
+  const cal = formData.get("calorias");
+  const prot = formData.get("proteina_g");
+
+  const datos = esquemaComidaRegistrada.safeParse({
+    descripcion: formData.get("descripcion"),
+    cantidad: cantidad === "" ? undefined : cantidad,
+    calorias: cal === "" ? undefined : cal,
+    proteina_g: prot === "" ? undefined : prot,
+    fecha: formData.get("fecha"),
+  });
+
+  if (!datos.success) return { error: datos.error.issues[0].message };
+
+  const { supabase } = await sesion();
+
+  const { data: actual } = await supabase
+    .from("registro_comida")
+    .select("origen_dato")
+    .eq("id", id)
+    .single();
+
+  const { error } = await supabase
+    .from("registro_comida")
+    .update({
+      fecha_evento: new Date(`${datos.data.fecha}T12:00:00`).toISOString(),
+      descripcion: datos.data.descripcion,
+      cantidad: datos.data.cantidad ?? null,
+      calorias: datos.data.calorias ?? null,
+      proteina_g: datos.data.proteina_g ?? null,
+      origen_dato:
+        actual?.origen_dato === "estimado" && datos.data.cantidad
+          ? "declarado"
+          : actual?.origen_dato,
+    })
+    .eq("id", id);
+
+  if (error) return { error: `No se ha podido guardar: ${error.message}` };
+
+  revalidatePath("/");
+  revalidatePath("/historial");
+  revalidatePath("/dieta");
+  return { aviso: "Corregido." };
+}
+
 /**
  * Borrar una comida ya registrada (§8: el historial tiene borrado).
  *
