@@ -1,8 +1,8 @@
 # Especificación funcional — App de tracking fitness con IA
 
 **Versión:** 3.0
-**Fecha:** 15 de agosto de 2026
-**Estado:** en construcción; §11 revisada tras contrastar con el uso real
+**Fecha:** 16 de agosto de 2026
+**Estado:** en construcción; §11 y §6 revisadas tras contrastar con el uso real
 **Autor:** Ionel
 
 ---
@@ -27,12 +27,15 @@ Cuando una sección dice que algo "no se hace" o "queda fuera", es una exclusió
 | 8 | La §5 se revisa contra la documentación de Hevy: filas de serie explícitas, tipos de serie, temporizador de descanso, supersets, anterior por índice de serie y pregunta de actualizar plantilla al cerrar | 5 |
 | 9 | La §21 se enmienda donde el flujo de Hevy la contradecía: densidad de la tabla de series, color de superset y alcance de la prohibición de números animados | 21.4, 21.5, 21.6, 21.7, 21.9 |
 | 10 | La §21 se reescribe entera: la dirección pasa de "Instrumento dual" a "Instrumento blando" — superficies con profundidad, neutros con sesgo cian, acento teal y tres papeles tipográficos. Nueva §21.10 | 21 |
+| 11 | La §6 se reescribe entera: la unidad pasa a ser la comida guardada y el plan semanal deja de ser requisito previo. Nuevas §6.6 (ascenso desde el chat) y §6.7 (la foto no es una medida) | 6 |
 
 *Motivo de la revisión:* en un mes de uso real con un asistente genérico, solo 1 de cada 6 mensajes era registrar datos. La v2.0 solo admitía ese sexto.
 
 *Motivo de los cambios 8 y 9:* la §5 describía el flujo de Hevy de memoria, porque el dominio estaba bloqueado por red. Al leerlo (§19 punto 6), parte de lo escrito resultó ser suposición — incluido "deslizar para completar", que Hevy no hace.
 
 *Motivo del cambio 10:* la dirección anterior trataba la precisión y la calidez como opuestas, y la app se leía como una hoja de cálculo con acento naranja. En una herramienta que se usa a diario y durante meses, eso es un riesgo de abandono (principio 1), no una virtud.
+
+*Motivo del cambio 11:* la §6 escrita ponía todo el coste en el primer día —sin plan semanal definido, la pantalla de dieta no hacía nada— que es justo cuando la gente abandona el registro de comida. Mismo riesgo que el cambio 10, en otra parte de la app.
 
 ### 0.2 Cambios de la v2.0 respecto a la v1.0
 
@@ -218,21 +221,34 @@ Una sesión en curso se guarda de forma persistente mientras dura (no solo en me
 
 ---
 
-## 6. Vía C — Dieta planificada y adherencia
+## 6. Vía C — Comida
 
-Mismo patrón que las rutinas de entreno, aplicado a comida: se planifica una vez, y el día a día es confirmar.
+`DECISIÓN` (revisada el 16 de agosto de 2026): la unidad de esta vía es **la comida guardada, no la casilla de un día de la semana**. El plan semanal deja de ser requisito previo y pasa a ser una capa opcional encima (§6.4).
 
-### 6.1 Plan de dieta semanal
+*Motivo:* la versión anterior exigía definir un plan semanal antes de que la app sirviera de nada — sin plan, la pantalla de dieta no hacía más que decir que el plan estaba vacío. Todo el coste caía en el primer día y el beneficio llegaba después. Es el patrón que la evidencia señala como el que rompe la adherencia: el tiempo invertido es a la vez la barrera más citada y el motivo de abandono más citado, y en torno al 80% de la gente deja de registrar comida en las primeras semanas. La rejilla de siete días agrava lo mismo por otro lado, porque obliga a declarar que la comida del martes es distinta de la del miércoles cuando en realidad casi todo el mundo rota un puñado corto de comidas.
 
-- El usuario define un plan semanal: qué comidas tiene cada día, con qué alimentos y **cantidades**.
-- Se define por chat, en un momento sin prisa. Aquí **sí** se piden cantidades faltantes de forma sistemática — es una vez por semana, no cinco veces al día.
-- Los macros de cada comida planificada se calculan una vez, al definir el plan, y quedan guardados.
-- El plan es editable en cualquier momento.
-- El plan puede ser parcial: no hace falta planificar las 7 comidas de los 7 días para que el sistema sirva.
+*Material consultado el 16 de agosto de 2026:* [JMIR mHealth and uHealth (2023), estudio de métodos mixtos sobre abandono de apps de nutrición](https://mhealth.jmir.org/2023/1/e39515); [Nutrola, retención comparada de contadores de calorías](https://nutrola.app/en/blog/calorie-tracker-retention-rates-how-long-users-stick-with-each-app); [Fuel Nutrition, adherencia al registro de comida](https://fuelnutrition.app/blog/food-tracking-adherence); [MacroFactor, comparación de acciones por registro frente a MyFitnessPal](https://macrofactor.com/macrofactor-vs-myfitnesspal/). Son páginas de producto y divulgación salvo el primero, que es investigación revisada por pares.
 
-### 6.2 Check-in diario
+### 6.1 Biblioteca de comidas
 
-Para cada comida planificada del día, el usuario responde con una interacción mínima:
+- Una **comida** es un nombre, sus alimentos con **cantidades**, y sus macros. Los macros se calculan **una vez**, al crearla, y quedan guardados.
+- Se crea de dos maneras: escribiéndola con calma, o ascendiendo una que ya se registró por chat (§6.6).
+- Al crearla **sí** se piden las cantidades que falten de forma sistemática. Es una vez por comida, no cinco veces al día.
+- Es editable en cualquier momento. Editar una comida **no** reescribe los registros pasados que la usaron: lo que se comió el martes no cambia porque hoy se corrija la receta.
+- La biblioteca se ordena por uso reciente y frecuencia. Lo de siempre queda arriba sin que haya que buscarlo.
+
+### 6.2 Registrar el día
+
+`DECISIÓN`: registrar comida **no exige plan**. Hay siempre dos caminos abiertos, y ninguno depende del otro:
+
+| Camino | Cuándo | Coste |
+|--------|--------|-------|
+| Elegir de la biblioteca | Lo que se repite, que es la mayoría | Un toque |
+| Escribir en el chat (§3) | Lo improvisado, comer fuera, lo que no está guardado | Una frase |
+
+*Motivo de mantener los dos:* el predictor más fiable de que alguien siga registrando meses después es tener **más de un método**. Quien depende de uno solo abandona en cuanto ese método le falla — un día raro, una comida que no está en la biblioteca, prisa.
+
+Cuando hay plan para hoy (§6.4), las comidas planificadas aparecen arriba y la respuesta sigue siendo de una interacción:
 
 | Respuesta | Qué se registra |
 |-----------|-----------------|
@@ -242,7 +258,11 @@ Para cada comida planificada del día, el usuario responde con una interacción 
 | **Otra cosa** | Requiere descripción y cantidades explícitas, como texto libre |
 | **No la comí** | Se registra como comida omitida |
 
-*Nota:* confirmar contra el plan es **más preciso** que describir por texto libre, no menos — las cantidades se pensaron una vez con calma en vez de estimarse al vuelo cinco veces al día.
+Cuando no hay plan, ese sitio lo ocupa la biblioteca. La pantalla nunca queda vacía por no haber planificado.
+
+*Nota:* confirmar contra una comida guardada es **más preciso** que describirla por texto libre, no menos — las cantidades se pensaron una vez con calma en vez de estimarse al vuelo cinco veces al día.
+
+**Objetivo de coste, medible:** el camino de "lo de siempre" en un toque, y ninguna comida por encima de dos minutos. Por encima de ese umbral el registro no sobrevive al primer mes. Como referencia externa, la app más rápida del mercado registra una comida en 10 acciones donde MyFitnessPal necesita 15.
 
 ### 6.3 Regla de desviación
 
@@ -252,17 +272,56 @@ Para cada comida planificada del día, el usuario responde con una interacción 
 
 Para que la obligatoriedad no se convierta en fricción, la pregunta debe ser lo más rápida posible de responder: opciones concretas y tocables (ej. *"¿la mitad, el doble, otra cantidad?"*) antes que un campo de texto libre pidiendo gramos exactos.
 
-### 6.4 Comida fuera de plan
+### 6.4 Plan semanal (opcional)
 
-Cuando no hay plan para esa comida (comer fuera, un día sin planificar), se registra por chat de texto libre, con la misma regla: **si no hay cantidad explícita, se pregunta**.
+`DECISIÓN`: el plan semanal deja de ser la puerta de entrada y pasa a ser una capa opcional sobre la biblioteca.
+
+- Consiste en asignar comidas **ya existentes en la biblioteca** a días y momentos del día. No se define comida nueva desde aquí: se define en la biblioteca y se coloca en el plan.
+- Puede ser parcial. No hace falta cubrir las 7 comidas de los 7 días para que sirva.
+- Es editable en cualquier momento.
+- La **adherencia se deriva**: si lo registrado ese día coincide con lo asignado, es adherencia; si no, es desviación. No hay que declararla aparte.
+
+*Motivo de conservarlo:* planificar sigue siendo la forma más barata de registrar, porque elimina el buscar, el estimar y el decidir sobre la marcha. Lo que se retira no es el plan, es su **obligatoriedad**.
+
+Quien nunca cree un plan tiene una app que funciona: registra desde la biblioteca y el chat, y ve sus macros. Lo único que pierde es la métrica de adherencia, que sin plan no significa nada.
+
+### 6.5 Comida sin cantidad
+
+Cuando algo se registra por chat sin cantidad explícita, se pregunta. Misma regla que en las desviaciones (§6.3).
 
 `DECISIÓN`: se descarta la alternativa de estimar en silencio con un margen amplio. Contradice el principio 4 y el propio motivo de la regla de desviación.
 
-### 6.5 Modelo común con las rutinas
+### 6.6 Ascenso a la biblioteca
 
-Rutinas de entreno y plan de dieta comparten la misma forma: **plantilla programada + registro diario de adherencia contra esa plantilla**. Se modelan sobre el mismo patrón de datos, no como dos sistemas separados.
+`DECISIÓN`: cuando una comida registrada por chat se repite, la app **ofrece** guardarla en la biblioteca. Ofrece, no guarda.
+
+- La detección es por descripción equivalente y cantidades parecidas, no por texto idéntico.
+- La oferta aparece en el momento del segundo registro, con las cantidades ya rellenas del primero, y se acepta o se descarta con un toque.
+- Aceptar crea la comida en la biblioteca. Descartar no vuelve a preguntar por esa misma comida.
+
+*Motivo de que sea una oferta y no un guardado silencioso:* una biblioteca que se llena sola de entradas que el usuario no ha decidido crear deja de ser suya y pasa a ser una lista que hay que limpiar. Y una comida guardada tiene consecuencias — es la que se ofrecerá en un toque durante meses.
+
+*Motivo de que exista:* es lo que convierte el chat de plan B en constructor. La biblioteca se escribe usándola, no en una sesión de configuración inicial que nadie hace.
+
+### 6.7 La foto no es una medida
+
+`DECISIÓN`: no se estiman macros a partir de una fotografía.
+
+En pruebas con comidas pesadas en cocina metabólica, las apps de estimación por foto subestimaron alrededor de **un tercio** de las calorías —entre 250 y 345 kcal por comida— y unos 30 g de grasa. La grasa es justo lo que una cámara no ve: el aceite de la sartén, la mantequilla, el aliño, la veta de la carne.
+
+*Cautela sobre la fuente:* es un resumen presentado en congreso (NUTRITION 2026), seleccionado por comité pero sin revisión por pares completa. Ver [ScienceDaily](https://www.sciencedaily.com/releases/2026/07/260726015237.htm) y [Healio](https://www.healio.com/news/primary-care/20260804/ai-photobased-calorietracking-tools-underestimate-them-by-33).
+
+Una foto puede acompañar a un registro como recordatorio de qué se comió. No puede ser el origen de una cifra. Esto no es una restricción nueva: es la §6.3 y el principio 6 aplicados a una tecnología concreta.
+
+### 6.8 Modelo común con las rutinas
+
+Rutinas de entreno y plan de dieta comparten la misma forma: **plantilla programada + registro de adherencia contra esa plantilla**. Se modelan sobre el mismo patrón de datos, no como dos sistemas separados.
 
 *Motivo:* la lógica de "qué estaba planificado / qué se hizo realmente / cuánto se desvió" es idéntica en ambos casos. Duplicarla obliga a arreglar cada bug dos veces.
+
+**Enmienda del 16 de agosto de 2026.** El patrón se mantiene; lo que cambia es que la plantilla deja de ser obligatoria en el lado de la comida. Un registro sin `plantilla_item_id` es de primera clase, no un caso degradado. La simetría con las rutinas no se rompe por esto: un entreno improvisado ya se registraba sin plantilla (§16, `plantilla_id` opcional), así que la comida se está alineando con el entreno, no separándose de él.
+
+La diferencia real entre los dos lados es de cadencia, y explica por qué el plan de comida no puede exigirse como se exige una rutina: una rutina se ejecuta dos o cuatro veces por semana y se elige al empezar; una comida ocurre cinco veces al día y muchas veces no se elige.
 
 ---
 
@@ -556,10 +615,16 @@ catalogo_ejercicio
   ├─ nombre canónico, alias[], grupo muscular, equipo
   └─ guía de ejecución (texto)
 
-plantilla                          ← patrón común (sección 6.5)
+plantilla                          ← patrón común (sección 6.8)
   ├─ tipo: rutina_entreno | plan_dieta
   ├─ nombre
-  └─ items[] (ejercicios+series objetivo | comidas+cantidades objetivo)
+  └─ items[] (ejercicios+series objetivo | comida_guardada asignada a día+momento)
+
+comida_guardada                    ← biblioteca (sección 6.1)
+  ├─ nombre
+  ├─ alimentos con cantidades (texto)
+  ├─ macros y calorías, calculados una vez al crearla
+  └─ contadores de uso (veces registrada, última vez) → orden de la lista
 
 registro_entreno
   ├─ fecha evento / fecha registro / origen
@@ -568,7 +633,9 @@ registro_entreno
 
 registro_comida
   ├─ fecha evento / fecha registro / origen
+  ├─ comida_guardada_id (opcional: null si fue texto libre)
   ├─ plantilla_id + estado adherencia (igual | más | menos | otra | omitida)
+  │    opcional: null si no había plan ese día, que es un caso normal (§6.4)
   ├─ descripción, macros, calorías
   └─ origen_dato: plan | declarado | estimado
 
@@ -609,9 +676,10 @@ principio_base                     ← base curada (sección 11.4)
 
 1. Creación y edición de rutinas de entreno (interfaz + chat).
 2. Sesión de entreno en vivo, mobile-first, con persistencia ante interrupción.
-3. Plan de dieta semanal.
-4. Check-in diario de adherencia, con regla de desviación obligatoria.
-5. Dictado por voz en el chat.
+3. Biblioteca de comidas (§6.1) y registro de un toque desde ella (§6.2). Va antes que el plan: es lo que hace útil la pantalla el primer día.
+4. Ascenso a la biblioteca desde el chat (§6.6).
+5. Plan de dieta semanal opcional encima de la biblioteca (§6.4), con adherencia derivada y regla de desviación obligatoria (§6.3).
+6. Dictado por voz en el chat.
 
 `DECISIÓN`: esta fase va **antes** de objetivos e insights, no después. Si registrar sigue siendo incómodo, el resto de funcionalidad da igual: la app se abandona antes de acumular histórico suficiente para que los insights valgan algo.
 
@@ -663,7 +731,7 @@ principio_base                     ← base curada (sección 11.4)
 | 5 | Segunda persona (Carol): plan propio, compra conjunta, rutinas coordinadas | Anexo C.5 | Cuando la §11 revisada esté implementada |
 | 6 | Rutinas 1:1 con Hevy — crear, editar y ejecutar: qué se copia exactamente | 5.1, 5.2, 21 | Siguiente en construirse, en cuanto haya material de referencia |
 | 7 | Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6) | 11.3, 11.6 | Antes de aplicar la migración `0003` |
-| 8 | Lista de la compra derivada del plan de dieta semanal | 6.1 | Con la Fase 1.5 en uso real |
+| 8 | Lista de la compra derivada del plan de dieta semanal | 6.4 | Con la Fase 1.5 en uso real |
 | 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
 | 10 | Elegir ejercicio: pantalla propia con buscador y filtro por grupo muscular, no desplegable | 5.1, 4.1 | Antes de ampliar el catálogo (punto 2) |
 | 11 | Editar y eliminar rutinas ya creadas | 5.1 | Con el punto 6, cierra el flujo de crear/editar |
@@ -676,7 +744,7 @@ principio_base                     ← base curada (sección 11.4)
 | 18 | Ruido visual de los campos de texto en la sesión en vivo | 5.2, 21.6 | Con el punto 6 |
 | 19 | Reemplazar un ejercicio sin salir de la sesión | 5.2 | Con el punto 6 |
 | 20 | «Descartar sesión» no funciona | 5.4 | Es un fallo, no una decisión: se arregla, no se debate |
-| 21 | La vía de dieta hay que repensarla entera | 6 | Antes de construir la Fase 1.5 |
+| ~~21~~ | ~~La vía de dieta hay que repensarla entera~~ | 6 | **Cerrado el 16 de agosto de 2026** — ver nota al final |
 
 **Lote añadido el 16 de agosto de 2026**, a partir del uso real de la app en un móvil. Doce puntos, que no son de la misma naturaleza y no deberían tratarse igual:
 
@@ -713,6 +781,14 @@ La §21.2 no entra en conflicto: la sesión en vivo sigue arrancando en oscuro r
 Si aun así se retira, hay que decidir qué pasa con el nivel 2: o baja entero a nivel 3 (observaciones sin conclusión), o se acepta recomendación sin anclaje. Y quedan sin uso la migración `0003`, `src/app/principios/`, `src/lib/ia/principios.ts` y `src/lib/datos/principios-acciones.ts`.
 
 **Sobre el 9.** `src/lib/ia/proveedor.ts` es hoy, por decisión escrita en el propio archivo, *"un interruptor de desarrollo, no una capa de abstracción de proveedores"*. Dejar elegir proveedor y modelo al usuario lo convierte exactamente en lo segundo. Antes hay que resolver dos cosas que la §14 no cubre: dónde se guarda una clave de terceros (no en `mensaje_original`, no en texto plano) y qué se le enseña al usuario cuando su elección manda datos de salud a un tercero ajeno a Anthropic. La advertencia de la §14 deja de ser una nota para desarrolladores y pasa a ser interfaz.
+
+*Cerrado el 16 de agosto de 2026: el punto 21, la vía de comida.* Reescrita la §6 entera sobre biblioteca de comidas con plan opcional encima (decisión 27), y descartada la estimación por fotografía (decisión 28). La especificación está decidida; queda construirlo.
+
+Lo que arrastra, y que no estaba en el enunciado del punto:
+
+- **Migración pendiente.** `plantilla_item.dia_semana` deja de ser el eje del plan de comida, y hace falta la tabla de la biblioteca (`comida_guardada`) más una referencia opcional desde `registro_comida`. Los datos de dieta que haya en ese momento son pocos y de prueba, pero la migración debe contemplarlos.
+- **La §17 cambia de orden dentro de la Fase 1.5.** El punto 3 era "plan de dieta semanal" y ahora lo primero es la biblioteca; el plan pasa detrás. Construirlos en el orden viejo reproduce el problema que esta decisión corrige.
+- **El punto 4 sigue abierto** (formato de las preguntas rápidas de desviación, §6.3). La reescritura no lo resuelve: solo lo mueve de sitio, porque ahora esas preguntas aparecen tanto contra el plan como contra una comida de la biblioteca.
 
 *Cerrado:* la dirección visual (§21). Decidida el 14 de agosto de 2026 — ver §21 y decisión 13 del anexo B.
 
@@ -954,7 +1030,7 @@ Orden fijo en ambas presentaciones. La navegación no se reordena por uso recien
 |---|---------|-----------|
 | 1 | Hoy | Chat de entrada libre (§3) y check-in de dieta del día (§6.2) |
 | 2 | Entreno | Rutinas guardadas (§5.1) y arranque de sesión en vivo |
-| 3 | Dieta | Plan semanal (§6.1) |
+| 3 | Dieta | Biblioteca de comidas (§6.1) y plan semanal opcional (§6.4) |
 | 4 | Historial | Lista filtrable de todos los registros (§8) |
 | 5 | Evolución | Gráficos (§10) e insights (§11) |
 | 6 | Objetivos | Objetivos y progreso (§9) |
@@ -1063,7 +1139,7 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 9 | Guardar lo parseado, preguntar lo fallido | Rechazar el mensaje entero | Rechazar obliga a reescribir lo que ya estaba bien | 7.4 |
 | 10 | Fase 1.5 antes de insights | Objetivos e insights primero | Sin registro cómodo no hay histórico que analizar | 17 |
 | 11 | Sin imágenes de ejecución | Generar imágenes con IA | Biomecánica incorrecta = riesgo de lesión | 4.1 |
-| 12 | Plantilla+adherencia como patrón único | Rutinas y dieta como sistemas separados | Misma lógica; duplicarla obliga a arreglar bugs dos veces | 6.5 |
+| 12 | Plantilla+adherencia como patrón único | Rutinas y dieta como sistemas separados | Misma lógica; duplicarla obliga a arreglar bugs dos veces. Acotada por la decisión 27: el patrón sigue, la plantilla de comida deja de ser obligatoria | 6.8 |
 | 13 | Dirección visual "Instrumento dual": tema dual + sesión en vivo siempre oscura | Paleta de gimnasio saturada en toda la app / minimalismo claro en toda la app | Análisis y sesión en vivo son contextos de uso opuestos; una sola piel falla en uno de los dos | 21 |
 | 14 | Acento único de acción, disjunto de la paleta de series | Reutilizar el acento y los colores de estado en los gráficos | Un color de estado en una serie afirma cosas que nadie ha querido decir | 21.4, 21.5 |
 | 15 | Esqueleto con pulso de opacidad | Spinner genérico / barrido de brillo | Reserva el espacio del dato y evita el reenvío por impaciencia | 21.8 |
@@ -1078,6 +1154,8 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 24 | Relieve blando con borde obligatorio de 1px | Neumorfismo puro, solo sombras | Sin borde, una tarjeta no llega a 3:1 de contraste no textual y desaparece al sol o con `prefers-contrast` | 21.10, 21.9 |
 | 25 | Tres papeles tipográficos | Una sola familia para toda la interfaz | Con superficies blandas, una redondeada en titulares evita que el relieve parezca una sombra pegada sobre una interfaz plana; el cuerpo sigue en Inter porque ahí manda leer a 12-14px | 21.6 |
 | 26 | La sesión en vivo sigue oscura tras el rediseño | Aclararla para unificar el lenguaje blando | El motivo de la §21.2 es la luz del gimnasio contra la pantalla, y eso no lo cambia una decisión estética | 21.2 |
+| 27 | Biblioteca de comidas como unidad, plan semanal opcional encima | Mantener el plan semanal como puerta de entrada / registro solo por chat sin biblioteca | Exigir el plan pone todo el coste en el primer día, que es cuando se abandona; la rejilla de 7 días tampoco describe cómo se come. Acota la decisión 12, no la sustituye | 6, 6.1, 6.4 |
+| 28 | Sin estimación de macros por fotografía | Registro por foto con IA, como el resto del mercado | Subestima en torno a un tercio de las calorías porque la grasa no se ve; sería precisión aparente sobre un dato peor que el declarado | 6.7 |
 
 ---
 
