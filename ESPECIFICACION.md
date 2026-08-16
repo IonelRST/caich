@@ -28,12 +28,15 @@ Cuando una sección dice que algo "no se hace" o "queda fuera", es una exclusió
 | 9 | La §21 se enmienda donde el flujo de Hevy la contradecía: densidad de la tabla de series, color de superset y alcance de la prohibición de números animados | 21.4, 21.5, 21.6, 21.7, 21.9 |
 | 10 | La §21 se reescribe entera: la dirección pasa de "Instrumento dual" a "Instrumento blando" — superficies con profundidad, neutros con sesgo cian, acento teal y tres papeles tipográficos. Nueva §21.10 | 21 |
 | 11 | La §6 se reescribe entera: la unidad pasa a ser la comida guardada y el plan semanal deja de ser requisito previo. Nuevas §6.6 (ascenso desde el chat) y §6.7 (la foto no es una medida) | 6 |
+| 12 | Se retira la base de principios y el requisito de citar un principio aprobado para afirmar en el nivel 2. El cambio 4 de esta misma lista queda revertido | 11.3, 11.6 |
 
 *Motivo de la revisión:* en un mes de uso real con un asistente genérico, solo 1 de cada 6 mensajes era registrar datos. La v2.0 solo admitía ese sexto.
 
 *Motivo de los cambios 8 y 9:* la §5 describía el flujo de Hevy de memoria, porque el dominio estaba bloqueado por red. Al leerlo (§19 punto 6), parte de lo escrito resultó ser suposición — incluido "deslizar para completar", que Hevy no hace.
 
 *Motivo del cambio 10:* la dirección anterior trataba la precisión y la calidez como opuestas, y la app se leía como una hoja de cálculo con acento naranja. En una herramienta que se usa a diario y durante meses, eso es un riesgo de abandono (principio 1), no una virtud.
+
+*Motivo del cambio 12:* la funcionalidad estaba construida y sin estrenar — 18 principios redactados, ninguno revisado — y mientras tanto bloqueaba las recomendaciones que el cambio 2 de esta misma lista autoriza. Una puerta que nadie cruza no filtra: cierra.
 
 *Motivo del cambio 11:* la §6 escrita ponía todo el coste en el primer día —sin plan semanal definido, la pantalla de dieta no hacía nada— que es justo cuando la gente abandona el registro de comida. Mismo riesgo que el cambio 10, en otra parte de la app.
 
@@ -450,7 +453,7 @@ Requisitos:
 
 - **Dice en qué se apoya.** No *"sube a 60 kg"*, sino *"cerraste las 12 repeticiones en las tres series, así que toca subir"*. El usuario tiene que poder discrepar del razonamiento, no solo del número.
 - **Usa los datos reales del usuario**, no recomendaciones genéricas. Es la diferencia entre un entrenador y un artículo de revista.
-- **Se apoya en la base de conocimiento** (§11.6), que deja de ser una lista corta de 15-20 anclas y pasa a ser el material de referencia del dominio.
+- **Se apoya en conocimiento estándar del dominio**, no en una lista de anclas aprobadas previamente. Lo que separa el nivel 2 del nivel 3 es **el tipo de afirmación** —aplicar algo establecido frente a inferir un patrón del histórico propio—, no si existe una fila aprobada en una tabla (§11.6).
 - **Nada de esto es prescripción médica.** Ver §11.5.
 
 ### 11.4 Nivel 3 — Inferencia sobre el histórico propio (restringido)
@@ -481,14 +484,24 @@ Casos que quedan fuera, explícitamente:
 
 La app **sí** puede registrar que ocurrieron (§4.3, medidas de modelo abierto) para que el usuario los lleve a su médico. Lo que no hace es opinar sobre ellos.
 
-### 11.6 Base de conocimiento
+### 11.6 Base de principios — retirada
 
-Sustituye a la "base curada de principios" de la v2.0, que nació como lista de 15-20 anclas para autorizar afirmaciones. Con §11.3 abierta, cambia de función: es el **material de referencia** del que sale el razonamiento.
+`DECISIÓN` (16 de agosto de 2026): se retira la base de principios y, con ella, el requisito de que toda afirmación de nivel 2 cite un principio aprobado.
 
-- Sigue generándose con IA y **aprobándose por el usuario**: ese orden no cambia.
-- Sigue cubriendo lo no controvertido: sobrecarga progresiva, rangos de proteína, sueño y recuperación, déficit y superávit, volumen mínimo efectivo, gestión de fatiga y descargas.
-- Se amplía con reglas de progresión operativas (rangos de repeticiones, cuándo subir, cuándo consolidar) y estructura de rutinas, que es lo que el uso real demandaba.
-- **Lo que no esté aprobado no se usa como apoyo.** Una base que se autoaprueba no cura nada.
+**Evidencia que la cierra.** La funcionalidad estaba construida y en uso desde hacía días: 18 principios redactados por la IA, **0 aprobados y 0 descartados**. Y el servidor degradaba a nivel 3 todo candidato de nivel 2 sin ancla válida, así que con la base vacía la app **no podía emitir una sola recomendación**. La puerta no filtraba: cerraba.
+
+**Por qué el argumento a favor no se sostiene.** La versión anterior de esta sección sostenía que sin base curada el nivel 2 quedaría apoyado en lo que el modelo recuerde. Pero los 18 principios los redactó el modelo: aprobarlos no aporta anclaje externo, solo un sello. Una base que escribe el propio modelo y el usuario firma añade ceremonia, no fundamento — el enunciado *"una base que se autoaprueba no cura nada"* se aplicaba a sí misma.
+
+**Qué sostiene el nivel 2 en su lugar.** Los requisitos de la §11.3, que no dependían de la base: decir en qué se apoya el razonamiento, y usar los datos reales del usuario. El usuario puede discrepar del razonamiento porque lo tiene delante, que es la garantía que se buscaba.
+
+**Qué NO cambia, y es lo que de verdad protege:**
+
+- El **límite médico** (§11.5) sigue intacto y no negociable. Nunca dependió de esta base.
+- El **freno del nivel 3** (§11.4) sigue intacto: inferir un patrón del histórico propio se presenta como observación con sus datos crudos, nunca como conclusión.
+
+*Consecuencias materiales:* quedan sin uso la migración `0003`, `src/app/principios/`, `src/lib/ia/principios.ts` y `src/lib/datos/principios-acciones.ts`. El destino «Principios» desaparece de la navegación, que pasa de 9 entradas a 8 en el código. La tabla `principio_base` **no se borra** en esta decisión: dejar de usarla es reversible, tirarla no, y las 18 filas no estorban.
+
+*Nota de desajuste, anterior a esta decisión:* la tabla de §22.2 lista 7 destinos y el código tiene 9 (añade «Registrar» e «Insights» por separado). Retirar Principios lo deja en 8. El desajuste sigue abierto y no se resuelve aquí.
 
 ### 11.7 Tono
 
@@ -598,7 +611,7 @@ Nada de esto se construye en v1. Es la lista que debe revisarse **antes** de que
 - Cada mensaje de chat implica al menos una llamada a la API de Claude para parsear texto → JSON estructurado. Los insights implican llamadas adicionales.
 - **Las vías B y C no consumen API** salvo en desviaciones de dieta. Esto reduce el coste operativo del uso diario, además de la fricción.
 - **Modelo según tarea:** modelo rápido y económico para el parseo estructurado (tarea simple y repetitiva); mayor capacidad de razonamiento reservada para los insights de nivel 2.
-- **Prompt caching:** el catálogo de ejercicios, el schema de parseo y la base curada de principios van como contexto en muchas llamadas. Cachearlos reduce coste directamente.
+- **Prompt caching:** el catálogo de ejercicios y el schema de parseo van como contexto en muchas llamadas. Cachearlos reduce coste directamente. (La base de principios estaba en esta lista; retirada en §11.6.)
 - **Cacheo de insights:** no recalcular un insight periódico si los datos de base no han cambiado desde el último cálculo.
 
 ---
@@ -648,7 +661,7 @@ objetivo
 mensaje_original
   └─ texto crudo + referencias a los registros que generó
 
-principio_base                     ← base curada (sección 11.4)
+principio_base                     ← retirada (sección 11.6); tabla conservada, sin uso
   └─ enunciado, ámbito, aprobado_por_usuario
 ```
 
@@ -688,9 +701,8 @@ principio_base                     ← base curada (sección 11.4)
 ### Fase 2 — Objetivos e insights
 
 1. Objetivos genéricos y progreso contra ellos.
-2. Base curada de principios (15-20, generada por IA y aprobada por el usuario).
-3. Insights de nivel 1 (estadísticas puras).
-4. Insights de nivel 2 y 3, con las reglas de anclaje y presentación de la sección 11.
+2. Insights de nivel 1 (estadísticas puras).
+3. Insights de nivel 2 y 3, con las reglas de presentación de la sección 11. (La base curada de principios era el punto 2 de esta fase; retirada en §11.6.)
 5. Insights bajo demanda y resúmenes automáticos periódicos.
 
 ### Fase 3 — Capa MCP
@@ -726,18 +738,18 @@ principio_base                     ← base curada (sección 11.4)
 |---|-------|---------|----------------|
 | 1 | Cómo distingue el sistema una pregunta médica de una de entrenamiento | 11.5 | Al implementar la §11 revisada: es donde el límite se hace o se rompe |
 | 2 | Ampliación del catálogo de ejercicios de 10-15 a 40-60 | 4.1 | Al empezar a usar la app en serio |
-| 3 | Ampliación de la base de conocimiento del dominio | 11.6 | Gradual, según haga falta |
+| ~~3~~ | ~~Ampliación de la base de conocimiento del dominio~~ | 11.6 | **Cerrado el 16 de agosto de 2026** — la base se retira, no hay nada que ampliar |
 | 4 | Formato exacto de las preguntas rápidas de desviación de dieta | 6.3 | Al construir la Fase 1.5 |
 | 5 | Segunda persona (Carol): plan propio, compra conjunta, rutinas coordinadas | Anexo C.5 | Cuando la §11 revisada esté implementada |
 | 6 | Rutinas 1:1 con Hevy — crear, editar y ejecutar: qué se copia exactamente | 5.1, 5.2, 21 | Siguiente en construirse, en cuanto haya material de referencia |
-| 7 | Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6) | 11.3, 11.6 | Antes de aplicar la migración `0003` |
+| ~~7~~ | ~~Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6)~~ | 11.3, 11.6 | **Cerrado el 16 de agosto de 2026** — ver nota al final |
 | 8 | Lista de la compra derivada del plan de dieta semanal | 6.4 | Con la Fase 1.5 en uso real |
 | 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
 | 10 | Elegir ejercicio: pantalla propia con buscador y filtro por grupo muscular, no desplegable | 5.1, 4.1 | Antes de ampliar el catálogo (punto 2) |
 | 11 | Editar y eliminar rutinas ya creadas | 5.1 | Con el punto 6, cierra el flujo de crear/editar |
 | 12 | Crear una rutina desde el chat en lenguaje normal | 3, 5.1 | Después del punto 10 |
 | 13 | Fundir historial, evolución, insights y objetivos en una pestaña «Progreso» | 8, 10, 11, 22.2 | Antes de tocar la navegación otra vez |
-| 14 | Si los principios curados (§11.6) siguen aportando algo | 11.3, 11.6 | Junto con el punto 7: es la misma pregunta |
+| ~~14~~ | ~~Si los principios curados (§11.6) siguen aportando algo~~ | 11.3, 11.6 | **Cerrado el 16 de agosto de 2026** — ver nota al final |
 | 15 | Deslizar para borrar ejercicio y serie en la sesión en vivo | 5.2 | Con el punto 6 |
 | 16 | Reordenar ejercicios dentro de la sesión en vivo | 5.2 | Con el punto 6 |
 | 17 | Comentario por ejercicio en la sesión en vivo | 5.2 | Con el punto 6 |
@@ -776,9 +788,11 @@ La §21.2 no entra en conflicto: la sesión en vivo sigue arrancando en oscuro r
 
 *Pendiente de cierre:* este punto se cierra cuando los tres flujos estén construidos. La especificación ya está decidida.
 
-**Sobre el 7.** Las dos piezas no hacen el mismo trabajo, así que una no sustituye a la otra. El límite médico **corta**: hay preguntas que no se responden. La base de conocimiento **sostiene**: la §11.3 exige que toda recomendación de progresión o de dieta se apoye en material aprobado y diga en qué se apoya. Sin ella, el nivel 2 no desaparece — queda apoyado en lo que el modelo recuerde, que es justo lo que la §11.6 evita al exigir aprobación previa (*"una base que se autoaprueba no cura nada"*).
+**Cerrados el 16 de agosto de 2026: los puntos 3, 7 y 14 — la base de principios.** Eran la misma pregunta formulada tres veces, y la cierra un dato, no un argumento: la funcionalidad llevaba días construida con **18 principios redactados por la IA, 0 aprobados y 0 descartados**, y el servidor degradaba a nivel 3 todo lo que no citara un principio aprobado. Con la base vacía, la app no podía emitir una sola recomendación. Ver §11.6.
 
-Si aun así se retira, hay que decidir qué pasa con el nivel 2: o baja entero a nivel 3 (observaciones sin conclusión), o se acepta recomendación sin anclaje. Y quedan sin uso la migración `0003`, `src/app/principios/`, `src/lib/ia/principios.ts` y `src/lib/datos/principios-acciones.ts`.
+La nota anterior de este punto sostenía que sin base curada el nivel 2 quedaría apoyado en lo que el modelo recuerde. Se conserva aquí el contraargumento que la venció: esos 18 principios los escribió el modelo, así que aprobarlos no añadía anclaje externo. La frase *"una base que se autoaprueba no cura nada"* describía a la propia base.
+
+Lo que **no** se movió, y era lo que de verdad protegía: el límite médico (§11.5) y el freno del nivel 3 (§11.4). Ninguno dependía de esta base.
 
 **Sobre el 9.** `src/lib/ia/proveedor.ts` es hoy, por decisión escrita en el propio archivo, *"un interruptor de desarrollo, no una capa de abstracción de proveedores"*. Dejar elegir proveedor y modelo al usuario lo convierte exactamente en lo segundo. Antes hay que resolver dos cosas que la §14 no cubre: dónde se guarda una clave de terceros (no en `mensaje_original`, no en texto plano) y qué se le enseña al usuario cuando su elección manda datos de salud a un tercero ajeno a Anthropic. La advertencia de la §14 deja de ser una nota para desarrolladores y pasa a ser interfaz.
 
@@ -830,7 +844,7 @@ Dos restricciones condicionan todo lo que sigue:
 | Instrumento de precisión: el dato manda sobre la decoración | App motivacional que celebra cada registro |
 | Calmado en reposo, contundente en la sesión en vivo | Uniformemente enérgico en todas las pantallas |
 | Blando al tacto: las superficies tienen grosor y los controles se hunden al pulsarlos | Plano y sin respuesta, o con relieve puramente decorativo |
-| Honesto con la incertidumbre (§4.2, §11.6): un dato estimado no se ve igual que uno declarado | Presentador de conclusiones seguras |
+| Honesto con la incertidumbre (§4.2, §11.4): un dato estimado no se ve igual que uno declarado | Presentador de conclusiones seguras |
 | Denso donde hay datos, espacioso donde hay decisiones | Dashboard saturado por defecto |
 
 *Motivo:* el principio 6 de la §1.1 (*en salud, la precisión importa más que la fluidez*) sigue mandando sobre la decoración. Blando no es lo mismo que celebratorio: la §21.9 sigue prohibiendo rachas, medallas y confeti. Lo que la suavidad compra es que abrir la app a diario no cueste.
@@ -1156,6 +1170,7 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 26 | La sesión en vivo sigue oscura tras el rediseño | Aclararla para unificar el lenguaje blando | El motivo de la §21.2 es la luz del gimnasio contra la pantalla, y eso no lo cambia una decisión estética | 21.2 |
 | 27 | Biblioteca de comidas como unidad, plan semanal opcional encima | Mantener el plan semanal como puerta de entrada / registro solo por chat sin biblioteca | Exigir el plan pone todo el coste en el primer día, que es cuando se abandona; la rejilla de 7 días tampoco describe cómo se come. Acota la decisión 12, no la sustituye | 6, 6.1, 6.4 |
 | 28 | Sin estimación de macros por fotografía | Registro por foto con IA, como el resto del mercado | Subestima en torno a un tercio de las calorías porque la grasa no se ve; sería precisión aparente sobre un dato peor que el declarado | 6.7 |
+| 29 | Se retira la base de principios y su puerta de aprobación | Mantenerla como material de referencia sin puerta / aprobar los 18 principios pendientes | 18 redactados, 0 aprobados: la puerta no filtraba, cerraba — con la base vacía el nivel 2 no podía emitirse. Y los escribió el propio modelo, así que aprobarlos no añadía anclaje. El límite médico (§11.5) y el freno del nivel 3 (§11.4) siguen intactos | 11.3, 11.6 |
 
 ---
 
