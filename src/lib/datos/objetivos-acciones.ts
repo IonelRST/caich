@@ -59,6 +59,53 @@ export async function crearObjetivo(
   return { aviso: "Objetivo creado." };
 }
 
+/**
+ * Corregir un objetivo ya creado (§9, punto 22 de la §19).
+ *
+ * No se toca `cumplido_en`: marcarlo cumplido y corregir su enunciado son dos
+ * cosas distintas, y editar la meta de un objetivo ya cumplido no debe
+ * resucitarlo. Para eso está `marcarCumplido`, que es su propia acción.
+ */
+export async function actualizarObjetivo(
+  _previo: EstadoObjetivo,
+  formData: FormData,
+): Promise<EstadoObjetivo> {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Falta el objetivo." };
+
+  const fecha = formData.get("fecha_objetivo");
+
+  const datos = esquema.safeParse({
+    descripcion: formData.get("descripcion"),
+    metrica: formData.get("metrica"),
+    valor_objetivo: formData.get("valor_objetivo"),
+    unidad: formData.get("unidad"),
+    direccion: formData.get("direccion"),
+    fecha_objetivo: fecha === "" ? undefined : fecha,
+  });
+
+  if (!datos.success) return { error: datos.error.issues[0].message };
+
+  const supabase = await crearClienteServidor();
+
+  const { error } = await supabase
+    .from("objetivo")
+    .update({
+      descripcion: datos.data.descripcion,
+      metrica: datos.data.metrica,
+      valor_objetivo: datos.data.valor_objetivo,
+      unidad: datos.data.unidad,
+      direccion: datos.data.direccion,
+      fecha_objetivo: datos.data.fecha_objetivo ?? null,
+    })
+    .eq("id", id);
+
+  if (error) return { error: `No se ha podido guardar: ${error.message}` };
+
+  revalidatePath("/objetivos");
+  return { aviso: "Corregido." };
+}
+
 export async function borrarObjetivo(formData: FormData): Promise<void> {
   const id = formData.get("id");
   if (typeof id !== "string") return;

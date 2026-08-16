@@ -1,4 +1,5 @@
 import {
+  EditorObjetivo,
   FormularioObjetivo,
   type OpcionMetrica,
 } from "./formulario-objetivo";
@@ -164,7 +165,7 @@ export default async function Objetivos() {
                     </div>
                   )}
 
-                  <div className="mt-3 flex gap-4">
+                  <div className="mt-3 flex flex-wrap items-center gap-4">
                     {p.alcanzado && (
                       <form action={marcarCumplido}>
                         <input type="hidden" name="id" value={o.id} />
@@ -176,6 +177,20 @@ export default async function Objetivos() {
                         </button>
                       </form>
                     )}
+                    {/* §19 punto 22: corregir la meta, la fecha o el enunciado
+                        sin tener que borrar el objetivo y perder su histórico. */}
+                    <EditorObjetivo
+                      objetivo={{
+                        id: o.id,
+                        descripcion: o.descripcion,
+                        metrica: o.metrica,
+                        valor_objetivo: Number(o.valor_objetivo),
+                        unidad: o.unidad,
+                        direccion: o.direccion,
+                        fecha_objetivo: o.fecha_objetivo,
+                      }}
+                      opciones={opciones}
+                    />
                     <form action={borrarObjetivo}>
                       <input type="hidden" name="id" value={o.id} />
                       <button
