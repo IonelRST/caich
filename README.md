@@ -2,7 +2,7 @@
 
 App web de tracking fitness con IA: registro de entrenos, comida y medidas corporales, con gráficos de evolución e insights basados en el propio histórico.
 
-**Estado:** Fases 1 y 1.5 completas salvo el dictado por voz. Fase 2 construida a falta de aplicar la migración `0003`.
+**Estado:** Fases 1 y 1.5 completas salvo el dictado por voz. Fase 2 construida.
 
 | Área | Estado |
 |------|--------|
@@ -12,8 +12,8 @@ App web de tracking fitness con IA: registro de entrenos, comida y medidas corpo
 | Chat de texto libre + parseo a datos (§3, §7) | Funcionando |
 | Objetivos y gráficos de evolución | Funcionando |
 | Insights de nivel 1 — estadísticas puras (§11.1) | Funcionando |
-| Base curada de principios (§11.4) | **Requiere aplicar la migración 0003** |
-| Insights de nivel 2 y 3 (§11.2, §11.3) | Construido, sin verificar: depende de la 0003 |
+| Base curada de principios | **Retirada** el 16/08/2026 (§11.6) — ver más abajo |
+| Insights de nivel 2 y 3 (§11.2, §11.3, §11.4) | Construido, sin verificar en uso real |
 | Dictado por voz (§3.4) | Pendiente |
 | Resúmenes automáticos periódicos (§11.5) | Pendiente |
 | Capa MCP (§12) | Pendiente |
@@ -34,11 +34,15 @@ En el panel de Supabase → **SQL Editor**, ejecutar en orden:
 
 1. `supabase/migrations/0001_esquema_inicial.sql` — tablas, RLS y políticas
 2. `supabase/migrations/0002_semilla_catalogo.sql` — 15 ejercicios iniciales
-3. `supabase/migrations/0003_principios_base.sql` — base curada de principios (§11.4)
+3. `supabase/migrations/0003_principios_base.sql` — base de principios, **ya no se usa** (§11.6)
 4. `supabase/migrations/0004_series_de_rutina.sql` — series como filas (§5.1, §5.2)
 
-> **La 0003 está sin aplicar.** Hasta que se ejecute, `/principios` muestra un aviso
-> de tabla ausente y los insights de nivel 2 no tienen anclaje posible.
+> **La 0003 quedó obsoleta.** La base de principios se retiró el 16 de agosto de 2026
+> (§11.6): 18 principios redactados por la IA, ninguno aprobado, y mientras tanto la
+> puerta impedía emitir cualquier insight de nivel 2. La tabla `principio_base` no se
+> borra —dejar de usarla es reversible, tirarla no— pero nada la lee. La migración se
+> mantiene en el repositorio como historia; aplicarla en una instalación nueva no hace
+> daño y tampoco sirve para nada.
 
 > **La 0004 está sin aplicar.** Es obligatoria para `/rutinas` y `/entreno`: crea
 > `plantilla_serie`, añade columnas a las tablas de sesión y **elimina**
@@ -103,11 +107,12 @@ Tres decisiones que no se ven leyendo un archivo suelto:
   en [`src/lib/datos/insights.ts`](src/lib/datos/insights.ts) como funciones puras
   sobre filas ya leídas, para que el cálculo que sostiene un dato de salud se pueda
   comprobar sin levantar una base de datos.
-- **El anclaje de los insights de nivel 2 se impone en código, no en el prompt.**
-  El modelo devuelve un `principio_id` y el servidor comprueba que esté entre los
-  aprobados de verdad; si no lo está, el insight no se descarta en silencio, baja a
-  nivel 3 como observación sin conclusión (§11.2, §11.3). Pedirlo en el prompt no
-  bastaría: un modelo puede citar un principio que no existe.
+- **Lo que separa un insight de nivel 2 de uno de nivel 3 es el tipo de afirmación**
+  (§11.3, §11.4): aplicar conocimiento establecido del dominio puede concluir; inferir
+  un patrón del histórico propio, no —es n=1 y con confusores que la app no puede
+  descartar. La garantía del nivel 2 es decir en qué se apoya, y eso se comprueba en
+  código: un nivel 2 sin apoyo escrito no se descarta en silencio, baja a nivel 3.
+  Pedirlo solo en el prompt no bastaría.
 
 ## Idea en una frase
 
@@ -129,7 +134,7 @@ Registrar entreno y dieta debe costar lo mínimo posible: rutinas y plan de comi
 |------|-----------|
 | 1 | Login, base de datos con RLS, chat + parseo, historial, gráficos |
 | 1.5 | Rutinas y entreno en vivo, plan de dieta y check-in, dictado por voz |
-| 2 | Objetivos, base curada de principios, insights |
+| 2 | Objetivos e insights |
 | 3 | Capa MCP y clientes externos |
 
 Detalle completo en la sección 17 de la especificación.

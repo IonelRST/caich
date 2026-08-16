@@ -20,8 +20,8 @@ type Proveedor = "tensorx" | "claude";
 /**
  * §15: modelo según tarea. El parseo es simple y repetitivo y se ejecuta en
  * cada mensaje, así que va a un modelo rápido y barato; los insights razonan
- * sobre el histórico y cruzan datos con la base de principios, así que se
- * reservan el modelo capaz. Un único modelo para ambas cosas paga de más en la
+ * sobre varias semanas de histórico a la vez, así que se reservan el modelo
+ * capaz. Un único modelo para ambas cosas paga de más en la
  * tarea frecuente o rinde de menos en la difícil.
  */
 export type Tarea = "parseo" | "insights";

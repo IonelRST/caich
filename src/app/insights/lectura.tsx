@@ -28,7 +28,7 @@ function Boton() {
   );
 }
 
-export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
+export function Nivel23() {
   const [estado, accion] = useActionState(
     () => pedirNivel23(),
     ESTADO_INICIAL,
@@ -47,13 +47,6 @@ export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
         )}
       </form>
 
-      {!hayPrincipios && (
-        <p className="text-sm text-aviso">
-          Sin principios aprobados no se puede afirmar ninguna causa: todo lo que
-          salga se quedará en observación sin conclusión.
-        </p>
-      )}
-
       {r?.nota && <p className="text-sm text-suave">{r.nota}</p>}
 
       {r && r.nivel2.length > 0 && (
@@ -71,11 +64,11 @@ export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
                     conclusión, para que se pueda verificar. */}
                 <p className="mt-2 text-sm text-suave">{i.datosDeRespaldo}</p>
 
+                {/* §11.3: el razonamiento se muestra para poder discrepar de
+                    él, no solo del número. */}
                 <div className="mt-3 border-t border-borde pt-3">
-                  <p className="text-xs text-suave">
-                    Se apoya en un principio aprobado por ti:
-                  </p>
-                  <p className="mt-1 text-xs">{i.principio.enunciado}</p>
+                  <p className="text-xs text-suave">Se apoya en:</p>
+                  <p className="mt-1 text-xs">{i.apoyo}</p>
                   <p className="mt-2 text-xs text-suave">
                     {i.muestras} registros · {ETIQUETA_FUERZA[i.fuerza] ?? i.fuerza}
                   </p>
@@ -90,9 +83,9 @@ export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
         <section>
           <h3 className="text-sm font-medium">Observaciones sin conclusión</h3>
           <p className="mt-2 text-sm text-suave">
-            Coincidencias en los datos que no se apoyan en ningún principio
-            aprobado. No afirman una causa. Para cualquier decisión sobre esto,
-            un entrenador, nutricionista o médico.
+            Patrones vistos en tus propios datos. No afirman una causa: son n=1,
+            con confusores que la app no puede descartar. Para cualquier decisión
+            sobre esto, un entrenador, nutricionista o médico.
           </p>
           <ul className="mt-3 space-y-3">
             {r.nivel3.map((o, n) => (
@@ -104,8 +97,8 @@ export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
                 <p className="mt-2 text-sm text-suave">{o.datosDeRespaldo}</p>
                 {o.degradado && (
                   <p className="mt-3 border-t border-borde pt-3 text-xs text-aviso">
-                    Venía como conclusión, pero no citaba un principio aprobado
-                    válido: se queda en observación.
+                    Venía como conclusión, pero no decía en qué se apoyaba: se
+                    queda en observación.
                   </p>
                 )}
               </li>

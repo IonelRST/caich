@@ -2,8 +2,7 @@
  * Insights de nivel 1 — estadísticas puras (§11.1).
  *
  * Aritmética sobre los datos estructurados del usuario. Sin interpretación y sin
- * pasar por un modelo de lenguaje: son hechos, no afirmaciones sobre causas, y
- * por eso no necesitan ancla en la base de principios.
+ * pasar por un modelo de lenguaje: son hechos, no afirmaciones sobre causas.
  *
  * Todo lo de aquí son funciones puras sobre filas ya leídas. Es deliberado: el
  * cálculo que sostiene un insight de salud tiene que poder comprobarse sin

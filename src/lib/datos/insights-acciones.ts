@@ -1,16 +1,11 @@
 "use server";
 
 import { calcularNivel1, type FilaComida, type FilaEntreno, type FilaMedida, type Nivel1 } from "./insights";
-import {
-  generarNivel23,
-  type Nivel23,
-  type PrincipioAprobado,
-} from "@/lib/ia/insights-ia";
+import { generarNivel23, type Nivel23 } from "@/lib/ia/insights-ia";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export type LecturaInsights = {
   nivel1: Nivel1;
-  principiosAprobados: number;
   error?: string;
 };
 
@@ -33,7 +28,7 @@ async function leerDatos() {
   const supabase = await crearClienteServidor();
   const desde = new Date(Date.now() - DIAS_LECTURA * 86_400_000).toISOString();
 
-  const [medidas, entrenos, comidas, principios] = await Promise.all([
+  const [medidas, entrenos, comidas] = await Promise.all([
     supabase
       .from("registro_medida")
       .select("nombre, valor, fecha_evento")
@@ -48,11 +43,6 @@ async function leerDatos() {
       .from("registro_comida")
       .select("fecha_evento, proteina_g, calorias, adherencia")
       .gte("fecha_evento", desde),
-    supabase
-      .from("principio_base")
-      .select("id, enunciado, ambito")
-      .eq("aprobado", true)
-      .order("orden"),
   ]);
 
   // La forma anidada de Supabase se aplana aquí para que el módulo de cálculo
@@ -77,18 +67,14 @@ async function leerDatos() {
     medidas: (medidas.data ?? []) as FilaMedida[],
     entrenos: entrenosPlanos,
     comidas: (comidas.data ?? []) as FilaComida[],
-    principios: (principios.data ?? []) as PrincipioAprobado[],
   };
 }
 
 /** Nivel 1: aritmética pura, sin IA y sin coste (§11.1). Se calcula siempre. */
 export async function leerNivel1(): Promise<LecturaInsights> {
-  const { medidas, entrenos, comidas, principios } = await leerDatos();
+  const { medidas, entrenos, comidas } = await leerDatos();
 
-  return {
-    nivel1: calcularNivel1(medidas, entrenos, comidas, Date.now()),
-    principiosAprobados: principios.length,
-  };
+  return { nivel1: calcularNivel1(medidas, entrenos, comidas, Date.now()) };
 }
 
 export type EstadoNivel23 = { resultado?: Nivel23; error?: string };
@@ -100,11 +86,11 @@ export type EstadoNivel23 = { resultado?: Nivel23; error?: string };
  * dispara con un botón en vez de en cada visita.
  */
 export async function pedirNivel23(): Promise<EstadoNivel23> {
-  const { medidas, entrenos, comidas, principios } = await leerDatos();
+  const { medidas, entrenos, comidas } = await leerDatos();
   const nivel1 = calcularNivel1(medidas, entrenos, comidas, Date.now());
 
   try {
-    return { resultado: await generarNivel23(principios, nivel1.estadisticas) };
+    return { resultado: await generarNivel23(nivel1.estadisticas) };
   } catch (fallo) {
     return {
       error:

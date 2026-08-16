@@ -1,5 +1,4 @@
 import {
-  BookOpen,
   Dumbbell,
   Home,
   Lightbulb,
@@ -36,7 +35,6 @@ export const DESTINOS: readonly Destino[] = [
   { href: "/evolucion", texto: "Evolución", icono: TrendingUp },
   { href: "/insights", texto: "Insights", icono: Lightbulb },
   { href: "/objetivos", texto: "Objetivos", icono: Target },
-  { href: "/principios", texto: "Principios", icono: BookOpen },
 ];
 
 /**

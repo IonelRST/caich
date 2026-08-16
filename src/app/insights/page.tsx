@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { Nivel23 } from "./lectura";
 import { leerNivel1 } from "@/lib/datos/insights-acciones";
 
 export default async function Insights() {
-  const { nivel1, principiosAprobados } = await leerNivel1();
+  const { nivel1 } = await leerNivel1();
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
@@ -11,8 +10,8 @@ export default async function Insights() {
         <h1 className="text-2xl font-semibold tracking-tight">Insights</h1>
         <p className="mt-2 text-sm text-suave">
           Los números de abajo son aritmética sobre tus registros, sin IA de por
-          medio. La lectura interpretada va aparte, y solo puede afirmar una causa
-          si se apoya en un principio que hayas aprobado.
+          medio. La lectura interpretada va aparte, y cuando concluye algo dice
+          en qué se apoya.
         </p>
       </header>
 
@@ -43,7 +42,7 @@ export default async function Insights() {
         )}
       </section>
 
-      {/* §11.6: lo que no se puede calcular se dice, en vez de omitirlo y dar la
+      {/* §11.7: lo que no se puede calcular se dice, en vez de omitirlo y dar la
           impresión de que el histórico está completo. */}
       {nivel1.insuficiente.length > 0 && (
         <section className="mt-8">
@@ -61,34 +60,11 @@ export default async function Insights() {
       <section className="mt-10 border-t border-borde pt-6">
         <h2 className="text-sm font-medium">Lectura interpretada</h2>
         <p className="mt-2 text-sm text-suave">
-          Cuesta una llamada a la IA, así que se pide a mano.{" "}
-          {principiosAprobados > 0 ? (
-            <>
-              Tienes {principiosAprobados} principios aprobados como ancla.{" "}
-              <Link
-                href="/principios"
-                className="underline underline-offset-4"
-              >
-                Revisarlos
-              </Link>
-              .
-            </>
-          ) : (
-            <>
-              No tienes principios aprobados todavía.{" "}
-              <Link
-                href="/principios"
-                className="underline underline-offset-4"
-              >
-                Aprobar algunos
-              </Link>
-              .
-            </>
-          )}
+          Cuesta una llamada a la IA, así que se pide a mano.
         </p>
 
         <div className="mt-5">
-          <Nivel23 hayPrincipios={principiosAprobados > 0} />
+          <Nivel23 />
         </div>
       </section>
     </main>
