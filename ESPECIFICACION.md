@@ -746,17 +746,20 @@ principio_base                     ← retirada (sección 11.6); tabla conservad
 | 8 | Lista de la compra derivada del plan de dieta semanal | 6.4 | Con la Fase 1.5 en uso real |
 | 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
 | 10 | Elegir ejercicio: pantalla propia con buscador y filtro por grupo muscular, no desplegable | 5.1, 4.1 | Antes de ampliar el catálogo (punto 2) |
-| 11 | Editar y eliminar rutinas ya creadas | 5.1 | Con el punto 6, cierra el flujo de crear/editar |
+| ~~11~~ | ~~Editar y eliminar rutinas ya creadas~~ | 5.1 | **Cerrado el 16 de agosto de 2026** — ya existían; faltaba el acceso |
 | 12 | Crear una rutina desde el chat en lenguaje normal | 3, 5.1 | Después del punto 10 |
 | 13 | Fundir historial, evolución, insights y objetivos en una pestaña «Progreso» | 8, 10, 11, 22.2 | Antes de tocar la navegación otra vez |
 | ~~14~~ | ~~Si los principios curados (§11.6) siguen aportando algo~~ | 11.3, 11.6 | **Cerrado el 16 de agosto de 2026** — ver nota al final |
-| 15 | Deslizar para borrar ejercicio y serie en la sesión en vivo | 5.2 | Con el punto 6 |
+| 15 | Deslizar para borrar ejercicio y serie en la sesión en vivo | 5.2 | **Parcial el 16 de agosto de 2026**: quitar ejercicio ya existe como acción y control. Falta el gesto |
 | 16 | Reordenar ejercicios dentro de la sesión en vivo | 5.2 | Con el punto 6 |
 | 17 | Comentario por ejercicio en la sesión en vivo | 5.2 | Con el punto 6 |
-| 18 | Ruido visual de los campos de texto en la sesión en vivo | 5.2, 21.6 | Con el punto 6 |
+| ~~18~~ | ~~Ruido visual de los campos de texto en la sesión en vivo~~ | 5.2, 21.10 | **Cerrado el 16 de agosto de 2026** — excepción de relieve en las tablas de series |
 | 19 | Reemplazar un ejercicio sin salir de la sesión | 5.2 | Con el punto 6 |
 | ~~20~~ | ~~«Descartar sesión» no funciona~~ | 5.4 | **Cerrado el 16 de agosto de 2026** — no era un fallo propio: ver nota al final |
 | ~~21~~ | ~~La vía de dieta hay que repensarla entera~~ | 6 | **Cerrado el 16 de agosto de 2026** — ver nota al final |
+| 22 | Editar un objetivo ya creado | 9 | Con la auditoría CRUD; ver nota al final |
+| 23 | Editar una comida del plan semanal | 6.4 | Al enganchar el plan a la biblioteca |
+| 24 | La §22.2 lista 7 destinos y el código tiene 8 | 22.2 | Antes de tocar la navegación (punto 13) |
 
 **Lote añadido el 16 de agosto de 2026**, a partir del uso real de la app en un móvil. Doce puntos, que no son de la misma naturaleza y no deberían tratarse igual:
 
@@ -787,6 +790,26 @@ Material de referencia indicado por el usuario: <https://www.hevyapp.com/feature
 La §21.2 no entra en conflicto: la sesión en vivo sigue arrancando en oscuro reforzado, sea cual sea el tema general, y el constructor de rutinas sigue el tema normal de la app.
 
 *Pendiente de cierre:* este punto se cierra cuando los tres flujos estén construidos. La especificación ya está decidida.
+
+**Auditoría CRUD del 16 de agosto de 2026.** Se recorrió la app entidad por entidad comprobando qué se puede crear, leer, editar y borrar. El resultado tenía forma: **todo se creaba, se leía y se borraba; casi nada se editaba.**
+
+| Entidad | C | R | U | D |
+|---|---|---|---|---|
+| Comida guardada (§6.1) | ✓ | ✓ | ✓ | ✓ |
+| Rutina, ejercicio de rutina, serie de rutina | ✓ | ✓ | ✓ | ✓ |
+| Serie de la sesión en vivo | ✓ | ✓ | ✓ | ✓ |
+| Medida corporal | ✓ | ✓ | **faltaba** | ✓ |
+| Registro de comida | ✓ | ✓ | **faltaba** | ✓ |
+| Ejercicio dentro de la sesión en vivo | ✓ | ✓ | ✓ | **faltaba** |
+| Objetivo | ✓ | ✓ | **falta** (punto 22) | ✓ |
+| Comida del plan semanal | ✓ | ✓ | **falta** (punto 23) | ✓ |
+| Registro de entreno cerrado | ✓ | ✓ | no aplica | ✓ |
+
+*Consecuencia de la columna que faltaba:* corregir una errata obligaba a borrar y volver a crear, y eso cambia `fecha_registro` y pierde el enlace con `mensaje_original`. La §8 promete "edición y borrado" sin distinguir tipo de dato, así que no era una funcionalidad pendiente: era media sección sin construir.
+
+*Cerrado ese mismo día:* edición de medidas y de comidas en el historial, y quitar un ejercicio de la sesión en vivo. El entreno cerrado no entra: sus valores viven en sus series y quien las edita es la sesión (§5.2), no un formulario de una línea del historial.
+
+**Corrección al punto 11.** Renombrar, reordenar, editar series y borrar una rutina existían desde que se construyó la §5.1. Lo que faltaba era el **acceso**: el único camino era el nombre de la rutina como enlace, subrayado solo al pasar por encima. En un móvil no hay "por encima", así que la funcionalidad parecía no existir. Queda como recordatorio de que un hueco de interfaz y un hueco de funcionalidad se parecen mucho desde fuera, y conviene mirar el código antes de decidir cuál de los dos es.
 
 **Cerrado el 16 de agosto de 2026: el punto 20.** No era un fallo de «Descartar sesión». El formulario es un server action por POST, y Next 16 rechazaba con 403 las peticiones de desarrollo abiertas desde la IP de la red en vez de desde localhost — la misma causa por la que el menú de navegación no abría en el móvil. Se arregló declarando el origen en `next.config.ts`. Verificado de punta a punta: dos sesiones desechables creadas y descartadas, con borrado y redirección correctos.
 
