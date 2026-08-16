@@ -1,5 +1,7 @@
+import { Biblioteca, FormularioComida } from "./biblioteca";
 import { CheckinComida, FormularioComidaPlan } from "./formularios";
 import { DIAS, diaSemanaHoy } from "@/lib/datos/dieta";
+import type { ComidaGuardada } from "@/lib/datos/biblioteca-acciones";
 import { quitarComidaDelPlan } from "@/lib/datos/dieta-acciones";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
@@ -8,6 +10,14 @@ export const metadata = { title: "Dieta · caich" };
 export default async function Dieta() {
   const supabase = await crearClienteServidor();
   const hoy = diaSemanaHoy();
+
+  // §6.1: el orden sale del uso, para que lo de siempre quede arriba sin
+  // buscarlo. Lo hace la base de datos, no el componente.
+  const { data: biblioteca } = await supabase
+    .from("comida_guardada")
+    .select("id, nombre, cantidad, calorias, proteina_g, veces_registrada, ultima_vez")
+    .order("ultima_vez", { ascending: false, nullsFirst: false })
+    .order("veces_registrada", { ascending: false });
 
   const { data: plan } = await supabase
     .from("plantilla")
@@ -47,16 +57,16 @@ export default async function Dieta() {
         <h1 className="text-2xl font-semibold tracking-tight">Dieta</h1>
       </header>
 
-      <section className="mt-8">
-        <h2 className="text-sm font-medium">
-          Hoy · {DIAS[hoy - 1]}
-        </h2>
-
-        {deHoy.length === 0 ? (
-          <p className="mt-4 text-sm text-suave">
-            No hay comidas planificadas para hoy. Añádelas al plan más abajo.
-          </p>
-        ) : (
+      {/*
+        §6.2: cuando hay plan para hoy, sus comidas van arriba. Cuando no lo
+        hay, ese sitio lo ocupa la biblioteca. La pantalla nunca queda vacía por
+        no haber planificado, que era el problema de la versión anterior.
+      */}
+      {deHoy.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-sm font-medium">
+            Del plan de hoy · {DIAS[hoy - 1]}
+          </h2>
           <ul className="mt-4 space-y-3">
             {deHoy.map((i) => (
               <CheckinComida
@@ -69,13 +79,30 @@ export default async function Dieta() {
               />
             ))}
           </ul>
-        )}
+        </section>
+      )}
+
+      <section className="mt-8">
+        <h2 className="text-sm font-medium">Tu biblioteca</h2>
+        <p className="mt-1 text-sm text-suave">
+          Lo que repites. Un toque para registrarlo, sin plan de por medio.
+        </p>
+
+        <Biblioteca comidas={(biblioteca ?? []) as ComidaGuardada[]} />
       </section>
 
       <section className="mt-10">
+        <h2 className="text-sm font-medium">Guardar una comida</h2>
+        <div className="mt-4">
+          <FormularioComida />
+        </div>
+      </section>
+
+      <section className="mt-10 border-t border-borde pt-6">
         <h2 className="text-sm font-medium">Plan semanal</h2>
         <p className="mt-1 text-sm text-suave">
-          Se define una vez, con calma. El día a día es solo confirmar.
+          Opcional (§6.4). Coloca comidas en días concretos para medir
+          adherencia. Sin plan, la biblioteca de arriba funciona igual.
         </p>
 
         {!items || items.length === 0 ? (
