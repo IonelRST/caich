@@ -42,7 +42,7 @@ export function EditorEjercicio({
 
   return (
     <section
-      className="rounded-xl border border-borde p-4"
+      className="alzado rounded-xl p-4"
       style={
         item.superset_grupo != null
           ? {
@@ -125,7 +125,7 @@ export function EditorEjercicio({
         <input type="hidden" name="rutina_id" value={rutinaId} />
         <button
           type="submit"
-          className="h-11 w-full rounded-lg border border-borde text-sm font-medium text-suave"
+          className="control h-11 w-full rounded-lg text-sm font-medium text-suave"
         >
           + Añadir serie
         </button>
@@ -147,7 +147,7 @@ export function EditorEjercicio({
             name="nota"
             defaultValue={item.nota ?? ""}
             placeholder="Se ve durante el entreno"
-            className="h-11 w-full rounded-lg border border-borde bg-transparent px-3 text-sm outline-none focus:border-accion"
+            className="hundido h-11 w-full rounded-lg px-3 text-sm outline-none focus:border-accion"
           />
         </div>
 
@@ -163,7 +163,7 @@ export function EditorEjercicio({
               id={`descanso-${item.id}`}
               name="descanso_segundos"
               defaultValue={item.descanso_segundos ?? ""}
-              className="h-11 rounded-lg border border-borde bg-transparent px-3 text-sm"
+              className="hundido h-11 rounded-lg px-3 text-sm"
             >
               <option value="">Sin temporizador</option>
               {[30, 45, 60, 90, 120, 150, 180, 240, 300].map((s) => (
@@ -176,7 +176,7 @@ export function EditorEjercicio({
 
           <button
             type="submit"
-            className="h-11 rounded-lg border border-borde px-4 text-sm font-medium"
+            className="control h-11 rounded-lg px-4 text-sm font-medium"
           >
             Guardar
           </button>
@@ -239,7 +239,7 @@ function FilaSerieRutina({
             name="tipo"
             defaultValue={serie.tipo}
             aria-label={`Tipo de la serie ${serie.numero_serie}`}
-            className="h-11 w-full rounded-md border border-borde bg-transparent px-1.5 text-xs"
+            className="hundido h-11 w-full rounded-md px-1.5 text-xs"
           >
             {TIPOS_SERIE.map((t) => (
               <option key={t.valor} value={t.valor}>
@@ -260,7 +260,7 @@ function FilaSerieRutina({
             defaultValue={serie.peso_objetivo ?? ""}
             placeholder="–"
             aria-label={`Peso objetivo de la serie ${serie.numero_serie}`}
-            className="h-11 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-sm tabular-nums"
+            className="hundido h-11 w-full rounded-md px-1.5 text-center text-sm tabular-nums"
           />
         </td>
 
@@ -277,7 +277,7 @@ function FilaSerieRutina({
               defaultValue={serie.reps_min ?? ""}
               placeholder="–"
               aria-label={`Repeticiones de la serie ${serie.numero_serie}`}
-              className="h-11 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-sm tabular-nums"
+              className="hundido h-11 w-full rounded-md px-1.5 text-center text-sm tabular-nums"
             />
             <span className="text-xs text-suave">–</span>
             <input
@@ -289,7 +289,7 @@ function FilaSerieRutina({
               defaultValue={serie.reps_max ?? ""}
               placeholder="máx"
               aria-label={`Tope del rango de repeticiones de la serie ${serie.numero_serie} (opcional)`}
-              className="h-11 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-sm tabular-nums"
+              className="hundido h-11 w-full rounded-md px-1.5 text-center text-sm tabular-nums"
             />
           </div>
         </td>
@@ -302,7 +302,7 @@ function FilaSerieRutina({
               <button
                 type="submit"
                 aria-label={`Guardar la serie ${serie.numero_serie}`}
-                className="h-11 w-11 rounded-md border border-borde text-sm"
+                className="control h-11 w-11 rounded-md text-sm"
               >
                 ✓
               </button>
@@ -359,7 +359,7 @@ function BotonIcono({
         type="submit"
         disabled={desactivado}
         aria-label={etiqueta}
-        className="h-11 w-11 rounded-lg border border-borde text-sm disabled:opacity-40"
+        className="control h-11 w-11 rounded-lg text-sm disabled:opacity-40"
       >
         {children}
       </button>

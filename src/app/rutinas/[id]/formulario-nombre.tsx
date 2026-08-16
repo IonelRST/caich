@@ -12,7 +12,7 @@ function Boton() {
     <button
       type="submit"
       disabled={pending}
-      className="h-11 shrink-0 rounded-lg border border-borde px-4 text-sm font-medium disabled:opacity-50"
+      className="control h-11 shrink-0 rounded-lg px-4 text-sm font-medium disabled:opacity-50"
     >
       {pending ? "Guardando…" : "Renombrar"}
     </button>
@@ -36,7 +36,7 @@ export function FormularioNombre({ id, nombre }: { id: string; nombre: string })
           required
           maxLength={80}
           defaultValue={nombre}
-          className="h-11 w-full rounded-lg border border-borde bg-transparent px-3 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+          className="hundido h-11 w-full rounded-lg px-3 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
         />
       </div>
 

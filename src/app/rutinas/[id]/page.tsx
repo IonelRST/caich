@@ -115,7 +115,7 @@ export default async function DetalleRutina({
             <input type="hidden" name="rutina_id" value={id} />
             <button
               type="submit"
-              className="h-14 w-full rounded-lg bg-accion text-base font-medium text-sobre-accion"
+              className="h-14 w-full rounded-xl bg-accion text-base font-medium text-sobre-accion shadow-apoyado"
             >
               Empezar entreno
             </button>

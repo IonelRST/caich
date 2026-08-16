@@ -46,7 +46,7 @@ export default async function Principios() {
       {error && (
         <p
           role="alert"
-          className="mt-8 rounded-xl border border-borde bg-superficie p-5 text-sm text-error"
+          className="alzado mt-8 rounded-xl p-5 text-sm text-error"
         >
           No se ha podido leer la base de principios: {error.message}. Comprueba
           que la migración 0003 está aplicada en Supabase.
@@ -77,7 +77,7 @@ export default async function Principios() {
             {pendientes.map((p) => (
               <li
                 key={p.id}
-                className="rounded-xl border border-borde bg-superficie p-4"
+                className="alzado rounded-xl p-4"
               >
                 <p className="text-sm">{p.enunciado}</p>
                 <div className="mt-3 flex items-center gap-4">
@@ -116,7 +116,7 @@ export default async function Principios() {
             {aprobados.map((p) => (
               <li
                 key={p.id}
-                className="rounded-xl border border-borde bg-superficie p-4"
+                className="alzado rounded-xl p-4"
               >
                 <p className="text-sm">{p.enunciado}</p>
                 <div className="mt-3 flex items-center gap-4">

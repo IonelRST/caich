@@ -28,7 +28,7 @@ export default async function Insights() {
             {nivel1.estadisticas.map((e) => (
               <li
                 key={e.clave}
-                className="rounded-xl border border-borde bg-superficie p-4"
+                className="alzado rounded-xl p-4"
               >
                 <div className="flex items-baseline justify-between gap-4">
                   <h3 className="text-sm">{e.titulo}</h3>

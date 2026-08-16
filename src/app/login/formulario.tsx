@@ -71,7 +71,7 @@ export function FormularioLogin({
             type="email"
             autoComplete="email"
             required
-            className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+            className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
           />
         </div>
 
@@ -88,7 +88,7 @@ export function FormularioLogin({
             }
             required
             minLength={8}
-            className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+            className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
           />
           {modo === "registrar" && (
             <p className="text-xs text-suave">

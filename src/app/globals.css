@@ -1,75 +1,104 @@
 @import "tailwindcss";
 
-/* Tokens de la §21 de ESPECIFICACION.md.
+/* Tokens de la §21 de ESPECIFICACION.md — dirección "Instrumento blando".
    Los componentes usan SIEMPRE los nombres semánticos (bg-superficie,
-   text-suave, border-borde...), nunca un color crudo de Tailwind ni un hex.
-   Así el tema oscuro y el modo de sesión en vivo se resuelven aquí y no
-   obligan a duplicar cada clase con su variante dark:. */
+   text-suave, border-borde, shadow-alzado...), nunca un color crudo de
+   Tailwind ni un hex. Así el tema oscuro y el modo de sesión en vivo se
+   resuelven aquí y no obligan a duplicar cada clase con su variante dark:. */
 
 :root {
-  /* §21.3 — tema claro */
-  --fondo: #f7f7f8;
-  --superficie: #ffffff;
-  --borde: #e4e4e7;
-  --texto: #18181b;
-  --suave: #52525b;
+  /* §21.3 — tema claro.
+     Los neutros llevan sesgo cian: un gris puro al lado de una superficie
+     teal se lee como un gris sin elegir. */
+  --fondo: #e8f0f2;
+  --superficie: #f4fafb;
+  --hundido: #dfe9ec;
+  --borde: #cfdfe4;
+  --texto: #0d323b;
+  --suave: #47656e;
 
   /* §21.4 — acento único de acción y colores de estado.
-     Nunca aparecen como color de serie en un gráfico. */
-  --accion: #c2410c;
+     El acento es el teal, no el verde: el verde ya significa "éxito", y un
+     color que dice a la vez "toca aquí" y "salió bien" no dice ninguna de
+     las dos. Nunca aparecen como color de serie en un gráfico. */
+  --accion: #0b6675;
   --sobre-accion: #ffffff;
-  --exito: #15803d;
-  --error: #dc2626;
-  --aviso: #b45309;
+  --exito: #07785a;
+  --error: #c0392b;
+  --aviso: #9a5b12;
 
   /* §21.5 — paleta categórica de gráficos, disjunta de la de interfaz.
+     Sin teal (es el acento) y sin verde, ámbar ni rojo (son estados).
      El tono nunca es el único canal: cada serie lleva además su estilo
      de línea (ver la tabla de la §21.5). */
   --serie-1: #2563eb;
   --serie-2: #7c3aed;
-  --serie-3: #0891b2;
-  --serie-4: #db2777;
+  --serie-3: #db2777;
+  --serie-4: #4f46e5;
   --serie-5: #475569;
+
+  /* §21.10 — profundidad blanda. Fuente de luz arriba a la izquierda.
+     La sombra es decoración; el borde de 1px es lo que da contraste al
+     control. Neumorfismo sin borde deja los controles por debajo del
+     mínimo no textual, que es su fallo conocido. */
+  --luz: rgba(255, 255, 255, 0.95);
+  --sombra: rgba(13, 50, 59, 0.16);
+
+  /* El fondo de la sesión en vivo se declara también aquí porque lo necesita
+     el <body>, que está por encima del subárbol que redefine los tokens. */
+  --fondo-sesion: #08161c;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #0b0f1a;
-    --superficie: #141a26;
-    --borde: #263041;
-    --texto: #f8fafc;
-    --suave: #94a3b8;
+    --fondo: #102128;
+    --superficie: #17303a;
+    --hundido: #0c1b22;
+    --borde: #2b4653;
+    --texto: #e3f1f4;
+    --suave: #9db6be;
 
-    --accion: #f97316;
-    --sobre-accion: #0f172a;
-    --exito: #22c55e;
-    --error: #f87171;
-    --aviso: #fbbf24;
+    --accion: #3fc3d8;
+    --sobre-accion: #06222a;
+    --exito: #37d3a3;
+    --error: #ff7a6b;
+    --aviso: #e8b573;
 
     --serie-1: #60a5fa;
     --serie-2: #a78bfa;
-    --serie-3: #22d3ee;
-    --serie-4: #f472b6;
+    --serie-3: #f472b6;
+    --serie-4: #818cf8;
     --serie-5: #94a3b8;
+
+    --luz: rgba(255, 255, 255, 0.055);
+    --sombra: rgba(0, 0, 0, 0.5);
   }
 }
 
 /* §21.2 y §22.3 — la sesión de entreno en vivo arranca siempre en oscuro
    reforzado, sea cual sea el tema del resto de la app. No es el tema oscuro
    normal: es más contrastado, para leerse de pie y con el brazo estirado.
-   Al redefinir los mismos tokens, los componentes de dentro no cambian. */
-.sesion-viva {
-  --fondo: #020617;
-  --superficie: #0e1223;
-  --borde: #334155;
-  --texto: #f8fafc;
-  --suave: #94a3b8;
+   Al redefinir los mismos tokens, los componentes de dentro no cambian.
 
-  --accion: #f97316;
-  --sobre-accion: #0f172a;
-  --exito: #22c55e;
-  --error: #f87171;
-  --aviso: #fbbf24;
+   El rediseño blando llega también aquí, pero el fondo no se aclara: el
+   motivo de la §21.2 es la luz del gimnasio contra la pantalla, y eso no
+   lo cambia una decisión estética. */
+.sesion-viva {
+  --fondo: var(--fondo-sesion);
+  --superficie: #10262f;
+  --hundido: #061119;
+  --borde: #2f4d59;
+  --texto: #f2fbfd;
+  --suave: #9fbcc5;
+
+  --accion: #45cfe4;
+  --sobre-accion: #04191f;
+  --exito: #3fdcac;
+  --error: #ff8878;
+  --aviso: #f0c17f;
+
+  --luz: rgba(255, 255, 255, 0.05);
+  --sombra: rgba(0, 0, 0, 0.62);
 
   background-color: var(--fondo);
   color: var(--texto);
@@ -78,6 +107,7 @@
 @theme inline {
   --color-fondo: var(--fondo);
   --color-superficie: var(--superficie);
+  --color-hundido: var(--hundido);
   --color-borde: var(--borde);
   --color-texto: var(--texto);
   --color-suave: var(--suave);
@@ -94,9 +124,23 @@
   --color-serie-4: var(--serie-4);
   --color-serie-5: var(--serie-5);
 
-  /* §21.6 — una sola familia para toda la interfaz. La condensada existe
-     solo para el temporizador de descanso de la sesión en vivo: en la tabla
-     de series las cifras van en Inter, que a 16px se lee mejor. */
+  /* §21.10 — radios más generosos que los de serie de Tailwind. Se
+     redefine la escala en vez de cambiar 80 clases una por una. */
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+
+  /* §21.10 — profundidad blanda como utilidades: shadow-alzado,
+     shadow-apoyado, shadow-hundido. */
+  --shadow-alzado: -6px -6px 14px var(--luz), 6px 6px 18px var(--sombra);
+  --shadow-apoyado: -3px -3px 8px var(--luz), 3px 3px 9px var(--sombra);
+  --shadow-hundido: inset 3px 3px 7px var(--sombra), inset -3px -3px 7px var(--luz);
+
+  /* §21.6 — tres papeles tipográficos.
+     Display redondeada para titulares y nombres, Inter para todo el cuerpo
+     y las tablas, condensada solo para el temporizador de descanso. */
+  --font-display: var(--font-nunito);
   --font-sans: var(--font-inter);
   --font-cifra: var(--font-barlow-condensed);
 }
@@ -106,11 +150,82 @@ body {
   color: var(--texto);
 }
 
+/* §21.2: la sesión en vivo pinta hasta el borde de la pantalla. Un panel
+   oscuro flotando sobre un lienzo claro deja dos franjas encendidas a los
+   lados, que es exactamente el foco en la cara que esa decisión evita.
+   Se hace desde el <body> y no recortando el contenedor: un `clip-path`
+   aquí recortaría también el temporizador, que va en `position: fixed`. */
+body:has(.sesion-viva) {
+  background-color: var(--fondo-sesion);
+}
+
+/* §21.6 — los titulares van en la redondeada; el cuerpo no. Mezclarlas por
+   toda la interfaz convierte la suavidad en ruido. */
+:where(h1, h2) {
+  font-family: var(--font-display), var(--font-inter), sans-serif;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
 /* §21.6 — los pesos y macros se leen en columna; sin cifras de ancho fijo
    los dígitos bailan entre filas y la tabla deja de poder compararse de un
    vistazo. Se aplica a todo y se desactiva donde estorbe, no al revés. */
 :where(table, .cifras) {
   font-variant-numeric: tabular-nums;
+}
+
+/* §21.10 — primitivas de superficie blanda.
+   Se usan como clase junto a las utilidades de Tailwind. El borde va en la
+   propia primitiva para que no se pueda usar la sombra sin él. */
+.alzado {
+  background-color: var(--superficie);
+  border: 1px solid var(--borde);
+  box-shadow: var(--shadow-alzado);
+}
+
+.apoyado {
+  background-color: var(--superficie);
+  border: 1px solid var(--borde);
+  box-shadow: var(--shadow-apoyado);
+}
+
+.hundido {
+  background-color: var(--hundido);
+  border: 1px solid var(--borde);
+  box-shadow: var(--shadow-hundido);
+}
+
+/* §21.7 — un control blando tiene que seguir pareciendo tocable. Se hunde al
+   pulsarlo: es la única señal de profundidad que el neumorfismo da gratis y
+   sustituye al cambio de color que aquí no existe. */
+.control {
+  background-color: var(--superficie);
+  border: 1px solid var(--borde);
+  box-shadow: var(--shadow-apoyado);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease;
+}
+
+.control:hover {
+  transform: translateY(-1px);
+}
+
+.control:active,
+.control[aria-pressed="true"] {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-hundido);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control,
+  .control:hover,
+  .control:active,
+  .control[aria-pressed="true"] {
+    transform: none;
+    transition: none;
+  }
 }
 
 /* §21.8 — estado de carga: esqueleto con la forma del dato final y pulso de

@@ -64,7 +64,7 @@ export function FormularioMedida() {
               );
               if (elegida) setMedida(elegida);
             }}
-            className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+            className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
           >
             {MEDIDAS_HABITUALES.map((m) => (
               <option key={m.nombre} value={m.nombre}>
@@ -88,7 +88,7 @@ export function FormularioMedida() {
               min="0"
               inputMode="decimal"
               required
-              className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+              className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
             />
             <span className="text-sm text-suave">
               {medida.unidad}
@@ -108,7 +108,7 @@ export function FormularioMedida() {
             defaultValue={hoyISO()}
             max={hoyISO()}
             required
-            className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+            className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
           />
         </div>
       </div>

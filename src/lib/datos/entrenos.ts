@@ -132,8 +132,8 @@ export function textoObjetivoReps(
 export const COLORES_SUPERSET = [
   "#2563EB",
   "#7C3AED",
-  "#0891B2",
   "#DB2777",
+  "#4F46E5",
   "#475569",
 ] as const;
 

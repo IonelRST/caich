@@ -43,7 +43,7 @@ export default async function Portada() {
         <form action={cerrarSesion}>
           <button
             type="submit"
-            className="rounded-lg border border-borde px-3 py-1.5 text-sm transition-colors hover:bg-superficie"
+            className="control rounded-lg px-3 py-1.5 text-sm"
           >
             Salir
           </button>
@@ -62,7 +62,7 @@ export default async function Portada() {
 
       <Link
         href="/chat"
-        className="mt-8 flex items-center justify-between gap-4 rounded-xl border border-borde bg-superficie px-5 py-4 transition-colors hover:border-accion"
+        className="control mt-8 flex items-center justify-between gap-4 rounded-xl px-5 py-4 hover:border-accion"
       >
         <span className="text-sm font-medium">
           Registrar escribiendo
@@ -88,7 +88,7 @@ export default async function Portada() {
             Nada registrado todavía. Guarda tu primera medida arriba.
           </p>
         ) : (
-          <ul className="mt-4 divide-y divide-borde rounded-xl border border-borde bg-superficie px-4">
+          <ul className="alzado mt-4 divide-y divide-borde rounded-xl px-4">
             {ultimas.map((r) => (
               <li
                 key={r.id}

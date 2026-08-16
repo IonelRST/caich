@@ -64,7 +64,7 @@ export function FormularioPrincipio() {
       <button
         type="button"
         onClick={() => setAbierto(true)}
-        className="rounded-lg border border-borde px-4 py-2 text-sm transition-colors hover:bg-superficie"
+        className="control rounded-lg px-4 py-2 text-sm"
       >
         Añadir uno a mano
       </button>
@@ -74,7 +74,7 @@ export function FormularioPrincipio() {
   return (
     <form
       action={accion}
-      className="space-y-3 rounded-xl border border-borde bg-superficie p-5"
+      className="alzado space-y-3 rounded-xl p-5"
     >
       <div className="space-y-1.5">
         <label htmlFor="enunciado" className="block text-sm font-medium">
@@ -86,7 +86,7 @@ export function FormularioPrincipio() {
           rows={3}
           required
           minLength={20}
-          className="w-full resize-y rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+          className="hundido w-full resize-y rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
         />
       </div>
 
@@ -97,7 +97,7 @@ export function FormularioPrincipio() {
         <select
           id="ambito"
           name="ambito"
-          className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+          className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
         >
           {AMBITOS.map((a) => (
             <option key={a} value={a}>

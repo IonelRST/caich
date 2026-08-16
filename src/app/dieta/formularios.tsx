@@ -12,7 +12,7 @@ import {
 const INICIAL: EstadoDieta = {};
 
 const claseCampo =
-  "w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
+  "hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
 
 function Boton({ texto, cargando }: { texto: string; cargando: string }) {
   const { pending } = useFormStatus();
@@ -20,7 +20,7 @@ function Boton({ texto, cargando }: { texto: string; cargando: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion disabled:opacity-50"
+      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion shadow-apoyado disabled:opacity-50"
     >
       {pending ? cargando : texto}
     </button>
@@ -165,7 +165,7 @@ export function CheckinComida({
 
   if (yaRegistrada) {
     return (
-      <li className="rounded-xl border border-borde p-4 opacity-60">
+      <li className="alzado rounded-xl p-4 opacity-60">
         <p className="text-sm font-medium">
           {momento}: {descripcion}
         </p>
@@ -177,7 +177,7 @@ export function CheckinComida({
   }
 
   return (
-    <li className="rounded-xl border border-borde p-4">
+    <li className="alzado rounded-xl p-4">
       <p className="text-sm font-medium">
         {momento}: {descripcion}
       </p>

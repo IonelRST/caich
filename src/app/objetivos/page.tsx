@@ -128,7 +128,7 @@ export default async function Objetivos() {
               return (
                 <li
                   key={o.id}
-                  className="rounded-xl border border-borde p-4"
+                  className="alzado rounded-xl p-4"
                 >
                   <div className="flex items-baseline justify-between gap-3">
                     <p className="text-sm font-medium">{o.descripcion}</p>
