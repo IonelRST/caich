@@ -92,6 +92,32 @@ export async function anadirComidaAlPlan(
   return { aviso: "Comida añadida al plan." };
 }
 
+/**
+ * Borrar una comida ya registrada (§8: el historial tiene borrado).
+ *
+ * Es lo simétrico de `borrarMedida` y `borrarEntreno`, que existían desde el
+ * principio. Faltaba solo para comida, y con el registro de un toque de la §6.2
+ * eso pasó de hueco a problema: un toque de más era un dato que no se podía
+ * deshacer desde la app.
+ *
+ * No se descuenta `veces_registrada` de la comida guardada: ese contador ordena
+ * la biblioteca por costumbre de uso, y borrar un registro equivocado no
+ * significa que la comida se use menos.
+ */
+export async function borrarComidaRegistrada(
+  formData: FormData,
+): Promise<void> {
+  const id = formData.get("id");
+  if (typeof id !== "string") return;
+
+  const { supabase } = await sesion();
+  await supabase.from("registro_comida").delete().eq("id", id);
+
+  revalidatePath("/historial");
+  revalidatePath("/dieta");
+  revalidatePath("/");
+}
+
 export async function quitarComidaDelPlan(formData: FormData): Promise<void> {
   const id = formData.get("id");
   if (typeof id !== "string") return;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { borrarComidaRegistrada } from "@/lib/datos/dieta-acciones";
 import { borrarEntreno } from "@/lib/datos/entrenos-acciones";
 import { etiquetaDeMedida, MEDIDAS_HABITUALES } from "@/lib/datos/medidas";
 import { borrarMedida } from "@/lib/datos/medidas-acciones";
@@ -22,6 +23,12 @@ type Entrada = {
   fecha: string;
   titulo: string;
   detalle: string;
+};
+
+const BORRADO: Record<Entrada["tipo"], (formData: FormData) => Promise<void>> = {
+  medida: borrarMedida,
+  entreno: borrarEntreno,
+  comida: borrarComidaRegistrada,
 };
 
 export default async function Historial({
@@ -226,17 +233,18 @@ export default async function Historial({
                 </p>
               </div>
 
-              {e.tipo !== "comida" && (
-                <form action={e.tipo === "medida" ? borrarMedida : borrarEntreno}>
-                  <input type="hidden" name="id" value={e.id} />
-                  <button
-                    type="submit"
-                    className="shrink-0 rounded-lg px-2 py-1 text-xs text-suave hover:bg-error/10 hover:text-error"
-                  >
-                    Borrar
-                  </button>
-                </form>
-              )}
+              {/* §8: todo lo del historial se puede borrar, sin excepciones por
+                  tipo. Con el registro de un toque de la §6.2, no poder deshacer
+                  una comida dejaba un dato falso permanente. */}
+              <form action={BORRADO[e.tipo]}>
+                <input type="hidden" name="id" value={e.id} />
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-lg px-2 py-1 text-xs text-suave hover:bg-error/10 hover:text-error"
+                >
+                  Borrar
+                </button>
+              </form>
             </li>
           ))}
         </ul>
