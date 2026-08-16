@@ -665,6 +665,27 @@ principio_base                     ← base curada (sección 11.4)
 | 7 | Si el límite médico (§11.5) hace innecesaria la base de conocimiento (§11.6) | 11.3, 11.6 | Antes de aplicar la migración `0003` |
 | 8 | Lista de la compra derivada del plan de dieta semanal | 6.1 | Con la Fase 1.5 en uso real |
 | 9 | Clave de API, proveedor y modelo elegidos por el usuario | 14, 15 | Antes de abrir la app a nadie más |
+| 10 | Elegir ejercicio: pantalla propia con buscador y filtro por grupo muscular, no desplegable | 5.1, 4.1 | Antes de ampliar el catálogo (punto 2) |
+| 11 | Editar y eliminar rutinas ya creadas | 5.1 | Con el punto 6, cierra el flujo de crear/editar |
+| 12 | Crear una rutina desde el chat en lenguaje normal | 3, 5.1 | Después del punto 10 |
+| 13 | Fundir historial, evolución, insights y objetivos en una pestaña «Progreso» | 8, 10, 11, 22.2 | Antes de tocar la navegación otra vez |
+| 14 | Si los principios curados (§11.6) siguen aportando algo | 11.3, 11.6 | Junto con el punto 7: es la misma pregunta |
+| 15 | Deslizar para borrar ejercicio y serie en la sesión en vivo | 5.2 | Con el punto 6 |
+| 16 | Reordenar ejercicios dentro de la sesión en vivo | 5.2 | Con el punto 6 |
+| 17 | Comentario por ejercicio en la sesión en vivo | 5.2 | Con el punto 6 |
+| 18 | Ruido visual de los campos de texto en la sesión en vivo | 5.2, 21.6 | Con el punto 6 |
+| 19 | Reemplazar un ejercicio sin salir de la sesión | 5.2 | Con el punto 6 |
+| 20 | «Descartar sesión» no funciona | 5.4 | Es un fallo, no una decisión: se arregla, no se debate |
+| 21 | La vía de dieta hay que repensarla entera | 6 | Antes de construir la Fase 1.5 |
+
+**Lote añadido el 16 de agosto de 2026**, a partir del uso real de la app en un móvil. Doce puntos, que no son de la misma naturaleza y no deberían tratarse igual:
+
+- **Un fallo:** el 20. No hay nada que decidir.
+- **Seis del flujo de sesión en vivo** (15, 16, 17, 18, 19, y el 10 que le da entrada): son la misma pantalla y comparten el mismo diagnóstico —*«si estoy entrenando no puedo estar buscando durante una hora»*. Entran con el punto 6, que ya está en construcción, en vez de abrir un frente nuevo.
+- **Dos de gestión de rutinas:** el 11 y el 12. El 11 cierra un hueco del punto 6 (se crea y se ejecuta, pero no se edita ni se borra). El 12 depende de que antes exista una forma decente de elegir ejercicio, o hereda el problema del 10.
+- **Tres de estructura, no de detalle:** el 13, el 14 y el 21. Los tres cuestionan si una parte de la app merece existir tal como está, y ninguno se resuelve con un ajuste. El 13 y el 21 tocan secciones ya escritas (§8, §22.2 y §6 entera); el 14 es el punto 7 formulado desde el uso en vez de desde la arquitectura, y se decide una sola vez para los dos.
+
+Enunciados originales del usuario, por si la reformulación de la tabla pierde algo: el desplegable de ejercicios *«no es práctico»*; del historial, *«¿por qué motivo abriría el historial?»*; de los principios, *«sigo sin verle el beneficio si la IA tiene más habilidad que la definición principal»*; de la dieta, *«no me gusta para nada, hay que pensarlo de nuevo»*.
 
 **Orden decidido el 15 de agosto de 2026.** Primero el punto 6; el 7, el 8 y el 9 quedan en cola. No están pendientes por olvido: están aplazados a propósito. Las notas siguientes recogen la fricción de cada uno para no tener que volver a descubrirla.
 
