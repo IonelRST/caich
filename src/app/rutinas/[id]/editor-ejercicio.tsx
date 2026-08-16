@@ -125,17 +125,17 @@ export function EditorEjercicio({
       </div>
 
       {/*
-        `table-fixed` con anchos explícitos y tope de ancho: una tabla de cuatro
-        cifras no tiene por qué crecer con la pantalla. Sin esto, en escritorio
-        los campos de repeticiones se estiraban hasta que un "8" flotaba solo en
-        el centro de una cápsula de 350px.
+        `table-fixed` con proporciones explícitas: sin ellas, las columnas se
+        repartían por el contenido y las cabeceras dejaban de caer sobre su
+        columna. El reparto no cambia con el ancho, así que la tabla se lee
+        igual en móvil y en escritorio.
       */}
-      <table className="mt-3 w-full max-w-[21rem] table-fixed border-separate border-spacing-y-1 text-sm">
+      <table className="mt-3 w-full table-fixed border-separate border-spacing-y-1 text-sm">
         <colgroup>
-          <col className="w-[7.5rem]" />
-          <col className="w-16" />
-          <col className="w-[7.5rem]" />
-          <col className="w-7" />
+          <col className="w-[30%]" />
+          <col className="w-[20%]" />
+          <col className="w-[42%]" />
+          <col className="w-[8%]" />
         </colgroup>
         <thead>
           <tr className="text-[11px] uppercase tracking-wide text-suave">
@@ -271,15 +271,21 @@ function FilaSerieRutina({
           calentamiento no consume número de serie de trabajo.
         */}
         <td className="pr-2">
+          {/*
+            Número y sigla ocupan hueco fijo aunque estén vacíos. Pintarlos solo
+            cuando existen desalineaba la columna entera: sin sigla, el selector
+            se corría a la izquierda y ninguna fila cuadraba con la siguiente.
+          */}
           <div className="flex items-center gap-1">
-            <span className="inline-flex w-4 shrink-0 justify-end text-xs tabular-nums text-suave">
+            <span className="w-3 shrink-0 text-right text-xs tabular-nums text-suave">
               {etiqueta.numero}
             </span>
-            {etiqueta.sigla && (
-              <span className="text-[10px] font-semibold text-aviso">
-                {etiqueta.sigla}
-              </span>
-            )}
+            <span
+              aria-hidden={!etiqueta.sigla}
+              className="w-2.5 shrink-0 text-center text-[10px] font-semibold text-aviso"
+            >
+              {etiqueta.sigla}
+            </span>
             <select
               form={idForm}
               name="tipo"
