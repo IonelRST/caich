@@ -59,29 +59,41 @@ export default async function Rutinas() {
                   className="flex items-center justify-between gap-4 py-3"
                 >
                   <div className="min-w-0">
-                    <Link
-                      href={`/rutinas/${r.id}`}
-                      className="text-sm font-medium underline-offset-4 hover:underline"
-                    >
-                      {r.nombre}
-                    </Link>
+                    <p className="text-sm font-medium">{r.nombre}</p>
                     <p className="text-xs text-suave">
                       {numEjercicios}{" "}
                       {numEjercicios === 1 ? "ejercicio" : "ejercicios"}
                     </p>
                   </div>
 
-                  {numEjercicios > 0 && (
-                    <form action={empezarSesion}>
-                      <input type="hidden" name="rutina_id" value={r.id} />
-                      <button
-                        type="submit"
-                        className="shrink-0 rounded-lg bg-accion px-3 py-1.5 text-sm font-medium text-sobre-accion shadow-apoyado"
-                      >
-                        Empezar
-                      </button>
-                    </form>
-                  )}
+                  {/*
+                    Editar tiene control propio y visible. Antes el único acceso
+                    era el nombre como enlace, subrayado solo al pasar por
+                    encima: en un móvil no hay "por encima", así que renombrar,
+                    reordenar y borrar —que existen desde siempre— parecían no
+                    existir. Se muestra también con cero ejercicios, que es
+                    justo cuando hace falta entrar.
+                  */}
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Link
+                      href={`/rutinas/${r.id}`}
+                      className="control rounded-lg px-3 py-1.5 text-sm font-medium"
+                    >
+                      Editar
+                    </Link>
+
+                    {numEjercicios > 0 && (
+                      <form action={empezarSesion}>
+                        <input type="hidden" name="rutina_id" value={r.id} />
+                        <button
+                          type="submit"
+                          className="rounded-lg bg-accion px-3 py-1.5 text-sm font-medium text-sobre-accion shadow-apoyado"
+                        >
+                          Empezar
+                        </button>
+                      </form>
+                    )}
+                  </div>
                 </li>
               );
             })}
