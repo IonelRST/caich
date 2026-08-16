@@ -63,7 +63,7 @@ export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
             {r.nivel2.map((i, n) => (
               <li
                 key={n}
-                className="rounded-xl border border-borde bg-superficie p-4"
+                className="alzado rounded-xl p-4"
               >
                 <p className="text-sm">{i.afirmacion}</p>
 
@@ -98,7 +98,7 @@ export function Nivel23({ hayPrincipios }: { hayPrincipios: boolean }) {
             {r.nivel3.map((o, n) => (
               <li
                 key={n}
-                className="rounded-xl border border-borde bg-superficie p-4"
+                className="alzado rounded-xl p-4"
               >
                 <p className="text-sm">{o.observacion}</p>
                 <p className="mt-2 text-sm text-suave">{o.datosDeRespaldo}</p>

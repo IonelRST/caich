@@ -63,7 +63,7 @@ export function Temporizador({
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-borde bg-superficie px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3"
+      className="fixed inset-x-0 bottom-0 z-10 border-t border-borde bg-superficie px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 shadow-alzado"
       role="status"
       aria-live="polite"
     >
@@ -71,7 +71,7 @@ export function Temporizador({
         <button
           type="button"
           onClick={() => ajustar(-15)}
-          className="h-14 w-14 shrink-0 rounded-lg border border-borde text-sm font-medium"
+          className="control h-14 w-14 shrink-0 rounded-xl text-sm font-medium"
         >
           −15
         </button>
@@ -83,7 +83,7 @@ export function Temporizador({
         <button
           type="button"
           onClick={() => ajustar(15)}
-          className="h-14 w-14 shrink-0 rounded-lg border border-borde text-sm font-medium"
+          className="control h-14 w-14 shrink-0 rounded-xl text-sm font-medium"
         >
           +15
         </button>

@@ -27,7 +27,7 @@ export default async function Rutinas() {
         <form action={empezarSesionVacia}>
           <button
             type="submit"
-            className="h-14 w-full rounded-lg border border-borde text-base font-medium"
+            className="control h-14 w-full rounded-xl text-base font-medium"
           >
             Empezar entreno vacío
           </button>
@@ -76,7 +76,7 @@ export default async function Rutinas() {
                       <input type="hidden" name="rutina_id" value={r.id} />
                       <button
                         type="submit"
-                        className="shrink-0 rounded-lg bg-accion px-3 py-1.5 text-sm font-medium text-sobre-accion"
+                        className="shrink-0 rounded-lg bg-accion px-3 py-1.5 text-sm font-medium text-sobre-accion shadow-apoyado"
                       >
                         Empezar
                       </button>

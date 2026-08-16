@@ -73,7 +73,7 @@ export function PanelSesion({
       />
 
       {!completado && (
-        <p className="mt-4 rounded-lg bg-superficie px-3 py-2 text-xs text-suave">
+        <p className="apoyado mt-4 rounded-lg px-3 py-2 text-xs text-suave">
           Puedes cerrar esta pantalla y volver: la sesión se guarda sola y la
           retomas donde la dejaste.
         </p>
@@ -82,7 +82,7 @@ export function PanelSesion({
       {aviso && (
         <p
           role="status"
-          className="mt-4 rounded-lg border border-aviso px-3 py-2 text-sm text-aviso"
+          className="alzado mt-4 rounded-lg border-aviso px-3 py-2 text-sm text-aviso"
         >
           Descanso terminado.
         </p>
@@ -121,7 +121,7 @@ export function PanelSesion({
                 id="ejercicio_id"
                 name="ejercicio_id"
                 required
-                className="h-12 w-full rounded-lg border border-borde bg-transparent px-3 text-sm"
+                className="hundido h-12 w-full rounded-lg px-3 text-sm"
               >
                 {catalogo.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -131,7 +131,7 @@ export function PanelSesion({
               </select>
               <button
                 type="submit"
-                className="h-12 w-full rounded-lg border border-borde text-sm font-medium"
+                className="control h-12 w-full rounded-lg text-sm font-medium"
               >
                 Añadir
               </button>
@@ -141,7 +141,7 @@ export function PanelSesion({
               <input type="hidden" name="id" value={entrenoId} />
               <button
                 type="submit"
-                className="h-14 w-full rounded-lg bg-accion text-base font-medium text-sobre-accion"
+                className="h-14 w-full rounded-xl bg-accion text-base font-medium text-sobre-accion shadow-apoyado"
               >
                 Terminar entreno
               </button>

@@ -121,7 +121,8 @@ comprobar(
 
 console.log("\nColor de superset (§21.4, §21.5):");
 
-const ACENTO = ["#f97316", "#c2410c"];
+// §21.4: el acento pasó de naranja a teal el 16 de agosto de 2026.
+const ACENTO = ["#0b6675", "#3fc3d8", "#45cfe4"];
 const usados = [1, 2, 3, 4, 5, 6, 7].map(colorSuperset);
 
 comprobar(
@@ -132,7 +133,7 @@ comprobar(
 comprobar(
   "nunca es el acento de acción",
   usados.every((c) => !ACENTO.includes(c.toLowerCase())),
-  "el naranja sigue queriendo decir '¿dónde toco?'",
+  "el teal sigue queriendo decir '¿dónde toco?'",
 );
 comprobar(
   "da la vuelta al agotar la paleta",

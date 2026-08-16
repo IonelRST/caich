@@ -107,7 +107,7 @@ export function Marco({ children }: { children: React.ReactNode }) {
           aria-expanded={abierto}
           aria-controls="navegacion-principal"
           aria-label="Abrir navegación"
-          className="flex size-11 items-center justify-center rounded-lg border border-borde transition-colors hover:bg-superficie focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accion"
+          className="control flex size-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accion"
         >
           <Menu aria-hidden="true" className="size-5" />
         </button>

@@ -12,7 +12,7 @@ function Boton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion disabled:opacity-50"
+      className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion shadow-apoyado disabled:opacity-50"
     >
       {pending ? "Creando…" : "Crear"}
     </button>
@@ -34,7 +34,7 @@ export function FormularioRutina() {
           required
           maxLength={80}
           placeholder="Pierna A"
-          className="w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
+          className="hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
         />
       </div>
       <Boton />

@@ -16,7 +16,7 @@ function Boton() {
     <button
       type="submit"
       disabled={pending}
-      className="h-11 rounded-lg bg-accion px-4 text-sm font-medium text-sobre-accion disabled:opacity-50"
+      className="h-11 rounded-lg bg-accion px-4 text-sm font-medium text-sobre-accion shadow-apoyado disabled:opacity-50"
     >
       {pending ? "Añadiendo…" : "Añadir"}
     </button>
@@ -24,7 +24,7 @@ function Boton() {
 }
 
 const claseCampo =
-  "h-11 w-full rounded-lg border border-borde bg-transparent px-3 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
+  "hundido h-11 w-full rounded-lg px-3 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
 
 /**
  * Alta de un ejercicio en la rutina (§5.1).

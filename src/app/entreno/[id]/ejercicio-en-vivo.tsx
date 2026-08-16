@@ -53,7 +53,7 @@ export function EjercicioEnVivo({
 
   return (
     <section
-      className="rounded-xl border border-borde p-3"
+      className="alzado rounded-xl p-3"
       style={
         supersetGrupo != null
           ? {
@@ -129,7 +129,7 @@ export function EjercicioEnVivo({
         <input type="hidden" name="entreno_id" value={entrenoId} />
         <button
           type="submit"
-          className="h-11 w-full rounded-lg border border-borde text-sm font-medium text-suave"
+          className="control h-11 w-full rounded-lg text-sm font-medium text-suave"
         >
           + Añadir serie
         </button>
@@ -225,7 +225,7 @@ function FilaSerie({
           defaultValue={pesoInicial}
           placeholder={serie.peso_objetivo != null ? String(serie.peso_objetivo) : "–"}
           aria-label={`Peso de la serie ${serie.numero_serie}`}
-          className="h-10 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
+          className="hundido h-10 w-full rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
         />
       </td>
 
@@ -241,7 +241,7 @@ function FilaSerie({
           defaultValue={repsInicial}
           placeholder={objetivo || "–"}
           aria-label={`Repeticiones de la serie ${serie.numero_serie}${objetivo ? `, objetivo ${objetivo}` : ""}`}
-          className="h-10 w-full rounded-md border border-borde bg-transparent px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
+          className="hundido h-10 w-full rounded-md px-1.5 text-center text-base tabular-nums outline-none focus:border-accion"
         />
       </td>
 
@@ -264,10 +264,10 @@ function FilaSerie({
             }}
             aria-pressed={serie.completada}
             aria-label={`${serie.completada ? "Desmarcar" : "Marcar"} la serie ${serie.numero_serie}`}
-            className={`h-10 w-10 rounded-md border text-base leading-none ${
+            className={`h-10 w-10 rounded-md text-base leading-none ${
               serie.completada
-                ? "border-exito bg-exito text-fondo"
-                : "border-borde text-suave"
+                ? "border border-exito bg-exito text-fondo shadow-hundido"
+                : "control text-suave"
             }`}
           >
             ✓

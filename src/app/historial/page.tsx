@@ -144,7 +144,7 @@ export default async function Historial({
             id="tipo"
             name="tipo"
             defaultValue={tipo ?? ""}
-            className="rounded-lg border border-borde bg-transparent px-3 py-1.5 text-sm"
+            className="hundido rounded-lg px-3 py-1.5 text-sm"
           >
             <option value="">Todo</option>
             <option value="entreno">Entrenos</option>
@@ -167,7 +167,7 @@ export default async function Historial({
             name="desde"
             type="date"
             defaultValue={desde ?? ""}
-            className="rounded-lg border border-borde bg-transparent px-3 py-1.5 text-sm"
+            className="hundido rounded-lg px-3 py-1.5 text-sm"
           />
         </div>
 
@@ -180,13 +180,13 @@ export default async function Historial({
             name="hasta"
             type="date"
             defaultValue={hasta ?? ""}
-            className="rounded-lg border border-borde bg-transparent px-3 py-1.5 text-sm"
+            className="hundido rounded-lg px-3 py-1.5 text-sm"
           />
         </div>
 
         <button
           type="submit"
-          className="rounded-lg border border-borde px-3 py-1.5 text-sm hover:bg-superficie"
+          className="control rounded-lg px-3 py-1.5 text-sm"
         >
           Filtrar
         </button>

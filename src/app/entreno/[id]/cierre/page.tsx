@@ -134,7 +134,7 @@ export default async function CierreDeSesion({
 
 function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
-    <div className="rounded-lg border border-borde p-3">
+    <div className="alzado rounded-lg p-3">
       <dt className="text-xs text-suave">{etiqueta}</dt>
       <dd className="mt-1 text-lg font-semibold tabular-nums">{valor}</dd>
     </div>

@@ -26,10 +26,13 @@ Cuando una sección dice que algo "no se hace" o "queda fuera", es una exclusió
 | 7 | Nuevo anexo C con el análisis del uso real que motiva la revisión | Anexo C |
 | 8 | La §5 se revisa contra la documentación de Hevy: filas de serie explícitas, tipos de serie, temporizador de descanso, supersets, anterior por índice de serie y pregunta de actualizar plantilla al cerrar | 5 |
 | 9 | La §21 se enmienda donde el flujo de Hevy la contradecía: densidad de la tabla de series, color de superset y alcance de la prohibición de números animados | 21.4, 21.5, 21.6, 21.7, 21.9 |
+| 10 | La §21 se reescribe entera: la dirección pasa de "Instrumento dual" a "Instrumento blando" — superficies con profundidad, neutros con sesgo cian, acento teal y tres papeles tipográficos. Nueva §21.10 | 21 |
 
 *Motivo de la revisión:* en un mes de uso real con un asistente genérico, solo 1 de cada 6 mensajes era registrar datos. La v2.0 solo admitía ese sexto.
 
 *Motivo de los cambios 8 y 9:* la §5 describía el flujo de Hevy de memoria, porque el dominio estaba bloqueado por red. Al leerlo (§19 punto 6), parte de lo escrito resultó ser suposición — incluido "deslizar para completar", que Hevy no hace.
+
+*Motivo del cambio 10:* la dirección anterior trataba la precisión y la calidez como opuestas, y la app se leía como una hoja de cálculo con acento naranja. En una herramienta que se usa a diario y durante meses, eso es un riesgo de abandono (principio 1), no una virtud.
 
 ### 0.2 Cambios de la v2.0 respecto a la v1.0
 
@@ -712,9 +715,11 @@ Si aun así se retira, hay que decidir qué pasa con el nivel 2: o baja entero a
 
 ## 21. Dirección visual
 
-**Nombre de la dirección: "Instrumento dual".**
+**Nombre de la dirección: "Instrumento blando".**
 
-La app es un instrumento de medida, no un entrenador motivacional. Debe leerse como algo preciso y sin ruido, con una única excepción deliberada: la sesión de entreno en vivo, que se comporta como un panel de gimnasio — oscuro, enorme y de un solo golpe de vista.
+`DECISIÓN` (16 de agosto de 2026): se sustituye la dirección "Instrumento dual" por esta. El motivo no es estético: la anterior trataba la precisión y la calidez como opuestas, y la app se leía como una hoja de cálculo con acento naranja. Se registra en salud a diario y durante meses; una interfaz que no invita a volver no mide nada, por muy precisa que sea.
+
+Lo que **no** cambia es el argumento de fondo: sigue siendo un instrumento de medida, no un entrenador motivacional, y la sesión de entreno en vivo sigue siendo la pantalla crítica. Lo que cambia es el material: superficies con profundidad blanda en lugar de rectángulos planos, neutros con sesgo cian en lugar de grises, y un acento teal en lugar del naranja.
 
 Dos restricciones condicionan todo lo que sigue:
 
@@ -726,11 +731,12 @@ Dos restricciones condicionan todo lo que sigue:
 | Es | No es |
 |----|-------|
 | Instrumento de precisión: el dato manda sobre la decoración | App motivacional que celebra cada registro |
-| Silencioso en reposo, contundente en la sesión en vivo | Uniformemente enérgico en todas las pantallas |
+| Calmado en reposo, contundente en la sesión en vivo | Uniformemente enérgico en todas las pantallas |
+| Blando al tacto: las superficies tienen grosor y los controles se hunden al pulsarlos | Plano y sin respuesta, o con relieve puramente decorativo |
 | Honesto con la incertidumbre (§4.2, §11.6): un dato estimado no se ve igual que uno declarado | Presentador de conclusiones seguras |
 | Denso donde hay datos, espacioso donde hay decisiones | Dashboard saturado por defecto |
 
-*Motivo:* el principio 6 de la §1.1 (*en salud, la precisión importa más que la fluidez*) tiene consecuencia visual directa. Una interfaz que se celebra a sí misma empuja a registrar para sentirse bien, no para medir bien.
+*Motivo:* el principio 6 de la §1.1 (*en salud, la precisión importa más que la fluidez*) sigue mandando sobre la decoración. Blando no es lo mismo que celebratorio: la §21.9 sigue prohibiendo rachas, medallas y confeti. Lo que la suavidad compra es que abrir la app a diario no cueste.
 
 ### 21.2 Modo dual
 
@@ -738,53 +744,62 @@ Dos restricciones condicionan todo lo que sigue:
 
 *Motivo:* son dos contextos de uso opuestos. El análisis se hace sentado, con calma, donde el fondo claro da mejor densidad de lectura para tablas e historial. La sesión en vivo se hace de pie, con el brazo estirado y a veces con luz de fluorescente contra la pantalla; ahí un fondo claro es un foco en la cara y una pérdida real de legibilidad. No es una preferencia del usuario: es una propiedad de la pantalla.
 
+`DECISIÓN` (16 de agosto de 2026): el rediseño blando llega también a la sesión en vivo, pero **el fondo no se aclara**. Se revisó esta decisión al cambiar de dirección y se mantiene: el motivo era la luz del gimnasio contra la pantalla, y eso no lo cambia una decisión estética. Lo que cambia allí son las superficies y el acento, no la oscuridad.
+
 `DECISIÓN`: se descarta que la sesión en vivo herede el tema general. Obligaría al usuario a cambiar el tema al entrar y salir del gimnasio, que es fricción (principio 1) por una consistencia que a nadie le sirve.
 
 ### 21.3 Paleta de interfaz
 
-**Tema claro** (análisis, historial, chat, planificación):
+`DECISIÓN` (16 de agosto de 2026): los neutros llevan **sesgo cian**, no son grises puros. Un gris neutro junto a una superficie teal se lee como un gris que nadie eligió.
+
+**Tema claro** (análisis, historial, planificación):
 
 | Rol | Valor | Uso |
 |-----|-------|-----|
-| Fondo | `#F7F7F8` | Lienzo de la app |
-| Superficie | `#FFFFFF` | Tarjetas, tablas, modales |
-| Borde | `#E4E4E7` | Separadores y contornos |
-| Texto | `#18181B` | Cuerpo y cifras |
-| Texto atenuado | `#52525B` | Etiquetas, unidades, metadatos |
+| Fondo | `#E8F0F2` | Lienzo de la app |
+| Superficie | `#F4FAFB` | Tarjetas, tablas, modales |
+| Hundido | `#DFE9EC` | Campos de formulario, celdas editables |
+| Borde | `#CFDFE4` | Separadores y contornos |
+| Texto | `#0D323B` | Cuerpo y cifras |
+| Texto atenuado | `#47656E` | Etiquetas, unidades, metadatos |
 
 **Tema oscuro** (misma app, de noche):
 
 | Rol | Valor |
 |-----|-------|
-| Fondo | `#0B0F1A` |
-| Superficie | `#141A26` |
-| Borde | `#263041` |
-| Texto | `#F8FAFC` |
-| Texto atenuado | `#94A3B8` |
+| Fondo | `#102128` |
+| Superficie | `#17303A` |
+| Hundido | `#0C1B22` |
+| Borde | `#2B4653` |
+| Texto | `#E3F1F4` |
+| Texto atenuado | `#9DB6BE` |
 
 **Sesión en vivo** (oscuro reforzado, no es el tema oscuro normal):
 
 | Rol | Valor |
 |-----|-------|
-| Fondo | `#020617` |
-| Superficie | `#0E1223` |
-| Borde | `#334155` |
-| Texto | `#F8FAFC` |
+| Fondo | `#08161C` |
+| Superficie | `#10262F` |
+| Hundido | `#061119` |
+| Borde | `#2F4D59` |
+| Texto | `#F2FBFD` |
 
 ### 21.4 Acento y estados
 
-`DECISIÓN`: **un solo acento, reservado exclusivamente a la acción primaria.** El naranja no aparece en gráficos, ni en iconos decorativos, ni en cabeceras. Si algo es naranja, se toca.
+`DECISIÓN`: **un solo acento, reservado exclusivamente a la acción primaria.** No aparece en gráficos, ni en iconos decorativos, ni en cabeceras. Si algo lleva el acento, se toca.
+
+`DECISIÓN` (16 de agosto de 2026): el acento pasa de naranja a **teal**, y **no** al verde de la paleta sanitaria. El verde ya significa "éxito" en esta app, y un color que dice a la vez *"toca aquí"* y *"salió bien"* no dice ninguna de las dos. Sustituye a la decisión 14 del anexo B en cuanto al tono; el argumento del acento único se mantiene intacto.
 
 | Rol | Sobre fondo oscuro | Sobre fondo claro | Significado |
 |-----|--------------------|-------------------|-------------|
-| Acción | `#F97316` (texto encima `#0F172A`) | `#C2410C` (texto encima `#FFFFFF`) | Confirmar serie, guardar, enviar |
-| Éxito | `#22C55E` | `#15803D` | Adherencia cumplida, objetivo alcanzado, dato guardado |
-| Error | `#F87171` | `#DC2626` | Parseo fallido, validación, fallo de conexión |
-| Aviso | `#FBBF24` | `#B45309` | Desviación de plan, dato estimado, histórico insuficiente |
+| Acción | `#3FC3D8` (texto encima `#06222A`) | `#0B6675` (texto encima `#FFFFFF`) | Confirmar serie, guardar, enviar |
+| Éxito | `#37D3A3` | `#07785A` | Adherencia cumplida, objetivo alcanzado, dato guardado |
+| Error | `#FF7A6B` | `#C0392B` | Parseo fallido, validación, fallo de conexión |
+| Aviso | `#E8B573` | `#9A5B12` | Desviación de plan, dato estimado, histórico insuficiente |
 
 *Motivo del acento único:* en una pantalla que se usa con prisa y a una mano, el color tiene que responder a una sola pregunta — "¿dónde toco?". Repartir el acento entre decoración y acción destruye esa señal justo donde más importa.
 
-`DECISIÓN` (15 de agosto de 2026): el acento único **no impide el color de agrupación de supersets** (§5.1, §21.5). Ese color nunca es naranja y nunca marca algo accionable, así que no compite con la señal de "¿dónde toco?".
+`DECISIÓN`: el acento único **no impide el color de agrupación de supersets** (§5.1, §21.5). Ese color nunca es el del acento y nunca marca algo accionable, así que no compite con la señal de "¿dónde toco?".
 
 **Regla de estimación** (§4.2): un valor de origen `estimado` se marca siempre con el color de aviso **y** con un indicador no cromático (icono o etiqueta textual). Nunca solo con color.
 
@@ -792,12 +807,14 @@ Dos restricciones condicionan todo lo que sigue:
 
 `DECISIÓN`: los gráficos (§10) usan una **paleta categórica propia, disjunta de la paleta de interfaz**. Ningún color de estado ni el acento de acción aparece como color de serie.
 
+`DECISIÓN` (16 de agosto de 2026): se retira el cian `#0891B2` de la paleta de series, que ahora chocaría con el acento teal, y entra un índigo en su lugar. La paleta evita a la vez el teal (acento) y el verde, el ámbar y el rojo (estados).
+
 | # | Valor | Estilo de línea |
 |---|-------|-----------------|
 | 1 | `#2563EB` | Sólida |
 | 2 | `#7C3AED` | Discontinua |
-| 3 | `#0891B2` | Punteada |
-| 4 | `#DB2777` | Sólida fina |
+| 3 | `#DB2777` | Punteada |
+| 4 | `#4F46E5` | Sólida fina |
 | 5 | `#475569` | Discontinua larga |
 
 Reglas de uso:
@@ -808,29 +825,28 @@ Reglas de uso:
 - Los objetivos (§9) se dibujan como línea horizontal de referencia en `#475569` discontinua, con etiqueta del valor.
 - Todo gráfico tiene equivalente accesible: tabla de datos visible o desplegable, y navegación por teclado que revela los valores punto a punto.
 
-*Motivo:* si el verde de "éxito" es también el color de una serie de calorías, un pico de esa serie se lee como una señal positiva que nadie ha querido decir. Separar los dos vocabularios evita afirmar cosas por accidente — que es la versión visual del principio 4 (*la IA nunca inventa*).
-
-`DECISIÓN` (15 de agosto de 2026): los **colores de superset** de la sesión en vivo (§5.1) reutilizan esta misma paleta categórica, en orden. No hay conflicto de vocabularios: un superset y un gráfico no coinciden nunca en pantalla, y ningún color de estado ni el acento de acción entra en el juego.
+`DECISIÓN`: los **colores de superset** de la sesión en vivo (§5.1) reutilizan esta misma paleta categórica, en orden. No hay conflicto de vocabularios: un superset y un gráfico no coinciden nunca en pantalla, y ningún color de estado ni el acento de acción entra en el juego.
 
 El color **nunca es el único canal** (§21.9): cada superset lleva además corchete lateral y etiqueta textual ("Superserie A"), y sigue siendo identificable en escala de grises.
 
+*Motivo:* si el verde de "éxito" es también el color de una serie de calorías, un pico de esa serie se lee como una señal positiva que nadie ha querido decir. Separar los dos vocabularios evita afirmar cosas por accidente — que es la versión visual del principio 4 (*la IA nunca inventa*).
+
 ### 21.6 Tipografía
 
-`DECISIÓN`: **una sola familia para toda la interfaz — Inter** —, con una segunda familia acotada a un único uso.
+`DECISIÓN` (16 de agosto de 2026): **tres papeles tipográficos**, no uno. La dirección anterior usaba una sola familia porque trataba la neutralidad como una virtud; con superficies blandas, una redondeada en los titulares es lo que evita que el relieve parezca una sombra pegada encima de una interfaz plana.
 
 | Uso | Familia | Notas |
 |-----|---------|-------|
-| Titulares, cuerpo, etiquetas, tablas | Inter | Variable; pesos 400 / 500 / 600 / 700 |
+| Titulares (`h1`, `h2`) y nombres | Nunito 600-700 | **Solo ahí.** Repartida por toda la interfaz, cansa |
+| Cuerpo, etiquetas, tablas, formularios | Inter | Variable; pesos 400 / 500 / 600 / 700 |
 | Cifras en tablas, historial y gráficos | Inter con `font-variant-numeric: tabular-nums` | Obligatorio: los pesos y macros deben alinearse en columna |
 | Temporizador de descanso de la sesión en vivo | Barlow Condensed 600-700 | **Solo aquí.** No aparece en ninguna otra pantalla |
 
-*Motivo de la segunda familia:* en la sesión en vivo, "112,5 kg × 8" tiene que caber grande en un móvil estrecho y leerse con el brazo estirado. Una condensada gana el tamaño que hace falta sin partir la línea. Fuera de esa pantalla no aporta nada, así que no entra.
+*Motivo del reparto:* el cuerpo y las tablas es donde vive casi todo el texto, y ahí manda la legibilidad a 12-14px, que es cosa de Inter. Los titulares son pocos y grandes, que es donde una redondeada da carácter sin coste de lectura.
 
 Escala mínima: cuerpo 16px, nunca texto informativo por debajo de 12px, interlineado 1.5 en texto corrido.
 
-`DECISIÓN` (15 de agosto de 2026): en la **tabla de series** de la sesión en vivo (§5.2), las cifras de peso y repeticiones van a **16px en Inter** con `tabular-nums`, no en Barlow Condensed: a esa escala la condensada no aporta tamaño y perjudica la legibilidad. Barlow Condensed 600-700 queda reservada al **temporizador de descanso**, a 32px o más.
-
-*Nota sobre el motivo original:* la segunda familia entró para que "112,5 kg × 8" cupiese grande en un móvil estrecho. Al adoptar la tabla serie a serie de Hevy, ese motivo desaparece — las cifras de serie ya no son el elemento grande de la pantalla. La familia sigue justificada, pero por el temporizador, que es lo que se lee con el brazo estirado.
+`DECISIÓN`: en la **tabla de series** de la sesión en vivo (§5.2), las cifras de peso y repeticiones van a **16px en Inter**, no en Barlow Condensed: a esa escala la condensada no aporta tamaño y perjudica la legibilidad. Barlow Condensed queda reservada al **temporizador de descanso**, a 32px o más.
 
 ### 21.7 Objetivos táctiles y espaciado
 
@@ -839,6 +855,7 @@ Escala mínima: cuerpo 16px, nunca texto informativo por debajo de 12px, interli
 - **Botón de terminar sesión:** 56px de alto, en el tercio inferior, alcanzable con el pulgar.
 
 `DECISIÓN` (15 de agosto de 2026): se acepta bajar del mínimo global en esta tabla a cambio de la vista de conjunto serie a serie, que es el núcleo del flujo de Hevy (§5.2). **Es una concesión conocida, no un descuido:** los 56px originales protegían exactamente el caso de esta pantalla — de pie, con una mano, con las manos sudadas. Si el uso real muestra fallos de puntería al completar series, este es el primer parámetro que se revisa.
+
 - **Densidad:** alta en historial, tablas y gráficos (escala de 8-32px); espaciada en chat, planificación y ajustes (16-48px).
 - Se respetan las áreas seguras del dispositivo (notch, barra inferior); nada accionable queda debajo del borde de gesto.
 
@@ -851,10 +868,9 @@ Esto resuelve lo que la §13 pedía sin definir.
 - El esqueleto reserva el espacio exacto del dato que va a llegar, para que nada salte al aparecer.
 - Animación: opacidad `0.45 → 1 → 0.45`, 1600ms, `ease-in-out`, en bucle. Es un pulso, no un barrido.
 - Con `prefers-reduced-motion: reduce`, el esqueleto se queda estático a opacidad 0.6. No se sustituye por un spinner.
-- **Mientras la IA parsea un mensaje** (§3.1), el pulso ocurre sobre el hueco de la respuesta en el hilo del chat, no sobre un overlay que bloquee la pantalla: el usuario puede seguir escribiendo.
 - **Duración de transiciones de interfaz:** 150-250ms. Un único valor para todo es un antipatrón; las salidas van más rápidas que las entradas.
 
-*Motivo:* un spinner dice "algo está pasando". Un esqueleto dice "va a aparecer esto, aquí". Con datos que tardan lo que tarda una llamada a la API de Claude, la segunda frase es la que evita que el usuario reenvíe el mensaje.
+*Motivo:* un spinner dice "algo está pasando". Un esqueleto dice "va a aparecer esto, aquí".
 
 ### 21.9 Antipatrones
 
@@ -862,18 +878,37 @@ Explícitamente prohibido en este producto:
 
 | Antipatrón | Motivo |
 |------------|--------|
-| **Gamificación**: rachas, medallas, confeti, celebraciones al registrar | Premia registrar, no medir. Choca con el carácter (21.1) y con el principio 6 |
+| **Gamificación**: rachas, medallas, confeti, celebraciones al registrar | Premia registrar, no medir. Choca con el carácter (21.1) y con el principio 6. **La suavidad de la 21.10 no lo reabre** |
 | **Emoji como iconos** | Se usa un set SVG coherente (Lucide). Los emoji cambian de forma según el sistema operativo |
 | **Color como único canal de significado** | Estados, series y desviaciones llevan siempre forma, icono o texto además del color |
+| **Relieve blando sin borde** | Neumorfismo puro deja los controles por debajo del mínimo de contraste no textual. Ver 21.10 |
 | **Gris sobre gris** | Todo texto informativo cumple 4.5:1 como mínimo; el texto atenuado de la 21.3 ya está calculado para eso |
 | **Spinner genérico** | Sustituido por 21.8 |
 | **Fondo claro en la sesión en vivo** | Contradice 21.2 |
 | **El acento de acción en gráficos o decoración** | Contradice 21.4 |
-| **Quitar el anillo de foco** | El chat y los formularios se usan con teclado en desktop |
 | **Valores medidos que se animan al cambiar** (peso corporal, volumen o macros subiendo como contador) | Un peso corporal no "sube": se mide. Animarlo lo convierte en espectáculo. **No aplica al temporizador de descanso** (§5.2), donde el cambio del número *es* el dato |
+| **Quitar el anillo de foco** | Los formularios se usan con teclado en desktop |
 | **Fotos de gimnasio, siluetas musculadas, imágenes de stock fitness** | Es una herramienta personal de medición, no una marca deportiva |
 
-`DECISIÓN`: se descartan las dos direcciones alternativas evaluadas. Una paleta de gimnasio saturada (naranja de marca sobre fondo oscuro en toda la app) fallaba en las pantallas de análisis, donde el acento compite con las series de datos. Una dirección minimalista en claro para todo fallaba en la sesión en vivo, que es exactamente la pantalla que no se puede permitir fallar.
+### 21.10 Profundidad blanda
+
+`DECISIÓN` (16 de agosto de 2026): las superficies tienen grosor. Fuente de luz **arriba a la izquierda**, constante en toda la app.
+
+| Primitiva | Uso | Sombra |
+|-----------|-----|--------|
+| `alzado` | Tarjetas, paneles, módulos que contienen otras cosas | `-6px -6px 14px luz, 6px 6px 18px sombra` |
+| `apoyado` | Botones, chips, elementos sueltos sobre el lienzo | `-3px -3px 8px luz, 3px 3px 9px sombra` |
+| `hundido` | Campos de formulario, celdas editables, controles activos | `inset 3px 3px 7px sombra, inset -3px -3px 7px luz` |
+
+Valores de luz y sombra: en claro `rgba(255,255,255,0.95)` y `rgba(13,50,59,0.16)`; en oscuro `rgba(255,255,255,0.055)` y `rgba(0,0,0,0.5)`; en sesión en vivo `rgba(255,255,255,0.05)` y `rgba(0,0,0,0.62)`.
+
+**Regla no negociable:** toda superficie con sombra lleva además un **borde de 1px** del color de borde del tema. La sombra es decoración; el borde es lo que da contraste al control.
+
+*Motivo:* es el fallo conocido del neumorfismo. Una tarjeta definida solo por sombras difusas no alcanza el mínimo de contraste no textual de 3:1, y desaparece entera con `prefers-contrast: more`, con el brillo bajo o al sol. Con borde, la suavidad es un añadido que se puede perder sin que la interfaz deje de funcionar.
+
+**Radios:** 10px en controles pequeños, 14px en botones y campos, 22px en tarjetas, 28px en paneles grandes.
+
+**Respuesta al tacto:** un control se hunde al pulsarlo (`apoyado` → `hundido`) y sube 1px al pasar por encima. Es la única señal de profundidad que la suavidad da gratis, y sustituye al cambio de color que aquí no existe. Bajo `prefers-reduced-motion: reduce` no hay desplazamiento.
 
 ## 22. Estructura de navegación
 
@@ -1017,6 +1052,11 @@ Conjunto mínimo para probar el flujo completo. Cada entrada lleva sus alias en 
 | 19 | Tabla de series densa de Hevy (fila de 40px) | Mantener los steppers grandes de 56px | La vista de conjunto serie a serie es el núcleo del flujo; se acepta la concesión táctil a sabiendas | 5.2, 21.6, 21.7 |
 | 20 | Color por superset, reutilizando la paleta de series | Agrupación solo por forma, sin color | Supersets y gráficos no coinciden nunca en pantalla; el color va acompañado de corchete y etiqueta | 5.1, 21.4, 21.5 |
 | 21 | Cierre de sesión sobrio | Resumen celebratorio de Hevy (récords, comparativa de volumen, compartibles) | Premia registrar, no medir; la §21.9 lo prohíbe por nombre | 5.3, 21.9 |
+| 22 | Dirección "Instrumento blando" | Seguir con "Instrumento dual" (superficies planas, grises neutros) | Se registra a diario durante meses; una interfaz que no invita a volver no mide nada. Sustituye a la decisión 13 | 21 |
+| 23 | Acento teal, no verde | Verde sanitario como acento / mantener el naranja | El verde ya significa "éxito": un color que dice "toca aquí" y "salió bien" no dice ninguna de las dos. Sustituye el tono de la decisión 14, no su argumento | 21.4 |
+| 24 | Relieve blando con borde obligatorio de 1px | Neumorfismo puro, solo sombras | Sin borde, una tarjeta no llega a 3:1 de contraste no textual y desaparece al sol o con `prefers-contrast` | 21.10, 21.9 |
+| 25 | Tres papeles tipográficos | Una sola familia para toda la interfaz | Con superficies blandas, una redondeada en titulares evita que el relieve parezca una sombra pegada sobre una interfaz plana; el cuerpo sigue en Inter porque ahí manda leer a 12-14px | 21.6 |
+| 26 | La sesión en vivo sigue oscura tras el rediseño | Aclararla para unificar el lenguaje blando | El motivo de la §21.2 es la luz del gimnasio contra la pantalla, y eso no lo cambia una decisión estética | 21.2 |
 
 ---
 

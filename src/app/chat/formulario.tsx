@@ -49,7 +49,7 @@ export function FormularioChat() {
           required
           defaultValue={estado.texto}
           placeholder={EJEMPLO}
-          className="w-full resize-y rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none placeholder:text-suave focus:border-accion focus:ring-2 focus:ring-accion/40"
+          className="hundido w-full resize-y rounded-lg px-3 py-2 text-sm outline-none placeholder:text-suave focus:border-accion focus:ring-2 focus:ring-accion/40"
         />
 
         <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ export function FormularioChat() {
       {estado.guardado && estado.guardado.length > 0 && (
         <section
           role="status"
-          className="rounded-xl border border-borde bg-superficie p-5"
+          className="alzado rounded-xl p-5"
         >
           <h2 className="text-sm font-medium text-exito">Guardado</h2>
           <ul className="mt-3 space-y-1.5">
@@ -84,7 +84,7 @@ export function FormularioChat() {
         registró tres.
       */}
       {estado.dudas && estado.dudas.length > 0 && (
-        <section className="rounded-xl border border-borde bg-superficie p-5">
+        <section className="alzado rounded-xl p-5">
           <h2 className="text-sm font-medium text-aviso">Falta aclarar</h2>
           <ul className="mt-3 space-y-1.5">
             {estado.dudas.map((duda, i) => (
@@ -98,7 +98,7 @@ export function FormularioChat() {
 
       {estado.ejerciciosDesconocidos &&
         estado.ejerciciosDesconocidos.length > 0 && (
-          <section className="rounded-xl border border-borde bg-superficie p-5">
+          <section className="alzado rounded-xl p-5">
             <h2 className="text-sm font-medium text-aviso">
               Ejercicios sin reconocer
             </h2>

@@ -8,7 +8,7 @@ import { guardarCierre, type EstadoRutina } from "@/lib/datos/entrenos-acciones"
 const INICIAL: EstadoRutina = {};
 
 const claseCampo =
-  "w-full rounded-lg border border-borde bg-transparent px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
+  "hundido w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40";
 
 function Boton() {
   const { pending } = useFormStatus();
@@ -16,7 +16,7 @@ function Boton() {
     <button
       type="submit"
       disabled={pending}
-      className="h-14 w-full rounded-lg bg-accion text-base font-medium text-sobre-accion disabled:opacity-50"
+      className="h-14 w-full rounded-xl bg-accion text-base font-medium text-sobre-accion shadow-apoyado disabled:opacity-50"
     >
       {pending ? "Guardando…" : "Guardar entreno"}
     </button>
@@ -77,7 +77,7 @@ export function FormularioCierre({
       {/* §5.3: la plantilla solo se toca con confirmación explícita, y solo se
           pregunta si de verdad cambió la forma del plan. */}
       {desviada && (
-        <fieldset className="rounded-lg border border-borde p-3">
+        <fieldset className="alzado rounded-lg p-3">
           <legend className="px-1 text-sm font-medium">
             La sesión no siguió la rutina
           </legend>
