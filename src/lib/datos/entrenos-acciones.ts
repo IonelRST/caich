@@ -615,6 +615,42 @@ export async function anadirEjercicioSesion(formData: FormData): Promise<void> {
   revalidatePath(`/entreno/${entrenoId}`);
 }
 
+/**
+ * Quitar un ejercicio de la sesión en curso (§5.2).
+ *
+ * Faltaba: se podía añadir un ejercicio y borrar series sueltas, pero no
+ * deshacer el ejercicio entero. Con el entreno vacío eso deja sin salida a un
+ * añadido por error, y con una rutina obliga a rellenar algo que hoy no se hace.
+ *
+ * Las series caen por cascada (`on delete cascade` de la migración 0001). El
+ * orden se recompacta por el mismo motivo que en las rutinas: es el orden en
+ * que se ejecuta el entreno, y un hueco lo deja indefinido.
+ */
+export async function quitarEjercicioSesion(formData: FormData): Promise<void> {
+  const id = texto(formData, "id");
+  const entrenoId = texto(formData, "entreno_id");
+  if (!id || !entrenoId) return;
+
+  const { supabase } = await usuarioOFallo();
+  await supabase.from("registro_entreno_ejercicio").delete().eq("id", id);
+
+  const { data: restantes } = await supabase
+    .from("registro_entreno_ejercicio")
+    .select("id, orden")
+    .eq("entreno_id", entrenoId)
+    .order("orden");
+
+  for (const [i, e] of (restantes ?? []).entries()) {
+    if (e.orden === i) continue;
+    await supabase
+      .from("registro_entreno_ejercicio")
+      .update({ orden: i })
+      .eq("id", e.id);
+  }
+
+  revalidatePath(`/entreno/${entrenoId}`);
+}
+
 const esquemaSerie = z.object({
   peso: z.coerce.number().min(0).max(1000).optional(),
   repeticiones: z.coerce.number().int().min(0).max(200).optional(),

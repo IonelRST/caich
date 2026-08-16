@@ -4,6 +4,7 @@ import { useActionState, useRef } from "react";
 import {
   anadirSerieSesion,
   borrarSerie,
+  quitarEjercicioSesion,
   completarSerie,
   type EstadoRutina,
 } from "@/lib/datos/entrenos-acciones";
@@ -65,9 +66,24 @@ export function EjercicioEnVivo({
     >
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="text-base font-medium">{nombre}</h2>
-        <span className="shrink-0 text-xs text-suave">
-          {hechas}/{series.length} series
-        </span>
+        <div className="flex shrink-0 items-baseline gap-2">
+          <span className="text-xs text-suave">
+            {hechas}/{series.length} series
+          </span>
+          {/* §5.2: quitar el ejercicio entero. Sin esto, un añadido por error
+              en un entreno vacío no tenía deshacer. */}
+          <form action={quitarEjercicioSesion}>
+            <input type="hidden" name="id" value={entrenoEjercicioId} />
+            <input type="hidden" name="entreno_id" value={entrenoId} />
+            <button
+              type="submit"
+              aria-label={`Quitar ${nombre} de la sesión`}
+              className="h-8 w-8 rounded-md text-xs text-suave hover:bg-error/10 hover:text-error"
+            >
+              ✕
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* §21.9: el color del superset nunca es el único canal — va con borde
