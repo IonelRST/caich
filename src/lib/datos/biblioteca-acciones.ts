@@ -90,6 +90,85 @@ export async function guardarComida(
   return { aviso: id ? "Comida actualizada." : "Comida guardada." };
 }
 
+/**
+ * Clave de comparación entre comidas (§6.6).
+ *
+ * La detección es por descripción equivalente, no por texto idéntico: sin
+ * normalizar, "Pollo con arroz" y "pollo con  arroz" serían dos comidas
+ * distintas y no se detectaría ninguna repetición.
+ */
+export async function claveDeComida(descripcion: string): Promise<string> {
+  return descripcion
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export type Sugerencia = {
+  clave: string;
+  nombre: string;
+  cantidad: string;
+  calorias: number | null;
+  proteina_g: number | null;
+};
+
+/**
+ * Acepta la oferta: crea la comida en la biblioteca (§6.6).
+ *
+ * Las cantidades vienen del primer registro, no del segundo: es donde el
+ * usuario las escribió con detalle, y repetir algo no suele volver a
+ * describirlo entero.
+ */
+export async function aceptarSugerencia(
+  formData: FormData,
+): Promise<EstadoBiblioteca> {
+  const nombre = formData.get("nombre");
+  const cantidad = formData.get("cantidad");
+  if (typeof nombre !== "string" || typeof cantidad !== "string") {
+    return { error: "Faltan datos de la comida." };
+  }
+
+  const { supabase, user } = await sesion();
+  if (!user) return { error: "Tu sesión ha caducado. Vuelve a entrar." };
+
+  const num = (clave: string) => {
+    const v = formData.get(clave);
+    return v === "" || v == null ? null : Number(v);
+  };
+
+  const { error } = await supabase.from("comida_guardada").insert({
+    user_id: user.id,
+    nombre,
+    cantidad,
+    calorias: num("calorias"),
+    proteina_g: num("proteina_g"),
+  });
+
+  if (error) return { error: `No se ha podido guardar: ${error.message}` };
+
+  revalidatePath("/dieta");
+  return { aviso: `${nombre} está ya en tu biblioteca.` };
+}
+
+/** Rechaza la oferta y no vuelve a preguntar por esa comida (§6.6). */
+export async function descartarSugerencia(
+  formData: FormData,
+): Promise<EstadoBiblioteca> {
+  const clave = formData.get("clave");
+  if (typeof clave !== "string") return { error: "Falta la comida." };
+
+  const { supabase, user } = await sesion();
+  if (!user) return { error: "Tu sesión ha caducado. Vuelve a entrar." };
+
+  await supabase
+    .from("comida_sugerencia_descartada")
+    .insert({ user_id: user.id, clave });
+
+  return { aviso: "No volveré a proponerla." };
+}
+
 export async function borrarComida(formData: FormData): Promise<void> {
   const id = formData.get("id");
   if (typeof id !== "string") return;

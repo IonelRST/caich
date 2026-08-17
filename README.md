@@ -7,7 +7,8 @@ App web de tracking fitness con IA: registro de entrenos, comida y medidas corpo
 | Área | Estado |
 |------|--------|
 | Login, RLS, historial, exportación | Funcionando |
-| Biblioteca de comidas (§6.1, §6.2) | Construido, **requiere aplicar la migración 0005** |
+| Biblioteca de comidas (§6.1, §6.2) | Funcionando |
+| Ascenso a la biblioteca desde el chat (§6.6) | Construido, **requiere aplicar la migración 0006** |
 | Plan de dieta semanal, ahora opcional (§6.4) | Funcionando |
 | Rutinas y entreno en vivo 1:1 con Hevy (§5) | Construido, **requiere aplicar la migración 0004** |
 | Chat de texto libre + parseo a datos (§3, §7) | Funcionando |
@@ -38,6 +39,7 @@ En el panel de Supabase → **SQL Editor**, ejecutar en orden:
 3. `supabase/migrations/0003_principios_base.sql` — base de principios, **ya no se usa** (§11.6)
 4. `supabase/migrations/0004_series_de_rutina.sql` — series como filas (§5.1, §5.2)
 5. `supabase/migrations/0005_biblioteca_de_comidas.sql` — biblioteca de comidas (§6.1)
+6. `supabase/migrations/0006_sugerencias_de_biblioteca.sql` — ascenso desde el chat (§6.6)
 
 > **La 0003 quedó obsoleta.** La base de principios se retiró el 16 de agosto de 2026
 > (§11.6): 18 principios redactados por la IA, ninguno aprobado, y mientras tanto la

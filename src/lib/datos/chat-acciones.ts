@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { claveDeComida, type Sugerencia } from "./biblioteca-acciones";
 import { parsearMensaje } from "@/lib/ia/parseo";
 import type { Parseo } from "@/lib/ia/esquemas";
 import { crearClienteServidor } from "@/lib/supabase/server";
@@ -15,6 +16,8 @@ export type EstadoChat = {
   ejerciciosDesconocidos?: string[];
   /** El texto enviado, para poder reintentar sin reescribirlo. */
   texto?: string;
+  /** Comidas repetidas que se ofrecen para la biblioteca (§6.6). */
+  sugerencias?: Sugerencia[];
 };
 
 type EjercicioCatalogo = {
@@ -262,6 +265,11 @@ export async function registrarPorChat(
     guardado.push(`entreno con ${reconocidos.length} ejercicios: ${nombres}`);
   }
 
+  const sugerencias = await proponerParaBiblioteca(
+    supabase,
+    parseo.comidas.map((c) => c.descripcion),
+  );
+
   revalidatePath("/");
   revalidatePath("/historial");
   revalidatePath("/evolucion");
@@ -273,9 +281,95 @@ export async function registrarPorChat(
   return {
     guardado,
     dudas,
+    sugerencias,
     ejerciciosDesconocidos: [...desconocidos],
     // Si queda algo sin resolver se devuelve el texto, para poder corregir sobre
     // lo escrito en vez de teclearlo otra vez.
     texto: dudas.length > 0 || desconocidos.size > 0 ? texto : undefined,
   };
+}
+
+/**
+ * Ofrece guardar en la biblioteca las comidas que se repiten (§6.6).
+ *
+ * Se ofrece a partir del segundo registro de la misma comida: una vez es un
+ * día suelto, dos ya es costumbre. La descripción se compara normalizada, no
+ * literal, y las cantidades salen del registro más antiguo — es donde el
+ * usuario las escribió con detalle, porque al repetir algo no se suele volver a
+ * describir entero.
+ *
+ * No se propone lo que ya está en la biblioteca ni lo que el usuario descartó
+ * antes. Que esto falle no invalida nada: el registro ya está guardado, así que
+ * un error aquí se traga en silencio en vez de convertirse en un error del chat.
+ */
+async function proponerParaBiblioteca(
+  supabase: Awaited<ReturnType<typeof crearClienteServidor>>,
+  descripciones: string[],
+): Promise<Sugerencia[]> {
+  if (descripciones.length === 0) return [];
+
+  try {
+    const claves = new Set(
+      await Promise.all(descripciones.map((d) => claveDeComida(d))),
+    );
+
+    const desde = new Date(Date.now() - 90 * 86_400_000).toISOString();
+
+    const [{ data: registros }, { data: guardadas }, { data: descartadas }] =
+      await Promise.all([
+        supabase
+          .from("registro_comida")
+          .select("descripcion, cantidad, calorias, proteina_g, fecha_evento")
+          .gte("fecha_evento", desde)
+          .order("fecha_evento"),
+        supabase.from("comida_guardada").select("nombre"),
+        supabase.from("comida_sugerencia_descartada").select("clave"),
+      ]);
+
+    const yaEnBiblioteca = new Set(
+      await Promise.all(
+        (guardadas ?? []).map((g) => claveDeComida(g.nombre)),
+      ),
+    );
+    const yaDescartadas = new Set((descartadas ?? []).map((d) => d.clave));
+
+    type FilaComida = {
+      descripcion: string | null;
+      cantidad: string | null;
+      calorias: number | null;
+      proteina_g: number | null;
+    };
+
+    // Se agrupa por clave conservando el registro más antiguo de cada una.
+    const porClave = new Map<string, { veces: number; primero: FilaComida }>();
+
+    for (const r of (registros ?? []) as FilaComida[]) {
+      const clave = await claveDeComida(r.descripcion ?? "");
+      if (!clave || !claves.has(clave)) continue;
+      const previo = porClave.get(clave);
+      porClave.set(clave, {
+        veces: (previo?.veces ?? 0) + 1,
+        primero: previo?.primero ?? r,
+      });
+    }
+
+    const sugerencias: Sugerencia[] = [];
+
+    for (const [clave, { veces, primero }] of porClave) {
+      if (veces < 2) continue;
+      if (yaEnBiblioteca.has(clave) || yaDescartadas.has(clave)) continue;
+
+      sugerencias.push({
+        clave,
+        nombre: primero.descripcion ?? "",
+        cantidad: primero.cantidad ?? "",
+        calorias: primero.calorias,
+        proteina_g: primero.proteina_g,
+      });
+    }
+
+    return sugerencias;
+  } catch {
+    return [];
+  }
 }

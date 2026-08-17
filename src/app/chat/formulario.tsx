@@ -1,7 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import {
+  aceptarSugerencia,
+  descartarSugerencia,
+  type Sugerencia,
+} from "@/lib/datos/biblioteca-acciones";
 import {
   registrarPorChat,
   type EstadoChat,
@@ -78,6 +83,12 @@ export function FormularioChat() {
         </section>
       )}
 
+      {/* §6.6: lo que se repite se ofrece para la biblioteca. Ofrecer, no
+          guardar: una biblioteca que se llena sola deja de ser tuya. */}
+      {estado.sugerencias?.map((s) => (
+        <OfertaBiblioteca key={s.clave} sugerencia={s} />
+      ))}
+
       {/*
         §7.4: si algo no se ha entendido se dice explícitamente. Guardar dos de
         tres cosas y callarse es el peor resultado posible: el usuario cree que
@@ -117,5 +128,79 @@ export function FormularioChat() {
           </section>
         )}
     </div>
+  );
+}
+
+/**
+ * Oferta de guardar una comida repetida en la biblioteca (§6.6).
+ *
+ * Desaparece en cuanto se responde, en el cliente: la respuesta ya está tomada
+ * y dejar la tarjeta en pantalla invitaría a pulsar dos veces.
+ */
+function OfertaBiblioteca({ sugerencia }: { sugerencia: Sugerencia }) {
+  const [resuelto, setResuelto] = useState<string | null>(null);
+
+  if (resuelto) {
+    return (
+      <p role="status" className="text-sm text-suave">
+        {resuelto}
+      </p>
+    );
+  }
+
+  return (
+    <section className="alzado rounded-xl p-5">
+      <h2 className="text-sm font-medium">¿Lo guardo en tu biblioteca?</h2>
+      <p className="mt-2 text-sm text-suave">
+        Has registrado <strong className="font-medium text-texto">{sugerencia.nombre}</strong>{" "}
+        más de una vez. Guardado, se registra de un toque desde Dieta.
+      </p>
+      {sugerencia.cantidad && (
+        <p className="mt-1 text-xs text-suave">{sugerencia.cantidad}</p>
+      )}
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        <form
+          action={async (formData: FormData) => {
+            const r = await aceptarSugerencia(formData);
+            setResuelto(r.error ?? r.aviso ?? null);
+          }}
+        >
+          <input type="hidden" name="nombre" value={sugerencia.nombre} />
+          <input type="hidden" name="cantidad" value={sugerencia.cantidad} />
+          <input
+            type="hidden"
+            name="calorias"
+            value={sugerencia.calorias ?? ""}
+          />
+          <input
+            type="hidden"
+            name="proteina_g"
+            value={sugerencia.proteina_g ?? ""}
+          />
+          <button
+            type="submit"
+            className="rounded-lg bg-accion px-4 py-2 text-sm font-medium text-sobre-accion shadow-apoyado"
+          >
+            Guardar
+          </button>
+        </form>
+
+        <form
+          action={async (formData: FormData) => {
+            const r = await descartarSugerencia(formData);
+            setResuelto(r.error ?? r.aviso ?? null);
+          }}
+        >
+          <input type="hidden" name="clave" value={sugerencia.clave} />
+          <button
+            type="submit"
+            className="rounded-lg px-4 py-2 text-sm text-suave underline underline-offset-4"
+          >
+            No, gracias
+          </button>
+        </form>
+      </div>
+    </section>
   );
 }
