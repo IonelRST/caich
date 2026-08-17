@@ -7,15 +7,17 @@ import { crearClienteServidor } from "@/lib/supabase/server";
 
 export type EstadoDieta = { error?: string; aviso?: string };
 
+/**
+ * §6.4: el plan asigna comidas que YA existen en la biblioteca. No se define
+ * comida nueva desde aquí: se define en la biblioteca (§6.1) y se coloca en un
+ * día. Antes el plan repetía descripción, cantidad y macros por su cuenta, así
+ * que la misma comida existía dos veces y corregirla en un sitio no la
+ * corregía en el otro.
+ */
 const esquemaComida = z.object({
   dia_semana: z.coerce.number().int().min(1).max(7),
   momento_dia: z.string().min(1),
-  descripcion: z.string().min(1, { message: "Describe qué se come." }).max(200),
-  // §6.1: al definir el plan SÍ se piden cantidades de forma sistemática. Es una
-  // vez por semana y sin prisa, no cinco veces al día.
-  cantidad: z.string().min(1, { message: "Indica la cantidad." }).max(60),
-  calorias: z.coerce.number().min(0).max(10000).optional(),
-  proteina_g: z.coerce.number().min(0).max(1000).optional(),
+  comida_guardada_id: z.uuid({ message: "Elige una comida de tu biblioteca." }),
 });
 
 async function sesion() {
@@ -54,16 +56,10 @@ export async function anadirComidaAlPlan(
   _previo: EstadoDieta,
   formData: FormData,
 ): Promise<EstadoDieta> {
-  const cal = formData.get("calorias");
-  const prot = formData.get("proteina_g");
-
   const datos = esquemaComida.safeParse({
     dia_semana: formData.get("dia_semana"),
     momento_dia: formData.get("momento_dia"),
-    descripcion: formData.get("descripcion"),
-    cantidad: formData.get("cantidad"),
-    calorias: cal === "" ? undefined : cal,
-    proteina_g: prot === "" ? undefined : prot,
+    comida_guardada_id: formData.get("comida_guardada_id"),
   });
 
   if (!datos.success) return { error: datos.error.issues[0].message };
@@ -74,16 +70,15 @@ export async function anadirComidaAlPlan(
   const planId = await planDeDieta(supabase, user.id);
   if (!planId) return { error: "No se ha podido crear el plan." };
 
+  // Se guarda el enlace, no una copia. Corregir la comida en la biblioteca
+  // corrige también lo que el plan promete para el jueves.
   const { error } = await supabase.from("plantilla_item").insert({
     user_id: user.id,
     plantilla_id: planId,
     orden: MOMENTOS.indexOf(datos.data.momento_dia as (typeof MOMENTOS)[number]),
     dia_semana: datos.data.dia_semana,
     momento_dia: datos.data.momento_dia,
-    descripcion: datos.data.descripcion,
-    cantidad: datos.data.cantidad,
-    calorias: datos.data.calorias ?? null,
-    proteina_g: datos.data.proteina_g ?? null,
+    comida_guardada_id: datos.data.comida_guardada_id,
   });
 
   if (error) return { error: `No se ha podido guardar: ${error.message}` };
@@ -242,11 +237,36 @@ export async function registrarCheckin(
 
   const { data: item } = await supabase
     .from("plantilla_item")
-    .select("descripcion, cantidad, momento_dia, calorias, proteina_g")
+    .select(
+      "descripcion, cantidad, momento_dia, calorias, proteina_g, comida_guardada_id, comida_guardada(nombre, cantidad, calorias, proteina_g)",
+    )
     .eq("id", datos.data.plantilla_item_id)
     .single();
 
   if (!item) return { error: "Esa comida ya no está en el plan." };
+
+  // Los items enlazados a la biblioteca (§6.4) leen de ella; los antiguos
+  // conservan sus propios campos, así que un plan de antes sigue funcionando.
+  const enlazada = item.comida_guardada as unknown as {
+    nombre: string;
+    cantidad: string;
+    calorias: number | null;
+    proteina_g: number | null;
+  } | null;
+
+  const plan = enlazada
+    ? {
+        descripcion: enlazada.nombre,
+        cantidad: enlazada.cantidad,
+        calorias: enlazada.calorias,
+        proteina_g: enlazada.proteina_g,
+      }
+    : {
+        descripcion: item.descripcion,
+        cantidad: item.cantidad,
+        calorias: item.calorias,
+        proteina_g: item.proteina_g,
+      };
 
   const siguePlan = datos.data.adherencia === "igual";
 
@@ -257,14 +277,15 @@ export async function registrarCheckin(
     plantilla_item_id: datos.data.plantilla_item_id,
     adherencia: datos.data.adherencia,
     momento_dia: item.momento_dia,
+    comida_guardada_id: item.comida_guardada_id ?? null,
     descripcion: siguePlan
-      ? item.descripcion
-      : `${item.descripcion} — ${datos.data.detalle}`,
-    cantidad: siguePlan ? item.cantidad : datos.data.detalle,
+      ? plan.descripcion
+      : `${plan.descripcion} — ${datos.data.detalle}`,
+    cantidad: siguePlan ? plan.cantidad : datos.data.detalle,
     // Los macros solo se copian si se siguió el plan. En una desviación no se
     // inventan: quedan a null hasta que la IA los calcule desde el detalle.
-    calorias: siguePlan ? item.calorias : null,
-    proteina_g: siguePlan ? item.proteina_g : null,
+    calorias: siguePlan ? plan.calorias : null,
+    proteina_g: siguePlan ? plan.proteina_g : null,
     origen_dato: siguePlan ? "plan" : "declarado",
   });
 

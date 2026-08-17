@@ -27,8 +27,23 @@ function Boton({ texto, cargando }: { texto: string; cargando: string }) {
   );
 }
 
-export function FormularioComidaPlan({ diaActual }: { diaActual: number }) {
+export function FormularioComidaPlan({
+  diaActual,
+  biblioteca,
+}: {
+  diaActual: number;
+  biblioteca: { id: string; nombre: string }[];
+}) {
   const [estado, accion] = useActionState(anadirComidaAlPlan, INICIAL);
+
+  if (biblioteca.length === 0) {
+    return (
+      <p className="mt-4 text-sm text-suave">
+        El plan coloca comidas de tu biblioteca en días concretos. Guarda alguna
+        arriba y vuelve aquí.
+      </p>
+    );
+  }
 
   return (
     <form action={accion} className="mt-4 space-y-3">
@@ -65,62 +80,25 @@ export function FormularioComidaPlan({ diaActual }: { diaActual: number }) {
         </div>
       </div>
 
+      {/* §6.4: el plan coloca comidas que ya existen en la biblioteca. Antes se
+          reescribían aquí, así que la misma comida vivía en dos sitios y
+          corregirla en uno no la corregía en el otro. */}
       <div className="space-y-1.5">
-        <label htmlFor="descripcion" className="block text-sm font-medium">
-          Qué comes
+        <label htmlFor="comida_guardada_id" className="block text-sm font-medium">
+          Qué comida
         </label>
-        <input
-          id="descripcion"
-          name="descripcion"
+        <select
+          id="comida_guardada_id"
+          name="comida_guardada_id"
           required
-          maxLength={200}
-          placeholder="Avena con plátano y proteína"
           className={claseCampo}
-        />
-      </div>
-
-      <div className="flex flex-wrap gap-3">
-        <div className="min-w-40 flex-1 space-y-1.5">
-          <label htmlFor="cantidad" className="block text-sm font-medium">
-            Cantidad
-          </label>
-          <input
-            id="cantidad"
-            name="cantidad"
-            required
-            maxLength={60}
-            placeholder="80 g avena, 1 plátano, 30 g proteína"
-            className={claseCampo}
-          />
-        </div>
-
-        <div className="w-28 space-y-1.5">
-          <label htmlFor="calorias" className="block text-sm font-medium">
-            kcal
-          </label>
-          <input
-            id="calorias"
-            name="calorias"
-            type="number"
-            min={0}
-            placeholder="opcional"
-            className={claseCampo}
-          />
-        </div>
-
-        <div className="w-28 space-y-1.5">
-          <label htmlFor="proteina_g" className="block text-sm font-medium">
-            Proteína (g)
-          </label>
-          <input
-            id="proteina_g"
-            name="proteina_g"
-            type="number"
-            min={0}
-            placeholder="opcional"
-            className={claseCampo}
-          />
-        </div>
+        >
+          {biblioteca.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex items-center gap-3">

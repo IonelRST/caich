@@ -30,7 +30,9 @@ export default async function Dieta() {
   const { data: items } = plan
     ? await supabase
         .from("plantilla_item")
-        .select("id, dia_semana, momento_dia, descripcion, cantidad, calorias, proteina_g, orden")
+        .select(
+          "id, dia_semana, momento_dia, descripcion, cantidad, calorias, proteina_g, orden, comida_guardada(nombre, cantidad, calorias, proteina_g)",
+        )
         .eq("plantilla_id", plan.id)
         .order("dia_semana")
         .order("orden")
@@ -49,7 +51,40 @@ export default async function Dieta() {
     (registradasHoy ?? []).map((r) => r.plantilla_item_id).filter(Boolean),
   );
 
-  const deHoy = (items ?? []).filter((i) => i.dia_semana === hoy);
+  // §6.4: un item enlazado a la biblioteca lee de ella; los antiguos conservan
+  // sus propios campos, para que un plan de antes siga funcionando.
+  type ItemPlan = (typeof items extends (infer T)[] | null ? T : never) & {
+    comida_guardada?: {
+      nombre: string;
+      cantidad: string;
+      calorias: number | null;
+      proteina_g: number | null;
+    } | null;
+  };
+
+  const resuelto = (i: ItemPlan) => {
+    const enlazada = i.comida_guardada as unknown as {
+      nombre: string;
+      cantidad: string;
+      calorias: number | null;
+      proteina_g: number | null;
+    } | null;
+    return enlazada
+      ? {
+          descripcion: enlazada.nombre,
+          cantidad: enlazada.cantidad,
+          calorias: enlazada.calorias,
+          proteina_g: enlazada.proteina_g,
+        }
+      : {
+          descripcion: i.descripcion,
+          cantidad: i.cantidad,
+          calorias: i.calorias,
+          proteina_g: i.proteina_g,
+        };
+  };
+
+  const deHoy = ((items ?? []) as ItemPlan[]).filter((i) => i.dia_semana === hoy);
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
@@ -72,8 +107,8 @@ export default async function Dieta() {
               <CheckinComida
                 key={i.id}
                 itemId={i.id}
-                descripcion={i.descripcion ?? ""}
-                cantidad={i.cantidad}
+                descripcion={resuelto(i).descripcion ?? ""}
+                cantidad={resuelto(i).cantidad}
                 momento={i.momento_dia}
                 yaRegistrada={yaHechas.has(i.id)}
               />
@@ -112,7 +147,9 @@ export default async function Dieta() {
         ) : (
           <div className="mt-4 space-y-5">
             {DIAS.map((dia, idx) => {
-              const delDia = items.filter((i) => i.dia_semana === idx + 1);
+              const delDia = (items as ItemPlan[]).filter(
+                (i) => i.dia_semana === idx + 1,
+              );
               if (delDia.length === 0) return null;
 
               return (
@@ -131,12 +168,14 @@ export default async function Dieta() {
                             <span className="text-suave">
                               {i.momento_dia}:
                             </span>{" "}
-                            {i.descripcion}
+                            {resuelto(i).descripcion}
                           </p>
                           <p className="text-xs text-suave">
-                            {i.cantidad}
-                            {i.calorias != null && ` · ${i.calorias} kcal`}
-                            {i.proteina_g != null && ` · ${i.proteina_g} g prot.`}
+                            {resuelto(i).cantidad}
+                            {resuelto(i).calorias != null &&
+                              ` · ${resuelto(i).calorias} kcal`}
+                            {resuelto(i).proteina_g != null &&
+                              ` · ${resuelto(i).proteina_g} g prot.`}
                           </p>
                         </div>
                         <form action={quitarComidaDelPlan}>
@@ -160,7 +199,13 @@ export default async function Dieta() {
 
       <section className="mt-10">
         <h2 className="text-sm font-medium">Añadir comida al plan</h2>
-        <FormularioComidaPlan diaActual={hoy} />
+        <FormularioComidaPlan
+          diaActual={hoy}
+          biblioteca={(biblioteca ?? []).map((c) => ({
+            id: c.id,
+            nombre: c.nombre,
+          }))}
+        />
       </section>
     </main>
   );
