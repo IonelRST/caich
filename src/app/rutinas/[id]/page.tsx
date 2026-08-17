@@ -66,8 +66,10 @@ export default async function DetalleRutina({
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-6 py-12">
+      {/* El título es el propio campo del nombre: antes estaba dos veces, como
+          `h1` y como formulario con botón "Renombrar" justo debajo. */}
       <header className="flex items-baseline justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{rutina.nombre}</h1>
+        <FormularioNombre id={id} nombre={rutina.nombre} />
         <Link
           href="/rutinas"
           className="shrink-0 text-sm text-suave underline underline-offset-4 hover:text-texto"
@@ -75,8 +77,6 @@ export default async function DetalleRutina({
           Volver
         </Link>
       </header>
-
-      <FormularioNombre id={id} nombre={rutina.nombre} />
 
       <section className="mt-8">
         <h2 className="text-sm font-medium">Ejercicios</h2>

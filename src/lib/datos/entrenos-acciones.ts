@@ -87,18 +87,25 @@ export async function renombrarRutina(
 
 const esquemaEjercicioNuevo = z.object({
   ejercicio_id: z.uuid({ message: "Elige un ejercicio." }),
-  series: z.coerce.number().int().min(1).max(20),
-  reps_min: z.coerce.number().int().min(1).max(100),
-  reps_max: z.coerce.number().int().min(1).max(100).optional(),
-  peso_objetivo: z.coerce.number().min(0).max(1000).optional(),
-  descanso_segundos: z.coerce.number().int().min(5).max(300).optional(),
 });
+
+/**
+ * Con cuántas series entra un ejercicio nuevo (§5.1).
+ *
+ * Cuatro es lo más común y se corrige en la tabla en un toque. El alta ya no
+ * pregunta: preguntarlo obligaba a decidir series, repeticiones y peso en un
+ * formulario con otra forma que la tabla donde se editan después.
+ */
+const SERIES_AL_ANADIR = 4;
 
 /**
  * Añade un ejercicio a la rutina, ya con sus filas de serie (§5.1).
  *
- * El formulario pide "cuántas series" por comodidad, pero lo que se guarda son
- * N filas independientes: a partir de aquí cada una se edita por separado y
+ * El alta solo pide el ejercicio. Entra con cuatro filas vacías y todo lo demás
+ * se rellena en la tabla, que es la misma que se usa para corregirlo después:
+ * antes había dos modelos mentales para la misma cosa en la misma pantalla.
+ *
+ * Lo que se guarda son filas independientes: cada una se edita por separado y
  * puede cambiar de tipo, de peso o de rango sin tocar a las demás.
  */
 export async function anadirEjercicio(
@@ -108,25 +115,10 @@ export async function anadirEjercicio(
   const rutinaId = texto(formData, "rutina_id");
   if (!rutinaId) return { error: "Falta la rutina." };
 
-  const opcional = (clave: string) => {
-    const v = formData.get(clave);
-    return v === "" || v == null ? undefined : v;
-  };
-
   const datos = esquemaEjercicioNuevo.safeParse({
     ejercicio_id: formData.get("ejercicio_id"),
-    series: formData.get("series"),
-    reps_min: formData.get("reps_min"),
-    reps_max: opcional("reps_max"),
-    peso_objetivo: opcional("peso_objetivo"),
-    descanso_segundos: opcional("descanso_segundos"),
   });
   if (!datos.success) return { error: datos.error.issues[0].message };
-
-  const { reps_min, reps_max } = datos.data;
-  if (reps_max != null && reps_max < reps_min) {
-    return { error: "El rango de repeticiones va de menor a mayor." };
-  }
 
   const { supabase, user } = await usuarioOFallo();
   if (!user) return { error: "Tu sesión ha caducado. Vuelve a entrar." };
@@ -143,7 +135,7 @@ export async function anadirEjercicio(
       plantilla_id: rutinaId,
       orden: count ?? 0,
       ejercicio_id: datos.data.ejercicio_id,
-      descanso_segundos: datos.data.descanso_segundos ?? null,
+      descanso_segundos: null,
     })
     .select("id")
     .single();
@@ -152,15 +144,17 @@ export async function anadirEjercicio(
     return { error: `No se ha podido añadir: ${error?.message ?? ""}` };
   }
 
+  // Las filas nacen vacías: el peso y las repeticiones se ponen en la tabla,
+  // que es donde se van a corregir de todas formas.
   const { error: errorSeries } = await supabase.from("plantilla_serie").insert(
-    Array.from({ length: datos.data.series }, (_, i) => ({
+    Array.from({ length: SERIES_AL_ANADIR }, (_, i) => ({
       user_id: user.id,
       plantilla_item_id: item.id,
       numero_serie: i + 1,
       tipo: "normal",
-      peso_objetivo: datos.data.peso_objetivo ?? null,
-      reps_min,
-      reps_max: reps_max ?? null,
+      peso_objetivo: null,
+      reps_min: null,
+      reps_max: null,
     })),
   );
 

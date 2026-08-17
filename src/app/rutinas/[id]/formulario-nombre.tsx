@@ -1,56 +1,45 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { renombrarRutina, type EstadoRutina } from "@/lib/datos/entrenos-acciones";
 
 const INICIAL: EstadoRutina = {};
 
-function Boton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="control h-11 shrink-0 rounded-lg px-4 text-sm font-medium disabled:opacity-50"
-    >
-      {pending ? "Guardando…" : "Renombrar"}
-    </button>
-  );
-}
-
+/**
+ * El nombre de la rutina, editable en su sitio (§5.1).
+ *
+ * Antes había un `h1` con el nombre y, justo debajo, un campo con el mismo
+ * nombre y un botón "Renombrar": la misma cadena dos veces en cuatro
+ * centímetros. Ahora el título ES el campo.
+ *
+ * Guarda al salir del campo, como el resto de la pantalla desde el rediseño de
+ * la tabla: un botón de guardar aquí y ninguno en las series era otra
+ * incoherencia dentro de la misma vista.
+ */
 export function FormularioNombre({ id, nombre }: { id: string; nombre: string }) {
   const [estado, accion] = useActionState(renombrarRutina, INICIAL);
 
   return (
-    <form action={accion} className="mt-4 flex flex-wrap items-end gap-3">
+    <form action={accion} className="min-w-0 flex-1">
       <input type="hidden" name="id" value={id} />
 
-      <div className="min-w-48 flex-1 space-y-1.5">
-        <label htmlFor="nombre-rutina" className="block text-xs font-medium text-suave">
-          Nombre de la rutina
-        </label>
-        <input
-          id="nombre-rutina"
-          name="nombre"
-          required
-          maxLength={80}
-          defaultValue={nombre}
-          className="hundido h-11 w-full rounded-lg px-3 text-sm outline-none focus:border-accion focus:ring-2 focus:ring-accion/40"
-        />
-      </div>
-
-      <Boton />
+      <label htmlFor="nombre-rutina" className="sr-only">
+        Nombre de la rutina
+      </label>
+      <input
+        id="nombre-rutina"
+        name="nombre"
+        required
+        maxLength={80}
+        defaultValue={nombre}
+        onBlur={(e) => e.currentTarget.form?.requestSubmit()}
+        className="font-display w-full rounded-md bg-transparent text-2xl font-semibold tracking-tight outline-none focus:bg-hundido focus:px-2"
+      />
 
       {estado.error && (
-        <span role="alert" className="text-sm text-error">
+        <p role="alert" className="mt-1 text-sm text-error">
           {estado.error}
-        </span>
-      )}
-      {estado.aviso && (
-        <span role="status" className="text-sm text-exito">
-          {estado.aviso}
-        </span>
+        </p>
       )}
     </form>
   );
