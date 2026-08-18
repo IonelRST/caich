@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { DIAS, MOMENTOS } from "@/lib/datos/dieta";
 import {
@@ -136,6 +136,28 @@ export function CheckinComida({
 }) {
   const [estado, accion] = useActionState(registrarCheckin, INICIAL);
   const [adherencia, setAdherencia] = useState("igual");
+  const [detalle, setDetalle] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+
+  /*
+   * React resetea el formulario cuando la acción termina, y el reset devuelve
+   * los radios al estado inicial del HTML — "igual". El estado de React seguía
+   * en "menos", así que la interfaz mostraba "Menos" resaltado mientras el DOM
+   * enviaba "igual": el usuario creía registrar una desviación y registraba
+   * adherencia perfecta, que es justo el dato que la §6.3 declara imprescindible.
+   *
+   * Se vuelve a aplicar la elección al DOM después de cada resultado.
+   */
+  useEffect(() => {
+    const f = formRef.current;
+    if (!f) return;
+    const radio = f.querySelector<HTMLInputElement>(
+      `input[name="adherencia"][value="${adherencia}"]`,
+    );
+    if (radio) radio.checked = true;
+    const campo = f.querySelector<HTMLInputElement>('input[name="detalle"]');
+    if (campo) campo.value = detalle;
+  }, [estado, adherencia, detalle]);
 
   // §6.3: la desviación exige detalle. Se pide solo cuando hace falta, para no
   // cobrar ese peaje en el caso normal (que es seguir el plan).
@@ -165,7 +187,7 @@ export function CheckinComida({
         </p>
       )}
 
-      <form action={accion} className="mt-3 space-y-3">
+      <form ref={formRef} action={accion} className="mt-3 space-y-3">
         <input type="hidden" name="plantilla_item_id" value={itemId} />
 
         <div className="flex flex-wrap gap-2">
@@ -207,6 +229,8 @@ export function CheckinComida({
               name="detalle"
               required
               maxLength={200}
+              value={detalle}
+              onChange={(e) => setDetalle(e.target.value)}
               placeholder="el doble de arroz, unos 200 g"
               className={claseCampo}
             />

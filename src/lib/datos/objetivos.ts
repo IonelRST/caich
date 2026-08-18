@@ -55,14 +55,32 @@ export function calcularProgreso(
       : valorActual >= objetivo.valor_objetivo;
 
   const inicial = valorInicial ?? valorActual;
-  const recorridoTotal = Math.abs(objetivo.valor_objetivo - inicial);
-  const recorrido = Math.abs(valorActual - inicial);
+
+  /*
+   * El recorrido se mide EN LA DIRECCIÓN DECLARADA, no en valor absoluto.
+   *
+   * Midiéndolo en absoluto, alejarse del objetivo contaba igual que acercarse:
+   * un objetivo de bajar a 108 kg, con la medida más antigua en 77,2 y la
+   * actual en 116, daba "100 % del recorrido" mientras el peso subía.
+   *
+   * Y cuando el punto de partida no deja recorrido en esa dirección —aquí, 108
+   * está por encima de 77,2 y el objetivo era bajar— no hay porcentaje que
+   * signifique nada. Se devuelve null y la interfaz no pinta barra, en vez de
+   * inventar una cifra tranquilizadora.
+   */
+  const necesario =
+    objetivo.direccion === "bajar"
+      ? inicial - objetivo.valor_objetivo
+      : objetivo.valor_objetivo - inicial;
+
+  const avance =
+    objetivo.direccion === "bajar" ? inicial - valorActual : valorActual - inicial;
 
   const porcentaje = alcanzado
     ? 100
-    : recorridoTotal === 0
-      ? 100
-      : Math.max(0, Math.min(100, Math.round((recorrido / recorridoTotal) * 100)));
+    : necesario <= 0
+      ? null
+      : Math.max(0, Math.min(100, Math.round((avance / necesario) * 100)));
 
   return { objetivo, valorActual, porcentaje, alcanzado };
 }
